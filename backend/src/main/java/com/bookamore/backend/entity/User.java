@@ -1,4 +1,4 @@
-package com.booksy.backend.entity;
+package com.bookamore.backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
