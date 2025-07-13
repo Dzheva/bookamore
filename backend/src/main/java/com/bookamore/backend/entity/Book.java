@@ -2,16 +2,20 @@ package com.bookamore.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
 @Entity
 @Table(name = "books")
-@Data
+@EqualsAndHashCode(callSuper = false)
 public class Book extends BaseEntity {
-    @Column
+    @Column(nullable = false)
     private String title;
     @Column(length = 500)
     private String description;
@@ -19,22 +23,22 @@ public class Book extends BaseEntity {
     private String isbn;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "condition_id")
+    @JoinColumn(nullable = false, name = "condition_id")
     private BookCondition condition;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "authors_books",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id")
+            joinColumns = @JoinColumn(nullable = false, name = "book_id"),
+            inverseJoinColumns = @JoinColumn(nullable = false, name = "author_id")
     )
     private List<BookAuthor> authors = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "genres_books",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id")
+            joinColumns = @JoinColumn(nullable = false, name = "book_id"),
+            inverseJoinColumns = @JoinColumn(nullable = false, name = "genre_id")
     )
     private List<BookGenre> genres = new ArrayList<>();
 
