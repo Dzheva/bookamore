@@ -1,4 +1,4 @@
-# booksy
+# bookamore
 
 ---
 # Repository Workflow Guidelines
