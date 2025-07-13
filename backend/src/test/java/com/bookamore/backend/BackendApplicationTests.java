@@ -1,4 +1,4 @@
-package com.booksy.backend;
+package com.bookamore.backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
