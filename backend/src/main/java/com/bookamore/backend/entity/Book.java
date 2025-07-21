@@ -3,8 +3,6 @@ package com.bookamore.backend.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,7 @@ public class Book extends BaseEntity {
     @Column
     private String isbn;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(nullable = false, name = "condition_id")
     private BookCondition condition;
 
