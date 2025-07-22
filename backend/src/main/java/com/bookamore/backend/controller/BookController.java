@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("book/")
+@RequestMapping("api/v1/books")
 public class BookController {
 
     @Autowired
@@ -25,36 +25,34 @@ public class BookController {
         return bookService.getAll();
     }
 
-    @GetMapping("test_new_book")
-    public String getTestBook() {
-
-        BookAuthor a = new BookAuthor();
-        a.setName("John");
-        BookCondition c = new BookCondition();
-        c.setName("new");
-        BookGenre g = new BookGenre();
-        g.setName("Super_Genre");
-        BookImage i = new BookImage();
-        i.setPath("/books/img/1.png");
-
-        Book book = new Book();
-        book.setAuthors(List.of(a));
-        book.setIsbn("978-3-16-148410-0");
-        book.setCondition(c);
-        book.setGenres(List.of(g));
-        book.setTitle("Some_Book");
-        book.setDescription("A very interesting book, I swear.");
-        book.setImages(List.of(i));
-        i.setBook(book);
-
-        System.out.println(book.getId());
-
-        bookService.create(book);
-
-
-
-        return "Success!";
-    }
+//    @GetMapping("test_new_book")
+//    public String getTestBook() {
+//
+//        BookAuthor a = new BookAuthor();
+//        a.setName("John");
+//        BookCondition c = new BookCondition();
+//        c.setName("new");
+//        BookGenre g = new BookGenre();
+//        g.setName("Super_Genre");
+//        BookImage i = new BookImage();
+//        i.setPath("/books/img/1.png");
+//
+//        Book book = new Book();
+//        book.setAuthors(List.of(a));
+//        book.setIsbn("978-3-16-148410-0");
+//        book.setCondition(c);
+//        book.setGenres(List.of(g));
+//        book.setTitle("Some_Book");
+//        book.setDescription("A very interesting book, I swear.");
+//        book.setImages(List.of(i));
+//        i.setBook(book);
+//
+//        System.out.println(book.getId());
+//
+//        bookService.create(book);
+//
+//        return "Success!";
+//    }
 
     @PostMapping
     public ResponseEntity<BookResponse> createBook(@RequestBody BookRequest bookRequest){

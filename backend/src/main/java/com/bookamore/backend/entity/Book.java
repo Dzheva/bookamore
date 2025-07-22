@@ -1,5 +1,6 @@
 package com.bookamore.backend.entity;
 
+import com.bookamore.backend.entity.enums.BookCondition;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,9 +21,8 @@ public class Book extends BaseEntity {
     @Column
     private String isbn;
 
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "condition_id")
-    private BookCondition condition;
+    @Enumerated(EnumType.STRING)
+    private BookCondition bookCondition;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(

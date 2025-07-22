@@ -1,5 +1,6 @@
 package com.bookamore.backend.dto.response;
 
+import com.bookamore.backend.entity.enums.BookCondition;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ public class BookResponse {
     private String title;
     private List<String> authors;
     private BigDecimal price;
-    private String condition;
+    private BookCondition condition;
     private List<String> genres;
     private String type;
     private String isbn;

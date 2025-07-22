@@ -1,8 +1,7 @@
 package com.bookamore.backend.dto.request;
 
-import lombok.AllArgsConstructor;
+import com.bookamore.backend.entity.enums.BookCondition;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,7 +11,7 @@ public class BookRequest {
     private String title;
     private List<String> authors;
     private BigDecimal price;
-    private String condition;
+    private BookCondition condition;
     private List<String> genres;
     private String type;
     private String isbn;
