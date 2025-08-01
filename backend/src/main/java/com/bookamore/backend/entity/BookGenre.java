@@ -1,12 +1,11 @@
 package com.bookamore.backend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -17,4 +16,16 @@ import lombok.NoArgsConstructor;
 public class BookGenre extends BaseEntity{
     @Column(unique = true, nullable = false)
     private String name;
+
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Book> books = new ArrayList<>();
+/*
+    @ToString.Include(name = "bookIds")
+    private String bookIdsToString() {
+        return books == null
+                ? "null"
+                : books.stream().map(b -> String.valueOf(b.getId())).collect(Collectors.joining(", "));
+    }*/
 }

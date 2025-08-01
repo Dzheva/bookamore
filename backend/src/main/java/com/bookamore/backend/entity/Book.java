@@ -4,10 +4,10 @@ import com.bookamore.backend.entity.enums.BookCondition;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -24,7 +24,7 @@ public class Book extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private BookCondition bookCondition;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH})
     @JoinTable(
             name = "authors_books",
             joinColumns = @JoinColumn(nullable = false, name = "book_id"),
@@ -32,7 +32,7 @@ public class Book extends BaseEntity {
     )
     private List<BookAuthor> authors = new ArrayList<>();
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH})
     @JoinTable(
             name = "genres_books",
             joinColumns = @JoinColumn(nullable = false, name = "book_id"),
@@ -40,17 +40,6 @@ public class Book extends BaseEntity {
     )
     private List<BookGenre> genres = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookImage> images = new ArrayList<>();
-
-
-    public String getAuthorsNames() {
-        if (this.authors.isEmpty()) {
-            return "";
-        } else if (this.authors.size() == 1)
-            return this.authors.get(0).getName();
-        else {
-            return this.authors.stream().map(BookAuthor::getName).collect(Collectors.joining(", "));
-        }
-    }
 }
