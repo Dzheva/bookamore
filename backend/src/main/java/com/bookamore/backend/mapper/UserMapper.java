@@ -11,9 +11,9 @@ public interface UserMapper {
     @Mapping(target = "name", source = "signUpRequest.name")
     @Mapping(target = "email", source = "signUpRequest.email")
     @Mapping(target = "password", source = "signUpRequest.password")
-    User toUser(SignUpRequest signUpRequest);
+    User signUpRequestToUser(SignUpRequest signUpRequest);
 
     @Mapping(target = "email", source = "user.email")
     @Mapping(target = "message", constant = "Sign up is successful!")
-    SignUpResponse toSignUpResponse(User user);
+    SignUpResponse userToSignUpResponse(User user);
 }
