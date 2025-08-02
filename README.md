@@ -79,4 +79,85 @@ The Pull Request (PR) title must be **identical to the name of the main commit**
 * **Examples:**
     * If your branch's main commit is named `TFF-001 - add login page`, then the PR should also be named: `TFF-001 - add login page`
     * If your branch's main commit is named `TFB-002 - add auth endpoint`, then the PR should also be named: `TFB-002 - add auth endpoint`
+---
+# Docker Compose Project Setup
 
+---
+
+**Prerequisites**
+- Docker installed on your system
+- Docker Compose installed
+
+Before starting the containers:
+***make sure your system doesn't have any services using the ports specified in docker-compose file***
+* You can check port usage with:
+```
+netstat -tuln | grep <PORT>
+# or on Windows:
+netstat -ano | findstr :<PORT>
+```
+---
+### Basic Commands
+
+* **Start Services**
+```bash
+docker-compose up
+```
+* **Start Services in detached mode (run in background)**
+```bash
+docker-compose up -d
+```
+* **Start Services with force rebuild images**
+```bash
+docker-compose up --build
+```
+* **Start Services with custom compose file**
+```bash
+docker-compose up -f <file>
+```
+
+* **Stop Services**
+```bash
+docker-compose down
+```
+* **Stop Services & remove attached volumes**
+```bash
+docker-compose down -v
+```
+* **Stop Services & remove all cached images**
+```bash
+docker-compose down --rmi all
+```
+
+* **Check container status**
+```bash
+docker ps
+```
+
+* **Access a container**
+    * Replace  `<CONTAINER_NAME>` with your actual container name
+```bash
+docker exec -it <CONTAINER_NAME> bash
+```
+
+---
+## Profile 'Dev'
+
+This guide explains how to manage the Docker containers using the development configuration.
+
+
+* **Start the containers**
+1. To build and start all services:
+```bash
+docker-compose -f ./docker-compose-dev.yaml up --build
+```
+2. To build and start all services in detached mode:
+```bash
+docker-compose -f ./docker-compose-dev.yaml up --build -d
+```
+
+* **Stop the containers**
+```bash
+docker-compose -f ./docker-compose-dev.yaml down -v
+```
+---

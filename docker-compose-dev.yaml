@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   backend:
     tty: true
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-dev
     depends_on:
       - bookamore-db
     ports:
@@ -15,15 +13,16 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
     volumes:
-      - ../backend:/usr/bookamore-backend
+      - ./backend:/app
       - ~/.m2:/root/.m2
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 30s
 
   bookamore-db:
     image: postgres
@@ -33,23 +32,35 @@ services:
       - POSTGRES_DB=bookamore-db
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d bookamore-db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
   frontend:
     tty: true
     build:
-      context: frontend
-      dockerfile: Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile-dev
     ports:
       - "3000:3000"
     environment:
-      - CHOKIDAR_USEPOLLING=true  # Для корректной работы hot reload в Docker
-    #volumes:
-    #  - ../frontend:/app 
-    #  - /app/node_modules  # Исключаем node_modules из монтирования
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 networks:
   app-network:
