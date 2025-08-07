@@ -49,7 +49,7 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
     volumes:
-      - ./frontend:/app
+      - ./frontend:/usr/app
       - /app/node_modules
     depends_on:
       - backend
