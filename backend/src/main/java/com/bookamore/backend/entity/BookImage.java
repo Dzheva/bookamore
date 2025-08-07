@@ -13,7 +13,7 @@ public class BookImage extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String path;
     @ManyToOne
-    @JoinColumn(nullable = false, name = "book_id")
+    @JoinColumn(name = "book_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Book book;

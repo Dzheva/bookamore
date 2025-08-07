@@ -11,6 +11,7 @@ import com.bookamore.backend.entity.enums.BookCondition;
 import com.bookamore.backend.repository.BookAuthorRepository;
 import com.bookamore.backend.repository.BookGenreRepository;
 import com.bookamore.backend.repository.BookRepository;
+import com.bookamore.backend.repository.BookSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ public class BookService {
     private final BookAuthorRepository bookAuthorRepository;
     private final BookMapper bookMapper;
 
+    @Transactional
     public BookResponse create(BookRequest bookRequest) {
         Book book = bookMapper.toEntity(bookRequest);
 
@@ -55,7 +58,9 @@ public class BookService {
                     },
                     () -> {
                         // new Author
-                        managedAuthors.add(author);
+                        managedAuthors.add(
+                                bookAuthorRepository.save(author)
+                        );
                     }
             );
         }
@@ -74,7 +79,9 @@ public class BookService {
                     },
                     () -> {
                         // new Genre
-                        managedGenres.add(genre);
+                        managedGenres.add(
+                                bookGenreRepository.save(genre)
+                        );
                     }
             );
         }
@@ -117,15 +124,19 @@ public class BookService {
                 .map(bookMapper::toResponse).collect(Collectors.toList());
     }
 
-    public Page<BookResponse> getPageAllBooks(Integer page, Integer size, String sortBy, String direction) {
-        Sort sort = Sort.by(sortBy);
+    public Page<BookResponse> getPageAllBooks(Integer page, Integer size, String sortBy, String sortDir) {
+        Sort.Direction direction = Sort.Direction.fromString(sortDir);
+        Pageable pageable = PageRequest.of(page, size);
 
-        if (direction.equals(Sort.Direction.ASC.name()))
-            sort.ascending();
-        else
-            sort.descending();
+        if ("authorName".equalsIgnoreCase(sortBy)) {
+            return bookRepository.findAll(
+                    BookSpecifications.sortByAuthorName(direction),
+                    pageable
+            ).map(bookMapper::toResponse);
+        }
 
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Sort sort = Sort.by(direction, sortBy);
+        pageable = PageRequest.of(page, size, sort);
         return bookRepository.findAll(pageable).map(bookMapper::toResponse);
     }
 
@@ -135,21 +146,46 @@ public class BookService {
         return bookMapper.toResponse(book);
     }
 
+    @Transactional
     public Optional<BookResponse> update(Long bookId, BookRequest bookRequest) {
         Book existingBook = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with id: " + bookId));
 
-        Book book = bookMapper.toEntity(bookRequest);
+        Book patch = bookMapper.toEntity(bookRequest);
 
-        String newTitle = book.getTitle();
-        String newDesc = book.getDescription();
-        String newIsbn = book.getIsbn();
-        BookCondition newCondition = book.getBookCondition();
-        List<BookAuthor> newAuthors = book.getAuthors();
-        List<BookGenre> newGenres = book.getGenres();
-        List<BookImage> newImages = book.getImages();
-        LocalDateTime lastModifiedDate = book.getLastModifiedDate();
+
+        boolean simpleFieldsModified = updateSimpleFields(existingBook, patch);
+
+        boolean childrenModified = false;
+
+        childrenModified |= updateAuthors(existingBook, patch);
+
+        childrenModified |= updateGenres(existingBook, patch);
+
+        childrenModified |= updateImages(existingBook, patch);
+
+        boolean anyModified = childrenModified | simpleFieldsModified;
+
+        if (anyModified) {
+            if (childrenModified) {
+                // Update lastModifiedDate only when child entities are modified
+                existingBook.setLastModifiedDate(LocalDateTime.now());
+            }
+            Book savedBook = bookRepository.save(existingBook);  // save modified book
+            BookResponse savedBookResponse = bookMapper.toResponse(savedBook);
+            return Optional.of(savedBookResponse);
+        }
+
+        return Optional.empty();
+    }
+
+    private boolean updateSimpleFields(Book existingBook, Book patch) {
         boolean isModified = false;
+
+        String newTitle = patch.getTitle();
+        String newDesc = patch.getDescription();
+        String newIsbn = patch.getIsbn();
+        BookCondition newCondition = patch.getCondition();
 
         if (newTitle != null && !newTitle.equals(existingBook.getTitle())) {
             existingBook.setTitle(newTitle);
@@ -166,81 +202,125 @@ public class BookService {
             isModified = true;
         }
 
-        if (newCondition != null && !newCondition.equals(existingBook.getBookCondition())) {
-            existingBook.setBookCondition(newCondition);
+        if (newCondition != null && !newCondition.equals(existingBook.getCondition())) {
+            existingBook.setCondition(newCondition);
             isModified = true;
         }
 
-        if (newAuthors != null && !newAuthors.equals(existingBook.getAuthors())) {
-            existingBook.setAuthors(newAuthors);
-            isModified = true;
-        }
-
-        if (newGenres != null && !newGenres.equals(existingBook.getGenres())) {
-
-            if (newGenres.stream().anyMatch(g -> g.getName() == null)) {
-                throw new IllegalArgumentException("One or more provided genres has no name (name == null)");
-            }
-
-            Set<String> newGenresNames = newGenres.stream().map(BookGenre::getName).collect(Collectors.toSet());
-
-            List<BookGenre> existingGenres = existingBook.getGenres();
-            existingGenres.removeIf(genre -> !newGenresNames.contains(genre.getName()));  // remove old genre
-
-            Set<String> existingGenresNames = existingGenres.stream()
-                    .map(BookGenre::getName).collect(Collectors.toSet());
-
-            for (String genreName : newGenresNames) {
-                if (!existingGenresNames.contains(genreName)){
-                    bookGenreRepository.findByName(genreName).ifPresentOrElse(
-                            existedGenre -> {
-                                existedGenre.getBooks().add(book);
-                                existingGenres.add(existedGenre);
-                            },
-                            () -> {
-                                BookGenre newGenre = new BookGenre();
-                                newGenre.setName(genreName);
-                                newGenre.getBooks().add(existingBook);
-                                existingGenres.add(newGenre);  // add new genre
-                            }
-                    );
-                }
-            }
-
-            isModified = true;
-        }
-
-        if (newImages != null && !newImages.equals(existingBook.getImages())) {
-
-            Set<String> newPaths = newImages.stream().map(BookImage::getPath).collect(Collectors.toSet());
-
-            List<BookImage> existingImages = existingBook.getImages();
-            existingImages.removeIf(image -> !newPaths.contains(image.getPath()));  // remove old image
-
-            Set<String> existingPaths = existingImages.stream()
-                    .map(BookImage::getPath).collect(Collectors.toSet());
-
-            for (String path : newPaths) {
-                if (!existingPaths.contains(path)) {
-                    BookImage newImage = new BookImage();
-                    newImage.setPath(path);
-                    newImage.setBook(existingBook);
-                    existingImages.add(newImage);  // add new image
-                }
-            }
-
-            isModified = true;
-        }
-
-        if (isModified) {
-            existingBook.setLastModifiedDate(lastModifiedDate);
-            BookResponse savedBook = bookMapper.toResponse(bookRepository.save(existingBook));
-            return Optional.of(savedBook);
-        }
-
-        return Optional.empty();
+        return isModified;
     }
 
+    private boolean updateAuthors(Book existingBook, Book patch) {
+        List<BookAuthor> patchAuthors = patch.getAuthors();
+
+        if (patchAuthors == null || patchAuthors.equals(existingBook.getAuthors())) {
+            return false;
+        }
+        if (patchAuthors.stream().anyMatch(a -> a.getName() == null || a.getName().isBlank())) {
+            throw new IllegalArgumentException("One or more provided authors has no name " +
+                    "(name == null or name is blank)");
+        }
+
+        Set<String> patchAuthorsNames = patchAuthors.stream().map(BookAuthor::getName).collect(Collectors.toSet());
+
+        List<BookAuthor> existingAuthors = existingBook.getAuthors();
+        existingAuthors.removeIf(author -> !patchAuthorsNames.contains(author.getName())); // unassign author
+
+        Set<String> existingAuthorsNames = existingAuthors.stream()
+                .map(BookAuthor::getName).collect(Collectors.toSet());
+
+        for (String authorName : patchAuthorsNames) {
+            if (existingAuthorsNames.contains(authorName)) {
+                continue;
+            }
+
+            // assign existing author to book
+            bookAuthorRepository.findByName(authorName).ifPresentOrElse(
+                    existingAuthors::add,
+                    () -> {
+                        BookAuthor newAuthor = new BookAuthor();
+                        newAuthor.setName(authorName);
+                        existingAuthors.add(newAuthor);  // assign new author
+                        bookAuthorRepository.save(newAuthor);
+                    }
+            );
+        }
+        return true;
+    }
+
+    private boolean updateGenres(Book existingBook, Book patch) {
+
+        List<BookGenre> patchGenres = patch.getGenres();
+        if (patchGenres == null || patchGenres.equals(existingBook.getGenres())) {
+            return false;
+        }
+        if (patchGenres.stream().anyMatch(g -> g.getName() == null || g.getName().isBlank())) {
+            throw new IllegalArgumentException("One or more provided genres has no name "
+                    + "(name == null or name is blank)");
+        }
+
+        Set<String> patchGenresNames = patchGenres.stream().map(BookGenre::getName).collect(Collectors.toSet());
+
+        List<BookGenre> existingGenres = existingBook.getGenres();
+        existingGenres.removeIf(genre -> !patchGenresNames.contains(genre.getName()));  // unassign genres
+
+        Set<String> existingGenresNames = existingGenres.stream()
+                .map(BookGenre::getName).collect(Collectors.toSet());
+
+        for (String genreName : patchGenresNames) {
+            if (existingGenresNames.contains(genreName)) {
+                continue;
+            }
+
+            // assign existing genre to book
+            bookGenreRepository.findByName(genreName).ifPresentOrElse(
+                    existingGenres::add,
+                    () -> {
+                        BookGenre newGenre = new BookGenre();
+                        newGenre.setName(genreName);
+                        existingGenres.add(newGenre);  // assign new genre
+                        bookGenreRepository.save(newGenre);
+                    }
+            );
+        }
+
+        return true;
+    }
+
+    private boolean updateImages(Book existingBook, Book patch) {
+
+        List<BookImage> patchImages = patch.getImages();
+
+        if (patchImages == null || patchImages.equals(existingBook.getImages())) {
+            return false;
+        }
+        if (patchImages.stream().anyMatch(i -> i.getPath() == null)) {
+            throw new IllegalArgumentException("One or more provided images has no name (path == null)");
+        }
+
+        Set<String> patchPaths = patchImages.stream().map(BookImage::getPath).collect(Collectors.toSet());
+
+        List<BookImage> existingImages = existingBook.getImages();
+        existingImages.removeIf(image -> !patchPaths.contains(image.getPath()));  // remove old image
+
+        Set<String> existingPaths = existingImages.stream()
+                .map(BookImage::getPath).collect(Collectors.toSet());
+
+        for (String path : patchPaths) {
+            if (existingPaths.contains(path)) {
+                continue;
+            }
+
+            BookImage newImage = new BookImage();
+            newImage.setPath(path);
+            newImage.setBook(existingBook);
+            existingImages.add(newImage);  // add new image
+        }
+
+        return true;
+    }
+
+    @Transactional
     public boolean delete(Long bookId) {
         return bookRepository.findById(bookId).map(
                 book -> {
@@ -249,6 +329,5 @@ public class BookService {
                 }
         ).orElse(false);
     }
-
 
 }

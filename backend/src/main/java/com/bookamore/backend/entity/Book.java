@@ -14,27 +14,34 @@ import java.util.List;
 @Table(name = "books")
 @EqualsAndHashCode(callSuper = false)
 public class Book extends BaseEntity {
+
+    @OneToOne(mappedBy = "book")
+    private Offer offer;
+
     @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
+    private Integer yearOfRelease;
     @Column(length = 500)
     private String description;
     @Column
     private String isbn;
 
     @Enumerated(EnumType.STRING)
-    private BookCondition bookCondition;
+    @Column(nullable = false)
+    private BookCondition condition;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH})
+    @ManyToMany
     @JoinTable(
-            name = "authors_books",
+            name = "books_authors",
             joinColumns = @JoinColumn(nullable = false, name = "book_id"),
             inverseJoinColumns = @JoinColumn(nullable = false, name = "author_id")
     )
     private List<BookAuthor> authors = new ArrayList<>();
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH})
+    @ManyToMany
     @JoinTable(
-            name = "genres_books",
+            name = "books_genres",
             joinColumns = @JoinColumn(nullable = false, name = "book_id"),
             inverseJoinColumns = @JoinColumn(nullable = false, name = "genre_id")
     )
@@ -42,4 +49,6 @@ public class Book extends BaseEntity {
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookImage> images = new ArrayList<>();
+
+
 }
