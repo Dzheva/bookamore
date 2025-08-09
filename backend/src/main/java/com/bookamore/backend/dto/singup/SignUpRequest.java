@@ -17,6 +17,7 @@ public class SignUpRequest {
     @Email(message = "Invalid email format")
     @Schema(example = "john@example.com")
     private String email;
+    @NotBlank(message = "The password cannot be blank.")
     @Pattern(regexp = "(?=.*[a-z])(?=.*[A-Z]).{6,}",
             message = "The password must be at least 6 characters long " +
             "and contain at least 1 uppercase and 1 lowercase letter")

@@ -1,6 +1,7 @@
+### GET for smoke-test
 GET http://localhost:8080/api/v1/hello
 
-### Send POST request with json body
+###  POST for sign up
 POST http://localhost:8080/api/v1/auth/signup
 Content-Type: application/json
 
@@ -9,4 +10,5 @@ Content-Type: application/json
   "email": "john.doe@example.com",
   "password": "Password1"
 }
+
 

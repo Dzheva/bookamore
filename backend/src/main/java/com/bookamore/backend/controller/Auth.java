@@ -1,5 +1,7 @@
 package com.bookamore.backend.controller;
 
+import com.bookamore.backend.dto.signin.SignInRequest;
+import com.bookamore.backend.dto.signin.SignInResponse;
 import com.bookamore.backend.dto.singup.SignUpRequest;
 import com.bookamore.backend.dto.singup.SignUpResponse;
 import com.bookamore.backend.service.AuthService;
@@ -23,6 +25,14 @@ public class Auth {
     @ResponseStatus(HttpStatus.CREATED)
     public SignUpResponse signUp(@Validated @RequestBody SignUpRequest request){
         return authService.signUp(request);
+    }
+
+    @PostMapping("singin")
+    public ResponseEntity<SignInResponse> signIn(@Validated @RequestBody SignInRequest request){
+        SignInResponse response = authService.signIn(request);
+        return response.isStatus()
+                ? ResponseEntity.ok(response)
+                : ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
 }

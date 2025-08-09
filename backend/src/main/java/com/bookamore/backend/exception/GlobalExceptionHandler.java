@@ -18,6 +18,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> emailAlreadyExistsException(ResourceNotFoundException ex) {
+        log.warn("ResourceNotFoundException: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse("Resource Not Found", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         String defaultErrorMessage = "Validation failed";
