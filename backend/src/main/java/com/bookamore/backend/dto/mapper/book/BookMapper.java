@@ -1,6 +1,7 @@
 package com.bookamore.backend.dto.mapper.book;
 
 import com.bookamore.backend.dto.request.BookRequest;
+import com.bookamore.backend.dto.request.OfferWithBookRequest;
 import com.bookamore.backend.dto.response.BookResponse;
 import com.bookamore.backend.entity.Book;
 import org.mapstruct.Mapper;

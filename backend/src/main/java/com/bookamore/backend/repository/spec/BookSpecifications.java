@@ -1,4 +1,4 @@
-package com.bookamore.backend.repository;
+package com.bookamore.backend.repository.spec;
 
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.BookAuthor;

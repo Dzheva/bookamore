@@ -1,69 +1,33 @@
 package com.bookamore.backend.service;
 
-import com.bookamore.backend.dto.mapper.offer.OfferMapper;
 import com.bookamore.backend.dto.request.OfferRequest;
+import com.bookamore.backend.dto.request.OfferUpdateRequest;
+import com.bookamore.backend.dto.request.OfferWithBookRequest;
 import com.bookamore.backend.dto.response.OfferResponse;
-import com.bookamore.backend.entity.Book;
+import com.bookamore.backend.dto.response.OfferWithBookResponse;
 import com.bookamore.backend.entity.Offer;
-import com.bookamore.backend.entity.User;
-import com.bookamore.backend.repository.BookRepository;
-import com.bookamore.backend.repository.OfferRepository;
-import com.bookamore.backend.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
 
-import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
-public class OfferService {
+public interface OfferService {
 
-    private final OfferRepository offerRepository;
-    private final BookRepository bookRepository;
-    private final UserRepository userRepository;
+    OfferResponse create(OfferRequest request);
 
-    private final OfferMapper offerMapper;
+    OfferWithBookResponse create(OfferWithBookRequest request);
 
-    @Transactional
-    public OfferResponse create(OfferRequest request) {
-        Long bookId = Optional.ofNullable(request.getBookId())
-                .orElseThrow(() -> new IllegalArgumentException("Provided OfferRequest with bookId = null"));
+    Page<Offer> getOffersEntityPage(Integer page, Integer size, String sortBy, String sortDir);
 
-        Long sellerId = Optional.ofNullable(request.getSellerId())
-                .orElseThrow(() -> new IllegalArgumentException("Provided OfferRequest with sellerId = null"));
+    Page<OfferResponse> getOffersPage(Integer page, Integer size, String sortBy, String sortDir);
 
-        Book book = bookRepository.findById(bookId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Book not found with id: %d. Please, ensure the book exists before this operation", bookId))
-        );
+    Page<OfferWithBookResponse> getOffersWithBooksPage(Integer page, Integer size, String sortBy, String sortDir);
 
-        User user = userRepository.findById(sellerId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("User not found with id: %d. Please, ensure the user exists before this operation", sellerId))
-        );
+    Offer getEntityById(Long offerId);
 
-        Offer offer = offerMapper.toEntity(request);
-        offer.setBook(book);
-        offer.setUser(user);
-        offer = offerRepository.save(offer);
-        return offerMapper.toResponse(offer);
-    }
+    OfferResponse getById(Long offerId);
 
-    public void getPageAllBooks() {
+    OfferWithBookResponse getWithBookById(Long offerId);
 
-    }
+    OfferResponse update(Long offerId, OfferUpdateRequest request);
 
-    public void getById() {
-
-    }
-
-    @Transactional
-    public void update() {
-
-    }
-
-    @Transactional
-    public void delete() {
-
-    }
+    void delete(Long offerId);
 }

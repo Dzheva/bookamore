@@ -5,6 +5,7 @@ import com.bookamore.backend.entity.enums.OfferType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -12,10 +13,12 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "offers")
 @EqualsAndHashCode(callSuper = false)
+@ToString(callSuper = true)
 public class Offer extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
+    @ToString.Exclude
     private User user;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, optional = false)
@@ -38,4 +41,9 @@ public class Offer extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OfferStatus status;
+
+    @ToString.Include(name = "userId")
+    private Long getUserId() {
+        return user != null ? user.getId() : null;
+    }
 }

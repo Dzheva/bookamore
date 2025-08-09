@@ -3,8 +3,8 @@ package com.bookamore.backend.dto.mapper.offer;
 import com.bookamore.backend.dto.mapper.book.BookMapper;
 import com.bookamore.backend.dto.request.BookRequest;
 import com.bookamore.backend.dto.request.OfferRequest;
+import com.bookamore.backend.dto.request.OfferUpdateRequest;
 import com.bookamore.backend.dto.request.OfferWithBookRequest;
-import com.bookamore.backend.dto.response.BookResponse;
 import com.bookamore.backend.dto.response.OfferResponse;
 import com.bookamore.backend.dto.response.OfferWithBookResponse;
 import com.bookamore.backend.entity.Book;
@@ -37,7 +37,9 @@ public interface OfferMapper {
     @Mapping(target = "user", source = "sellerId", qualifiedByName = "createUserFromId")
     Offer toEntity(OfferWithBookRequest request);
 
-    BookRequest toBookRequest(OfferWithBookRequest request);
+    Offer toEntity(OfferUpdateRequest request);
+
+    Book toBookEntity(OfferWithBookRequest offerRequest);
 
     @Named("createBookFromId")
     default Book createBookFromId(Long id) {

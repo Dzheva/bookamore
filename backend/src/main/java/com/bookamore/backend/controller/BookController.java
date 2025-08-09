@@ -3,11 +3,17 @@ package com.bookamore.backend.controller;
 import com.bookamore.backend.dto.request.BookRequest;
 import com.bookamore.backend.dto.response.BookResponse;
 import com.bookamore.backend.service.BookService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.persistence.Column;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +26,13 @@ public class BookController {
 
     private final BookService bookService;
 
+    /*@Operation(summary = "Get books page")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Book created successfully"
+            )
+    })*/
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<BookResponse> getBooksPage(@RequestParam(defaultValue = "0") Integer page,
@@ -38,9 +51,20 @@ public class BookController {
                                                    schema = @Schema(allowableValues = {"asc", "desc"})
                                            )
                                            @RequestParam(defaultValue = "desc") String sortDir) {
-        return bookService.getPageAllBooks(page, size, sortBy, sortDir);
+        return bookService.getBooksPage(page, size, sortBy, sortDir);
     }
 
+    /*@Operation(summary = "Get book by ID")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Book created successfully",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BookResponse.class)
+                    )
+            )
+    })*/
     @GetMapping("/{bookId}")
     public ResponseEntity<BookResponse> getBookById(@PathVariable Long bookId) {
         BookResponse book = bookService.getById(bookId);
@@ -48,6 +72,15 @@ public class BookController {
         return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();
     }
 
+
+    /*@Operation(summary = "Create book", description = "Create a new book using BookRequest schema fields.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Book created successfully",
+                    content = @Content(schema = @Schema(implementation = BookResponse.class))
+            )
+    })*/
     @PostMapping
     public ResponseEntity<BookResponse> createBook(@RequestBody BookRequest bookRequest) {
         // TODO Unauthorized
@@ -56,6 +89,17 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBook);
     }
 
+    /*@Operation(summary = "Create a list of books", description = "Redundant method used to testing API only. Remove after MVP.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Book list created successfully",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BookResponse.class)
+                    )
+            )
+    })*/
     @PostMapping("/list")
     public ResponseEntity<List<BookResponse>> createBookList(@RequestBody List<BookRequest> bookRequestList) {
         // TODO Unauthorized
@@ -64,16 +108,37 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBooks);
     }
 
+    /*@Operation(summary = "Update book", description = "PATCH endpoint for book resource updates. " +
+            "Supports partial updates using BookRequest schema fields.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Book updated or already matches request parameters",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = BookResponse.class)
+                    )
+            )
+    })*/
     @PatchMapping("/update/{bookId}")
     public ResponseEntity<BookResponse> updateBook(@PathVariable Long bookId,
                                                    @RequestBody BookRequest bookRequest) {
-        return bookService.update(bookId, bookRequest)
-                .map(updatedBook -> ResponseEntity.status(HttpStatus.OK).body(updatedBook))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+        // TODO Unauthorized
+
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.update(bookId, bookRequest));
     }
 
+
+    /*@Operation(summary = "Delete book by ID", description = "Deletes a book resource. " +
+            "Note: Book must not have associated offers (delete offer first)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Book was deleted successfully")
+    })*/
     @DeleteMapping("/delete/{bookId}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
-        return bookService.delete(bookId) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        // TODO Unauthorized
+
+        bookService.delete(bookId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -181,7 +181,7 @@ Content-Type: application/json
 ]
 
 ###
-
+# Update book
 PATCH http://localhost:8080/api/v1/books/update/4
 Content-Type: application/json
 
@@ -189,3 +189,8 @@ Content-Type: application/json
     //"authors": ["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"]
     "authors": ["Erich Gamma", "Richard Helm", "NEW2"]
 }
+
+###
+# Delete book
+
+DELETE http://localhost:8080/api/v1/books/delete/1
