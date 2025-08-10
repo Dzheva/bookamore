@@ -1,0 +1,196 @@
+###
+# Get book by id
+GET http://localhost:8080/api/v1/books/1
+
+###
+# Get pageble books
+GET http://localhost:8080/api/v1/books?page=0&size=15&sortBy=createdDate&sortDir=desc
+
+###
+# Get pageble books
+GET http://localhost:8080/api/v1/books?page=1&size=5&sortBy=title&sortDir=asc
+
+###
+# Get pageble books
+GET http://localhost:8080/api/v1/books?page=&size=15&sortBy=authorName&sortDir=asc
+
+
+###
+# Post one book
+POST http://localhost:8080/api/v1/books
+Content-Type: application/json
+
+{
+  "title": "Clean Code",
+  "authors": ["Robert C. Martin"],
+  "condition": "USED",
+  "genres": ["Programming", "Software Engineering"],
+  "isbn": "9780132350884",
+  "images": ["/images/clean_code.jpg"],
+  "description": "A Handbook of Agile Software Craftsmanship.",
+  "yearOfRelease": 2008
+}
+
+
+###
+# Post many books
+POST http://localhost:8080/api/v1/books/list
+Content-Type: application/json
+
+[
+  {
+    "title": "Effective Java",
+    "authors": ["Joshua Bloch"],
+    "condition": "NEW",
+    "genres": ["Programming", "Java"],
+    "isbn": "9780134685991",
+    "images": ["/images/effective_java.jpg"],
+    "description": "Best practices for the Java platform.",
+    "yearOfRelease": 2018
+  },
+  {
+    "title": "Spring in Action",
+    "authors": ["Craig Walls"],
+    "condition": "AS_NEW",
+    "genres": ["Spring", "Java"],
+    "isbn": "9781617294945",
+    "images": ["/images/spring_in_action.jpg"],
+    "description": "Comprehensive guide to Spring Framework.",
+    "yearOfRelease": 2018
+  },
+  {
+    "title": "The Pragmatic Programmer",
+    "authors": ["Andrew Hunt", "David Thomas"],
+    "condition": "NEW",
+    "genres": ["Programming", "Career"],
+    "isbn": "9780135957059",
+    "images": ["/images/pragmatic_programmer.jpg"],
+    "description": "Your journey to mastery.",
+    "yearOfRelease": 1999
+  },
+  {
+    "title": "Design Patterns",
+    "authors": ["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"],
+    "condition": "USED",
+    "genres": ["Software Design", "Architecture"],
+    "isbn": "9780201633610",
+    "images": ["/images/design_patterns.jpg"],
+    "description": "Elements of reusable object-oriented software.",
+    "yearOfRelease": 1994
+  },
+  {
+    "title": "Head First Design Patterns",
+    "authors": ["Eric Freeman", "Elisabeth Robson"],
+    "condition": "USED",
+    "genres": ["Software Design", "Java"],
+    "isbn": "9780596007126",
+    "images": ["/images/head_first_dp.jpg"],
+    "description": "A brain-friendly guide.",
+    "yearOfRelease": 2004
+  },
+  {
+    "title": "Refactoring",
+    "authors": ["Martin Fowler"],
+    "condition": "AS_NEW",
+    "genres": ["Refactoring", "Clean Code"],
+    "isbn": "9780134757599",
+    "images": ["/images/refactoring.jpg"],
+    "description": "Improving the design of existing code.",
+    "yearOfRelease": 1999
+  },
+  {
+    "title": "Java Concurrency in Practice",
+    "authors": ["Brian Goetz"],
+    "condition": "NEW",
+    "genres": ["Concurrency", "Java"],
+    "isbn": "9780321349606",
+    "images": ["/images/java_concurrency.jpg"],
+    "description": "Concurrency best practices for Java.",
+    "yearOfRelease": 2006
+  },
+  {
+    "title": "You Don't Know JS",
+    "authors": ["Kyle Simpson"],
+    "condition": "USED",
+    "genres": ["JavaScript", "Programming"],
+    "isbn": "9781491904244",
+    "images": ["/images/ydkjs.jpg"],
+    "description": "A deep dive into JavaScript.",
+    "yearOfRelease": 2015
+  },
+  {
+    "title": "Kotlin in Action",
+    "authors": ["Dmitry Jemerov", "Svetlana Isakova"],
+    "condition": "NEW",
+    "genres": ["Kotlin", "Programming"],
+    "isbn": "9781617293290",
+    "images": ["/images/kotlin_in_action.jpg"],
+    "description": "A practical guide to Kotlin.",
+    "yearOfRelease": 2017
+  },
+  {
+    "title": "Test Driven Development",
+    "authors": ["Kent Beck"],
+    "condition": "AS_NEW",
+    "genres": ["Testing", "TDD"],
+    "isbn": "9780321146533",
+    "images": ["/images/tdd_by_example.jpg"],
+    "description": "By example with Java and JUnit.",
+    "yearOfRelease": 2002
+  },
+  {
+    "title": "Microservices Patterns",
+    "authors": ["Chris Richardson"],
+    "condition": "AS_NEW",
+    "genres": ["Microservices", "Architecture"],
+    "isbn": "9781617294549",
+    "images": ["/images/microservices_patterns.jpg"],
+    "description": "A comprehensive guide to microservice architecture.",
+    "yearOfRelease": 2018
+  },
+  {
+    "title": "Algorithms",
+    "authors": ["Robert Sedgewick", "Kevin Wayne"],
+    "condition": "NEW",
+    "genres": ["Algorithms", "Computer Science"],
+    "isbn": "9780321573513",
+    "images": ["/images/algorithms.jpg"],
+    "description": "Fourth edition covering algorithms in depth.",
+    "yearOfRelease": 2011
+  },
+  {
+    "title": "Grokking Algorithms",
+    "authors": ["Aditya Bhargava"],
+    "condition": "USED",
+    "genres": ["Algorithms", "Beginner"],
+    "isbn": "9781617292231",
+    "images": ["/images/grokking_algorithms.jpg"],
+    "description": "An illustrated guide for beginners.",
+    "yearOfRelease": 2016
+  },
+  {
+    "title": "Linux Command Line",
+    "authors": ["William Shotts"],
+    "condition": "NEW",
+    "genres": ["Linux", "Shell"],
+    "isbn": "9781593273897",
+    "images": ["/images/linux_command_line.jpg"],
+    "description": "A complete introduction to Bash and shell scripting.",
+    "yearOfRelease": 2012
+  }
+]
+
+###
+# Update book
+PATCH http://localhost:8080/api/v1/books/update/4
+Content-Type: application/json
+
+{
+    //"authors": ["Erich Gamma", "Richard Helm", "Ralph Johnson", "John Vlissides"]
+    "authors": ["Erich Gamma", "Richard Helm", "NEW2"]
+}
+
+###
+# Delete book
+
+DELETE http://localhost:8080/api/v1/books/delete/1
