@@ -15,7 +15,7 @@ public class UserServiceDetailsImpl implements UserDetailsService {
 
     private UserDetails remapper(User user) {
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getName())
+                .withUsername(user.getEmail())
                 .password(user.getPassword())
                 .build();
     }

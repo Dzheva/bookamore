@@ -1,41 +1,117 @@
 package com.bookamore.backend.exception;
 
 import com.bookamore.backend.dto.error.ErrorResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+import java.time.LocalDateTime;
+
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> emailAlreadyExistsException(EmailAlreadyExistsException ex) {
-        log.warn("EmailAlreadyExistsException: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse("Email in use", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    @ApiResponse(
+            responseCode = "409",
+            description = "Conflict: The requested resource already exists (e.g., email already taken)",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = @ExampleObject(
+                            name = "Email Conflict Example",
+                            value = "{\"timestamp\": \"2025-08-13T10:00:00.000Z\", \"status\": 409, \"error\": \"Conflict\", \"message\": \"Email already exists\", \"path\": \"/api/v1/signup\"}"
+                    )
+            )
+    )
+    public ErrorResponse emailAlreadyExistsException(EmailAlreadyExistsException ex, HttpServletRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        log.warn("EmailAlreadyExistsException: {}", errorResponse);
+
+        return errorResponse;
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> emailAlreadyExistsException(ResourceNotFoundException ex) {
-        log.warn("ResourceNotFoundException: {}", ex.getMessage());
-        ErrorResponse errorResponse = new ErrorResponse("Resource Not Found", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    @ApiResponse(
+            responseCode = "404",
+            description = "Not Found: The requested resource was not found",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = @ExampleObject(
+                            name = "Resource Not Found Example",
+                            value = "{\"timestamp\": \"2025-08-13T10:00:00.000Z\", \"status\": 404, \"error\": \"Not Found\", \"message\": \"Resource with email john@example.com not found\", \"path\": \"/api/v1/signup\"}"
+                    )
+            )
+    )
+    public ErrorResponse emailAlreadyExistsException(ResourceNotFoundException ex, HttpServletRequest request) {
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        log.warn("ResourceNotFoundException: {}", errorResponse);
+
+        return errorResponse;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    @ApiResponse(
+            responseCode = "400",
+            description = "Bad Request: Invalid request payload or parameter",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = @ExampleObject(
+                            name = "Validation Error Example",
+                            value = "{\"timestamp\": \"2025-08-13T10:00:00.000Z\", \"status\": 400, \"error\": \"Bad Request\", \"message\": \"email cannot be null\", \"path\": \"/api/v1/signup\"}"
+                    )
+            )
+    )
+    public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String defaultErrorMessage = "Validation failed";
         String firstErrorMessage = ex.getBindingResult().getFieldError() != null ?
                 ex.getBindingResult().getFieldError().getDefaultMessage() :
                 defaultErrorMessage;
 
-        ErrorResponse errorResponse = new ErrorResponse("Validation error", firstErrorMessage);
+        String fieldName = "unknown";
+        Object rejectedValue = null;
+        if (ex.getBindingResult().getFieldError() != null) {
+            fieldName = ex.getBindingResult().getFieldError().getField();
+            rejectedValue = ex.getBindingResult().getFieldError().getRejectedValue();
+        }
 
-        log.warn("Validation failed: {}", firstErrorMessage);
+        log.warn("Validation failed for field '{}' with value '{}': {}", fieldName, rejectedValue, firstErrorMessage);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(firstErrorMessage)
+                .path(request.getRequestURI())
+                .build();
+
+        log.warn("Validation failed: {}", errorResponse);
+
+        return errorResponse;
     }
 }
