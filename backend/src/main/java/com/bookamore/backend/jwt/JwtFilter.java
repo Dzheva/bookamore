@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -36,7 +37,6 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest rq,
                                     @NonNull HttpServletResponse rs,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-
 
         extractTokenFromRequest(rq).ifPresent(token -> {
             try {
@@ -65,10 +65,5 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
         filterChain.doFilter(rq, rs);
-    }
-
-    public static void main(String[] args) {
-
-
     }
 }

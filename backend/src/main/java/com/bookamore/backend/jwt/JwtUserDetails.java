@@ -23,6 +23,7 @@ public class JwtUserDetails implements UserDetails {
     public String getPassword() {
         return null;
     }
+
     @Override
     public String getUsername() {
         return user.getEmail();
