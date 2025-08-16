@@ -1,4 +1,4 @@
-package com.bookamore.backend.dto.request;
+package com.bookamore.backend.dto.offer;
 
 import com.bookamore.backend.entity.enums.OfferStatus;
 import com.bookamore.backend.entity.enums.OfferType;

@@ -1,5 +1,6 @@
-package com.bookamore.backend.dto.request;
+package com.bookamore.backend.dto.offer;
 
+import com.bookamore.backend.dto.book.BookRequest;
 import com.bookamore.backend.entity.enums.OfferStatus;
 import com.bookamore.backend.entity.enums.OfferType;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,7 +11,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 public class OfferWithBookRequest {

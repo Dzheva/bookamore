@@ -1,4 +1,4 @@
-package com.bookamore.backend.dto.request;
+package com.bookamore.backend.dto.offer;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
