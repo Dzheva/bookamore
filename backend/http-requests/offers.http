@@ -1,0 +1,50 @@
+###
+# Get offer by id
+GET http://localhost:8080/api/v1/offers/1
+
+###
+# Post offer with existing book
+POST http://localhost:8080/api/v1/offers
+Content-Type: application/json
+
+{
+  "type": "SELL",
+  "status": "OPEN",
+  "description": "Like new condition, barely used",
+  "price": 45.99,
+  "previewImage": "/images/offers/effective_java.jpg",
+  "bookId": 1,
+  "sellerId": 1
+}
+
+###
+# Post offer with new book
+POST http://localhost:8080/api/v1/offers/with-book
+Content-Type: application/json
+
+{
+  "type": "SELL",
+  "status": "OPEN",
+  "offerDescription": "Selling a first edition in great condition",
+  "price": 19.99,
+  "previewImage": "cover.jpg",
+  "book": {
+    "title": "Clean Code",
+    "yearOfRelease": 2008,
+    "description": "A Handbook of Agile Software Craftsmanship.",
+    "isbn": "9783161484100",
+    "condition": "NEW",
+    "authors": [
+      "Robert C. Martin"
+    ],
+    "genres": [
+      "Classic",
+      "Novel"
+    ],
+    "images": [
+      "image1.jpg",
+      "image2.jpg"
+    ]
+  },
+  "sellerId": 4
+}
