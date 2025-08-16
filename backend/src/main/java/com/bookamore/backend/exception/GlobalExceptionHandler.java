@@ -124,7 +124,7 @@ public class GlobalExceptionHandler {
                     schema = @Schema(implementation = ErrorResponse.class),
                     examples = @ExampleObject(
                             name = "Validation Error Example",
-                            value = "{\"timestamp\": \"2025-08-13T10:00:00.000Z\", \"status\": 400, \"error\": \"Bad Request\", \"message\": \"email cannot be null\", \"path\": \"/api/v1/signup\"}"
+                            value = "{\"timestamp\": \"2025-08-13T10:00:00.000Z\", \"status\": 500, \"error\": \"Internal server error\", \"message\": \"something wrong happened\", \"path\": \"/api/v1/books\"}"
                     )
             )
     )
