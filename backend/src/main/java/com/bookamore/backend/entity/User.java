@@ -8,13 +8,11 @@ import lombok.Data;
 @Entity
 @Table(name = "users")
 @Data
-public class User extends BaseEntity{
-    @Column
+public class User extends BaseEntity {
+    @Column(nullable = false)
     private String name;
-    @Column
-    private String surname;
-    @Column
+    @Column(nullable = false)
     private String email;
-    @Column
+    @Column(nullable = false, unique = true)
     private String password;
 }
