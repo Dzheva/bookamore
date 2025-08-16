@@ -1,22 +1,16 @@
 package com.bookamore.backend.controller;
 
-import com.bookamore.backend.dto.request.OfferRequest;
-import com.bookamore.backend.dto.request.OfferUpdateRequest;
-import com.bookamore.backend.dto.request.OfferWithBookRequest;
-import com.bookamore.backend.dto.response.OfferResponse;
-import com.bookamore.backend.dto.response.OfferWithBookResponse;
+import com.bookamore.backend.dto.offer.OfferRequest;
+import com.bookamore.backend.dto.offer.OfferUpdateRequest;
+import com.bookamore.backend.dto.offer.OfferWithBookRequest;
+import com.bookamore.backend.dto.offer.OfferResponse;
+import com.bookamore.backend.dto.offer.OfferWithBookResponse;
 import com.bookamore.backend.service.OfferService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.Context;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

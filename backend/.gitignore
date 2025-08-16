@@ -54,3 +54,6 @@ logs/               # Dedicated directory for application logs
 *.bak               # Backup files
 *.temp              # Temporary files
 *.tmp               # Temporary files (alternative extension)
+
+# ENVIROMENT
+/src/main/resources/.env

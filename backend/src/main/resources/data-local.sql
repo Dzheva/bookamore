@@ -1,12 +1,12 @@
 --################
 -- Insert users
 --################
-INSERT INTO users (created_date, id, last_modified_date, email, name, password, surname) VALUES
-(NOW(), 1, NOW(), 'john.doe@example.com', 'John', '$2a$10$xJwL5vZz3VUqUZJZ5p5n.e5vO9jZ7JQ5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q', 'Doe'),
-(NOW(), 2, NOW(), 'jane.smith@example.com', 'Jane', '$2a$10$yH9vZz3VUqUZJZ5p5n.e5vO9jZ7JQ5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q', 'Smith'),
-(NOW(), 3, NOW(), 'mike.johnson@example.com', 'Mike', '$2a$10$zK8vZz3VUqUZJZ5p5n.e5vO9jZ7JQ5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q', 'Johnson'),
-(NOW(), 4, NOW(), 'sarah.williams@example.com', 'Sarah', '$2a$10$wL2vZz3VUqUZJZ5p5n.e5vO9jZ7JQ5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q', 'Williams'),
-(NOW(), 5, NOW(), 'david.brown@example.com', 'David', '$2a$10$vM3vZz3VUqUZJZ5p5n.e5vO9jZ7JQ5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q5Q', 'Brown');
+INSERT INTO users (created_date, id, last_modified_date, email, name, password) VALUES
+(NOW(), 1, NOW(), 'john.doe@example.com', 'John', '$2a$10$jffLzQglZFxgmWZnowGHVOonKz23d98sGmUvb4Mkr1TYjFa54C.Dy'),  -- password: "myPassword123"
+(NOW(), 2, NOW(), 'jane.smith@example.com', 'Jane', '$2a$10$z1WEUVqtwdO7qW1enYaQxeP5kVJrQWU/eaxTZP4o3/xCwBOfXe/nS'), -- password: "myPassword123"
+(NOW(), 3, NOW(), 'mike.johnson@example.com', 'Mike', '$2a$10$DbWcjZTeLurHvWjB4Vq32uOA82YeUIS0XWHVdZ3zNa13W4NJj.ff.'), -- password: "myPassword123"
+(NOW(), 4, NOW(), 'sarah.williams@example.com', 'Sarah', '$2a$10$VsAlph6j0w0IPflwq9umCuZHvRMUjbasPYeG/.R0NXNH.DNOPXP/2'), -- password: "myPassword123"
+(NOW(), 5, NOW(), 'david.brown@example.com', 'David', '$2a$10$G.31YSoEEpL71aRIkQj1qOw1iuhLoxmW61eWAHPjyQD.ZxcNqgOuS'); -- password: "myPassword123"
 SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
 -- END Insert users
 -------------------------------------------------------------------

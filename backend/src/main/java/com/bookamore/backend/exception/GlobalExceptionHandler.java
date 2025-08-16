@@ -114,4 +114,29 @@ public class GlobalExceptionHandler {
 
         return errorResponse;
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content(
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = @ExampleObject(
+                            name = "Validation Error Example",
+                            value = "{\"timestamp\": \"2025-08-13T10:00:00.000Z\", \"status\": 500, \"error\": \"Internal server error\", \"message\": \"something wrong happened\", \"path\": \"/api/v1/books\"}"
+                    )
+            )
+    )
+    public ErrorResponse handleUnknownException(Exception ex, HttpServletRequest request) {
+        int endMessageIndex = Math.min(ex.getMessage().length(), 100);
+
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+                .message(ex.getMessage().substring(0, endMessageIndex))
+                .path(request.getRequestURI())
+                .build();
+    }
 }

@@ -1,5 +1,6 @@
-package com.bookamore.backend.dto.response;
+package com.bookamore.backend.dto.offer;
 
+import com.bookamore.backend.dto.book.BookResponse;
 import com.bookamore.backend.entity.enums.OfferStatus;
 import com.bookamore.backend.entity.enums.OfferType;
 import lombok.AllArgsConstructor;

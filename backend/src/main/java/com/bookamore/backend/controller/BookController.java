@@ -1,19 +1,13 @@
 package com.bookamore.backend.controller;
 
-import com.bookamore.backend.dto.request.BookRequest;
-import com.bookamore.backend.dto.response.BookResponse;
+import com.bookamore.backend.dto.book.BookRequest;
+import com.bookamore.backend.dto.book.BookResponse;
 import com.bookamore.backend.service.BookService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.persistence.Column;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
