@@ -1,8 +1,8 @@
 package com.bookamore.backend.service.impl;
 
 import com.bookamore.backend.dto.mapper.book.BookMapper;
-import com.bookamore.backend.dto.request.BookRequest;
-import com.bookamore.backend.dto.response.BookResponse;
+import com.bookamore.backend.dto.book.BookRequest;
+import com.bookamore.backend.dto.book.BookResponse;
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.BookAuthor;
 import com.bookamore.backend.entity.BookGenre;

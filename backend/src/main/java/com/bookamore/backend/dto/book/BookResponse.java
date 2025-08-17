@@ -1,4 +1,4 @@
-package com.bookamore.backend.dto.response;
+package com.bookamore.backend.dto.book;
 
 import com.bookamore.backend.entity.enums.BookCondition;
 import lombok.AllArgsConstructor;

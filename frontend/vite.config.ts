@@ -9,13 +9,24 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  server: {
+    proxy: {
+      '/api/v1': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@app': path.resolve(__dirname, './src/app'),
       '@pages': path.resolve(__dirname, './src/pages'),
       '@modules': path.resolve(__dirname, './src/modules'),
-      '@shared': path.resolve(__dirname, './src/shared')
+      '@shared': path.resolve(__dirname, './src/shared'),
+      "@types": path.resolve(__dirname, './src/types'),
+      "@store": path.resolve(__dirname, './src/store'),
+      "@api": path.resolve(__dirname, './src/store/api')
     }
   }
 })

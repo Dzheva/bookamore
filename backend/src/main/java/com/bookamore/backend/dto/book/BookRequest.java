@@ -1,4 +1,4 @@
-package com.bookamore.backend.dto.request;
+package com.bookamore.backend.dto.book;
 
 import com.bookamore.backend.entity.enums.BookCondition;
 import io.swagger.v3.oas.annotations.media.Schema;

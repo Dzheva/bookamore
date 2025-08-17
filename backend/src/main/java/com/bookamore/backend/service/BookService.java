@@ -1,12 +1,11 @@
 package com.bookamore.backend.service;
 
-import com.bookamore.backend.dto.request.BookRequest;
-import com.bookamore.backend.dto.response.BookResponse;
+import com.bookamore.backend.dto.book.BookRequest;
+import com.bookamore.backend.dto.book.BookResponse;
 import com.bookamore.backend.entity.Book;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookService {
 

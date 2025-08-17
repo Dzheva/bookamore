@@ -1,12 +1,12 @@
 package com.bookamore.backend.service.impl;
 
 import com.bookamore.backend.dto.mapper.offer.OfferMapper;
-import com.bookamore.backend.dto.request.BookRequest;
-import com.bookamore.backend.dto.request.OfferRequest;
-import com.bookamore.backend.dto.request.OfferUpdateRequest;
-import com.bookamore.backend.dto.request.OfferWithBookRequest;
-import com.bookamore.backend.dto.response.OfferResponse;
-import com.bookamore.backend.dto.response.OfferWithBookResponse;
+import com.bookamore.backend.dto.book.BookRequest;
+import com.bookamore.backend.dto.offer.OfferRequest;
+import com.bookamore.backend.dto.offer.OfferUpdateRequest;
+import com.bookamore.backend.dto.offer.OfferWithBookRequest;
+import com.bookamore.backend.dto.offer.OfferResponse;
+import com.bookamore.backend.dto.offer.OfferWithBookResponse;
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.Offer;
 import com.bookamore.backend.entity.User;
@@ -16,7 +16,6 @@ import com.bookamore.backend.exception.ResourceNotFoundException;
 import com.bookamore.backend.repository.BookRepository;
 import com.bookamore.backend.repository.OfferRepository;
 import com.bookamore.backend.repository.UserRepository;
-import com.bookamore.backend.repository.spec.BookSpecifications;
 import com.bookamore.backend.repository.spec.OfferSpecification;
 import com.bookamore.backend.service.BookService;
 import com.bookamore.backend.service.OfferService;

@@ -1,12 +1,11 @@
 package com.bookamore.backend.dto.mapper.offer;
 
 import com.bookamore.backend.dto.mapper.book.BookMapper;
-import com.bookamore.backend.dto.request.BookRequest;
-import com.bookamore.backend.dto.request.OfferRequest;
-import com.bookamore.backend.dto.request.OfferUpdateRequest;
-import com.bookamore.backend.dto.request.OfferWithBookRequest;
-import com.bookamore.backend.dto.response.OfferResponse;
-import com.bookamore.backend.dto.response.OfferWithBookResponse;
+import com.bookamore.backend.dto.offer.OfferRequest;
+import com.bookamore.backend.dto.offer.OfferUpdateRequest;
+import com.bookamore.backend.dto.offer.OfferWithBookRequest;
+import com.bookamore.backend.dto.offer.OfferResponse;
+import com.bookamore.backend.dto.offer.OfferWithBookResponse;
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.Offer;
 import com.bookamore.backend.entity.User;

@@ -1,3 +1,4 @@
+
 import { BottomNav } from "@/shared/ui/BottomNav";
 import { Header } from "@/shared/ui/Header";
 import { Categories } from "@/shared/ui/Categories";
@@ -27,6 +28,5 @@ const HomePage: React.FC = () => {
       <BottomNav />
     </div>
   );
-};
 
 export { HomePage };
