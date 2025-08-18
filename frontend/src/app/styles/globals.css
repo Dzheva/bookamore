@@ -1,4 +1,4 @@
-@import "reset.css";
+@import "tailwindcss";
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -19,8 +19,4 @@
     color: #213547;
     background-color: #ffffff;
   }
-}
-
-h1 {
-  font-size: 2rem;
 }
