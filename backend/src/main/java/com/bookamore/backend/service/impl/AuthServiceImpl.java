@@ -7,7 +7,7 @@ import com.bookamore.backend.dto.singup.SignUpResponse;
 import com.bookamore.backend.entity.User;
 import com.bookamore.backend.jwt.JwtTokenService;
 import com.bookamore.backend.jwt.JwtUserDetails;
-import com.bookamore.backend.mapper.UserMapper;
+import com.bookamore.backend.mapper.user.UserMapper;
 import com.bookamore.backend.service.AuthService;
 import com.bookamore.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
