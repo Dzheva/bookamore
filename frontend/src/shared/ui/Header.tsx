@@ -17,7 +17,7 @@ export function Header() {
             <input
               type="text"
               placeholder="Search: name, author, seller"
-              className="w-full bg-gray-100 rounded-xl px-4 py-2.5 pr-10 text-sm outline-none border-none placeholder-gray-500"
+              className="w-full bg-gray-100 rounded-xl px-4 py-2.5 pr-10 text-sm text-black outline-none border-none placeholder-gray-500"
             />
             <FiSearch
               size={20}
@@ -30,8 +30,7 @@ export function Header() {
         <div className="pb-4 flex items-center justify-between flex-wrap">
           <label className="flex items-center gap-2 text-sm cursor-pointer ml-3">
             <input
-              type="radio"
-              name="exchange"
+              type="checkbox"
               className="w-4 h-4 accent-black cursor-pointer"
             />
             <span className="text-black">Exchange only</span>

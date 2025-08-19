@@ -10,7 +10,7 @@ function BookCard({ condition }: BookCardProps) {
       
       {/* Book condition badge */}
       {condition && (
-        <div className="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-xs font-bold border">
+        <div className="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-xs font-bold text-black border">
           {condition === 'new' ? 'NEW' : 'USED'}
         </div>
       )}
