@@ -9,7 +9,7 @@ import {SignUpPage} from "@pages/SignUpPage/SignUpPage.tsx";
 import {UpdatePasswordPage} from "@pages/UpdatePasswordPage/UpdatePasswordPage.tsx";
 import {AllChatsPage} from "@pages/AllChatsPage/AllChatsPage.tsx";
 import {ChatPage} from "@pages/ChatPage/ChatPage.tsx";
-
+import {GenreResultsPage} from "@pages/GenreResultsPage/GenreResultsPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -26,7 +26,7 @@ export const router = createBrowserRouter([
     },
     {
         path: '/genres/:genre',
-        element: <FavoritesPage/>
+        element: <GenreResultsPage/>
     },
     {
         path: '/forgot-password',
