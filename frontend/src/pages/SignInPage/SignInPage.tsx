@@ -13,7 +13,7 @@ const SignInPage: React.FC = () => {
     return (
         <div className="flex min-h-screen flex-col items-center bg-white">
             <div className="w-full max-w-sm px-6"> {/* Обмежена ширина та відступи */}
-                <div className="w-full pt-10 pb-6">
+                <div className="w-full pt-4 pb-2">
                     <IoChevronBack className="text-2xl" />
                 </div>
 
@@ -90,7 +90,7 @@ const SignInPage: React.FC = () => {
                     </a>
                 </p>
 
-                <div className="mt-12 mb-20 text-center text-sm">
+                <div className="mt-6 mb-10 text-center text-sm">
                     <span className="text-gray-500">Do not have an account?</span>{' '}
                     <a href="/sign-up" className="font-bold text-blue-500">
                         Sign Up now
