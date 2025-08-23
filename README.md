@@ -145,7 +145,6 @@ docker exec -it <CONTAINER_NAME> bash
 
 This guide explains how to manage the Docker containers using the development configuration.
 
-
 * **Start the containers**
 1. To build and start all services:
 ```bash
@@ -160,4 +159,38 @@ docker-compose -f ./docker-compose-dev.yaml up --build -d
 ```bash
 docker-compose -f ./docker-compose-dev.yaml down -v
 ```
+---
+
+## Required Local Files
+
+To successfully build and run the project, some files must be created manually because they are **not stored in the repository**.
+
+#### Backend
+
+**.ENV**
+
+location **`backend/src/main/resources/`**
+- copy example
+```bash
+cp backend/src/main/resources/.env.example backend/src/main/resources/.env
+```
+- copy and edit origin
+```bash
+cp backend/src/main/resources/.env.origin backend/src/main/resources/.env
+nano backend/src/main/resources/.env
+```
+
+<!-- Add required configuration files here -->
+
+---
+
+### File Naming Conventions
+
+Some configuration files are not committed to the repository.  
+To make setup easier, use the following file naming conventions:
+
+- **`file_name`** — the actual configuration file (not stored in the repository)
+- **`file_name.origin`** — a template file with required keys but no values
+- **`file_name.example`** — a sample file preconfigured for running the application with the `local` and `dev` profiles  
+
 ---
