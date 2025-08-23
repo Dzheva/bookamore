@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ErrorResponse handleEmailAlreadyExistsException(EmailAlreadyExistsException ex, HttpServletRequest request) {
 
