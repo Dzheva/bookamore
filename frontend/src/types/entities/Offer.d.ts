@@ -1,4 +1,4 @@
-import type {Nullable} from "@types/utils/Nullable";
+//import type { Nullable } from "@types/utils/Nullable";
 
 export type Offer = {
     "id": number,
