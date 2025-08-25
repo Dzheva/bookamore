@@ -2,28 +2,37 @@ import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { IoChevronBack } from "react-icons/io5";
+import { useNavigate } from 'react-router';
 
 const SignInPage: React.FC = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const navigate = useNavigate();
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
 
+    const handleBackClick = () => {
+        navigate(-1); // Повернутися на попередню сторінку
+    };
+
     return (
         <div className="flex min-h-screen flex-col items-center bg-white">
-            <div className="w-full max-w-sm px-6"> {/* Обмежена ширина та відступи */}
-                <div className="w-full pt-4 pb-2">
-                    <IoChevronBack className="text-2xl" />
+            <div className="w-full max-w-sm">
+                <div className="w-full pt-4 pb-2 px-4">
+                    <button onClick={handleBackClick} className="p-1">
+                        <IoChevronBack className="text-2xl" />
+                    </button>
                 </div>
 
-                <div className="flex flex-col items-center">
-                    <div className="mb-6 h-40 w-40 rounded-full bg-gray-200"></div>
-                    <h2 className="mb-2 text-3xl font-bold text-gray-800">Login</h2>
-                    <p className="mb-10 text-center text-sm text-gray-500">
-                        eget Morbi lacus vel placerat fringilla varius quis risus enim
-                    </p>
-                </div>
+                <div className="px-6">
+                    <div className="flex flex-col items-center">
+                        <div className="mb-6 h-40 w-40 rounded-full bg-gray-200"></div>
+                        <h2 className="mb-2 text-3xl font-bold text-gray-800">Login</h2>
+                        <p className="mb-10 text-center text-sm text-gray-500">
+                            {/* eget Morbi lacus vel placerat fringilla varius quis risus enim */}
+                        </p>
+                    </div>
 
                 <form>
                     <div className="mb-4">
@@ -95,6 +104,7 @@ const SignInPage: React.FC = () => {
                     <a href="/sign-up" className="font-bold text-blue-500">
                         Sign Up now
                     </a>
+                </div>
                 </div>
             </div>
         </div>
