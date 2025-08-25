@@ -27,6 +27,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("signup")
+    @Operation(summary = "User Registration", description = "Registers a new user account with a unique email.")
     @ApiResponses(
             value = {
                     @ApiResponse(
