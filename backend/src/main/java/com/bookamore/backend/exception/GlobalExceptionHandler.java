@@ -12,26 +12,16 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 
-@RestControllerAdvice
 @Slf4j
+@RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ResponseStatus(HttpStatus.CONFLICT)
+
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    @ApiResponse(
-            responseCode = "409",
-            description = "Conflict: The requested resource already exists (e.g., email already taken)",
-            content = @Content(
-                    schema = @Schema(implementation = ErrorResponse.class),
-                    examples = @ExampleObject(
-                            name = "Email Conflict Example",
-                            value = "{\"timestamp\": \"2025-08-13T10:00:00.000Z\", \"status\": 409, \"error\": \"Conflict\", \"message\": \"Email already exists\", \"path\": \"/api/v1/signup\"}"
-                    )
-            )
-    )
-    public ErrorResponse emailAlreadyExistsException(EmailAlreadyExistsException ex, HttpServletRequest request) {
+    public ErrorResponse handleEmailAlreadyExistsException(EmailAlreadyExistsException ex, HttpServletRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
@@ -44,6 +34,29 @@ public class GlobalExceptionHandler {
         log.warn("EmailAlreadyExistsException: {}", errorResponse);
 
         return errorResponse;
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
+    @ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized Access",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    examples = @ExampleObject(
+                            name = "Unauthorized Error Example",
+                            value = "{\"timestamp\": \"2025-08-16T12:00:00.000Z\", \"status\": 401, \"error\": \"Unauthorized\", \"message\": \"Authentication failed. Please log in or provide a valid token.\", \"path\": \"/api/v1/protected/data\"}"
+                    )
+            )
+    )
+    public ErrorResponse handleUnauthorizedException(HttpClientErrorException.Unauthorized ex, HttpServletRequest request) {
+        return ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -59,7 +72,7 @@ public class GlobalExceptionHandler {
                     )
             )
     )
-    public ErrorResponse emailAlreadyExistsException(ResourceNotFoundException ex, HttpServletRequest request) {
+    public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException ex, HttpServletRequest request) {
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())

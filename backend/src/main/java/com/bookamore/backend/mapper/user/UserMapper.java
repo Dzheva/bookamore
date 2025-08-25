@@ -1,4 +1,4 @@
-package com.bookamore.backend.mapper;
+package com.bookamore.backend.mapper.user;
 
 import com.bookamore.backend.dto.singup.SignUpRequest;
 import com.bookamore.backend.dto.singup.SignUpResponse;
