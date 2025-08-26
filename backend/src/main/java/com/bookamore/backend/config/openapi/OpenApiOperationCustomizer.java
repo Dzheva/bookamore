@@ -25,52 +25,6 @@ public class OpenApiOperationCustomizer implements OperationCustomizer {
         return operation;
     }
 
-//    private void handleNo401SwgrAnnotation(Operation operation, HandlerMethod handlerMethod) {
-//        boolean isOnMethod = handlerMethod.getMethod().isAnnotationPresent(No401Swgr.class);
-//        boolean isOnClass = handlerMethod.getBeanType().isAnnotationPresent(No401Swgr.class);
-//
-//        if (!isOnMethod && !isOnClass) {
-//            return;
-//        }
-//
-//        operation.getResponses().remove(getCodeOf(HttpStatus.UNAUTHORIZED));
-//    }
-//
-//    private void handleNo404SwgrAnnotation(Operation operation, HandlerMethod handlerMethod) {
-//        boolean isOnMethod = handlerMethod.getMethod().isAnnotationPresent(No404Swgr.class);
-//        boolean isOnClass = handlerMethod.getBeanType().isAnnotationPresent(No404Swgr.class);
-//
-//        if (!isOnMethod && !isOnClass) {
-//            return;
-//        }
-//
-//        operation.getResponses().remove(getCodeOf(HttpStatus.NOT_FOUND));
-//    }
-//
-//    private void handleNo409SwgrAnnotation(Operation operation, HandlerMethod handlerMethod) {
-//        boolean isOnMethod = handlerMethod.getMethod().isAnnotationPresent(No409Swgr.class);
-//        boolean isOnClass = handlerMethod.getBeanType().isAnnotationPresent(No409Swgr.class);
-//
-//        if (!isOnMethod && !isOnClass) {
-//            return;
-//        }
-//
-//        operation.getResponses().remove(getCodeOf(HttpStatus.CONFLICT));
-//    }
-//
-//    private String getCodeOf(HttpStatus status) {
-//        return String.valueOf(status.value());  // returns string http status value (e.g. "404", "409")
-//    }
-//
-//    private void handleRemoveCodeAnnotations(Operation operation, HandlerMethod handlerMethod) {
-//
-//        handleNo401SwgrAnnotation(operation, handlerMethod);
-//
-//        handleNo404SwgrAnnotation(operation, handlerMethod);
-//
-//        handleNo409SwgrAnnotation(operation, handlerMethod);
-//    }
-
     private void removeByAnnotation(Operation operation, HandlerMethod handlerMethod,
                                     Class<? extends Annotation> annotationClass,
                                     HttpStatus httpStatus) {
