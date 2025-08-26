@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { IoChevronBack } from "react-icons/io5";
+import { useNavigate } from 'react-router';
 
 const SignUpPage: React.FC = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+    const navigate = useNavigate();
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -15,19 +17,26 @@ const SignUpPage: React.FC = () => {
         setConfirmPasswordVisible(!confirmPasswordVisible);
     };
 
+    const handleBackClick = () => {
+        navigate(-1); // Повернутися на попередню сторінку
+    };
+
     return (
         <div className="flex min-h-screen flex-col items-center bg-white">
-            <div className="w-full max-w-sm px-6">
-                <div className="w-full pt-4 pb-2">
-                    <IoChevronBack className="text-2xl" />
+            <div className="w-full max-w-sm">
+                <div className="w-full pt-4 pb-2 px-4">
+                    <button onClick={handleBackClick} className="p-1">
+                        <IoChevronBack className="text-2xl" />
+                    </button>
                 </div>
 
-                <div className="flex flex-col items-center">
-                    <h2 className="mb-2 text-3xl font-bold text-gray-800">Create account</h2>
-                    <p className="mb-10 text-center text-sm text-gray-500">
-                        eget Morbi lacus vel placerat fringilla varius quis risus enim
-                    </p>
-                </div>
+                <div className="px-6">
+                    <div className="flex flex-col items-center">
+                        <h2 className="mb-2 text-3xl font-bold text-gray-800">Create account</h2>
+                        <p className="mb-10 text-center text-sm text-gray-500">
+                            {/* eget Morbi lacus vel placerat fringilla varius quis risus enim */}
+                        </p>
+                    </div>
 
                 <form>
                     <div className="mb-4">
@@ -119,6 +128,7 @@ const SignUpPage: React.FC = () => {
                     <a href="/sign-in" className="font-bold text-gray-800">
                         Log in
                     </a>
+                </div>
                 </div>
             </div>
         </div>
