@@ -112,7 +112,7 @@ public class BookServiceImpl implements BookService {
         book.setImages(resolveImages(book));
     }
 
-    public List<BookResponse> createList(List<BookRequest> bookRequestList) {
+    /*public List<BookResponse> createList(List<BookRequest> bookRequestList) {
         List<BookResponse> createdBooks = new ArrayList<>();
 
         for (BookRequest bookRequest : bookRequestList) {
@@ -140,7 +140,7 @@ public class BookServiceImpl implements BookService {
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         return bookRepository.findAll(pageable).map(bookMapper::toResponse);
-    }
+    }*/
 
     public Book getBookEntityById(Long bookId) {
         return bookRepository.findById(bookId)

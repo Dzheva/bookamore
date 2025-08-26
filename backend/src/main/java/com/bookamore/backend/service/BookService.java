@@ -13,11 +13,11 @@ public interface BookService {
 
     BookResponse create(BookRequest bookRequest);
 
-    List<BookResponse> createList(List<BookRequest> bookRequestList);
+/*    List<BookResponse> createList(List<BookRequest> bookRequestList);
 
     List<BookResponse> getAll();
 
-    Page<BookResponse> getBooksPage(Integer page, Integer size, String sortBy, String sortDir);
+    Page<BookResponse> getBooksPage(Integer page, Integer size, String sortBy, String sortDir);*/
 
     Book getBookEntityById(Long bookId);
 
