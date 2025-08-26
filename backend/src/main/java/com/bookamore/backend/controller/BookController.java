@@ -2,7 +2,6 @@ package com.bookamore.backend.controller;
 
 import com.bookamore.backend.annotation.No401Swgr;
 import com.bookamore.backend.annotation.No404Swgr;
-import com.bookamore.backend.annotation.No409Swgr;
 import com.bookamore.backend.dto.book.BookRequest;
 import com.bookamore.backend.dto.book.BookResponse;
 import com.bookamore.backend.service.BookService;
@@ -38,7 +37,6 @@ public class BookController {
     @GetMapping
     @No401Swgr
     @No404Swgr
-    @No409Swgr
     @ResponseStatus(HttpStatus.OK)
     public Page<BookResponse> getBooksPage(@RequestParam(defaultValue = "0") Integer page,
                                            @RequestParam(defaultValue = "5") Integer size,
@@ -72,7 +70,6 @@ public class BookController {
     })
     @GetMapping("/{bookId}")
     @No401Swgr
-    @No409Swgr
     public ResponseEntity<BookResponse> getBookById(@PathVariable Long bookId) {
         BookResponse book = bookService.getById(bookId);
 

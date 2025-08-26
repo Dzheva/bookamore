@@ -2,7 +2,6 @@ package com.bookamore.backend.controller;
 
 import com.bookamore.backend.annotation.No401Swgr;
 import com.bookamore.backend.annotation.No404Swgr;
-import com.bookamore.backend.annotation.No409Swgr;
 import com.bookamore.backend.dto.offer.OfferRequest;
 import com.bookamore.backend.dto.offer.OfferUpdateRequest;
 import com.bookamore.backend.dto.offer.OfferWithBookRequest;
@@ -31,7 +30,6 @@ public class OfferController {
 
     @No401Swgr
     @No404Swgr
-    @No409Swgr
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<OfferResponse> getOffersPage(@RequestParam(defaultValue = "0") Integer page,
@@ -57,7 +55,6 @@ public class OfferController {
 
     @No401Swgr
     @No404Swgr
-    @No409Swgr
     @GetMapping("/with-book")
     @ResponseStatus(HttpStatus.OK)
     public Page<OfferWithBookResponse> getOffersWithBookPage(@RequestParam(defaultValue = "0") Integer page,
@@ -85,7 +82,6 @@ public class OfferController {
     }
 
     @No401Swgr
-    @No409Swgr
     @GetMapping("/{offerId}")
     public ResponseEntity<OfferResponse> getOfferById(@PathVariable Long offerId) {
         OfferResponse offer = offerService.getById(offerId);
@@ -94,7 +90,6 @@ public class OfferController {
     }
 
     @No401Swgr
-    @No409Swgr
     @GetMapping("/with-book/{offerId}")
     public ResponseEntity<OfferWithBookResponse> getOffersWithBookById(@PathVariable Long offerId) {
 
