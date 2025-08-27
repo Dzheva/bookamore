@@ -3,6 +3,7 @@ package com.bookamore.backend.controller;
 import com.bookamore.backend.annotation.No401Swgr;
 import com.bookamore.backend.dto.book.BookRequest;
 import com.bookamore.backend.dto.book.BookResponse;
+import com.bookamore.backend.dto.book.BookUpdateRequest;
 import com.bookamore.backend.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -54,10 +55,10 @@ public class BookController {
                     )
             )
     })
-    @PatchMapping("/update/{bookId}")
+    @PatchMapping("/{bookId}")
     public ResponseEntity<BookResponse> updateBook(@PathVariable Long bookId,
-                                                   @RequestBody BookRequest bookRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(bookService.update(bookId, bookRequest));
+                                                   @RequestBody BookUpdateRequest bookUpdateRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.update(bookId, bookUpdateRequest));
     }
 
 }

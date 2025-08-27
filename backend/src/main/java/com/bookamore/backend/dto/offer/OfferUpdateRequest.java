@@ -13,11 +13,9 @@ import java.math.BigDecimal;
 @Data
 public class OfferUpdateRequest {
 
-    @NotNull(message = "Offer type cannot be null.")
     @Schema(example = "SELL", description = "Type of the offer")
     private OfferType type;
 
-    @NotNull(message = "Offer status cannot be null.")
     @Schema(example = "OPEN", description = "Status of the offer")
     private OfferStatus status;
 
@@ -25,7 +23,6 @@ public class OfferUpdateRequest {
     @Schema(example = "Selling a first edition in great condition", description = "Description of the offer")
     private String description;
 
-    @NotNull(message = "Price cannot be null.")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0.")
     @Schema(example = "19.99", description = "Price of the book")
     private BigDecimal price;

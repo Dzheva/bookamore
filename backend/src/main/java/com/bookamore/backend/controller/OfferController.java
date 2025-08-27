@@ -32,6 +32,7 @@ public class OfferController {
     @No404Swgr
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get offers page", description = "Get offers page")
     public Page<OfferResponse> getOffersPage(@RequestParam(defaultValue = "0") Integer page,
                                              @RequestParam(defaultValue = "5") Integer size,
                                              @Parameter(
@@ -55,6 +56,7 @@ public class OfferController {
 
     @No401Swgr
     @No404Swgr
+    @Operation(summary = "Get offers page with book fields", description = "Get offers page with book fields")
     @GetMapping("/with-book")
     @ResponseStatus(HttpStatus.OK)
     public Page<OfferWithBookResponse> getOffersWithBookPage(@RequestParam(defaultValue = "0") Integer page,
@@ -83,6 +85,7 @@ public class OfferController {
 
     @No401Swgr
     @GetMapping("/{offerId}")
+    @Operation(summary = "Get offer by id", description = "Get offer by id")
     public ResponseEntity<OfferResponse> getOfferById(@PathVariable Long offerId) {
         OfferResponse offer = offerService.getById(offerId);
 
@@ -90,6 +93,7 @@ public class OfferController {
     }
 
     @No401Swgr
+    @Operation(summary = "Get offer by id with book fields", description = "Get offer by id with book fields")
     @GetMapping("/with-book/{offerId}")
     public ResponseEntity<OfferWithBookResponse> getOffersWithBookById(@PathVariable Long offerId) {
 
@@ -98,6 +102,7 @@ public class OfferController {
         return offer != null ? ResponseEntity.ok(offer) : ResponseEntity.notFound().build();
     }
 
+    @Operation(summary = "Create offer", description = "Create offer")
     @PostMapping
     public ResponseEntity<OfferResponse> createOffer(@RequestBody OfferRequest request) {
 
@@ -105,6 +110,7 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdOffer);
     }
 
+    @Operation(summary = "Create offer and its book", description = "Create offer and its book")
     @PostMapping("/with-book")
     public ResponseEntity<OfferWithBookResponse> createOfferWithBook(@RequestBody OfferWithBookRequest request) {
 
@@ -123,7 +129,7 @@ public class OfferController {
                     )
             )
     })
-    @PatchMapping("/update/{offerId}")
+    @PatchMapping("/{offerId}")
     public ResponseEntity<OfferResponse> updateOffer(@PathVariable Long offerId,
                                                      @RequestBody OfferUpdateRequest request) {
 
@@ -134,7 +140,7 @@ public class OfferController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Book was deleted successfully")
     })
-    @DeleteMapping("/delete/{offerId}")
+    @DeleteMapping("/{offerId}")
     public ResponseEntity<Void> deleteOffer(@PathVariable Long offerId) {
 
         offerService.delete(offerId);
