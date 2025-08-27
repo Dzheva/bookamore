@@ -1,4 +1,4 @@
-package com.bookamore.backend.dto.mapper.book;
+package com.bookamore.backend.mapper.book;
 
 import com.bookamore.backend.entity.BookAuthor;
 import org.mapstruct.Mapper;

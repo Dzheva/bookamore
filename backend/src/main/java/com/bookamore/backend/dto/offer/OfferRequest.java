@@ -23,7 +23,6 @@ public class OfferRequest {
     @Schema(example = "Selling a first edition in great condition", description = "Description of the offer")
     private String description;
 
-    @NotNull(message = "Price cannot be null.")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0.")
     @Schema(example = "19.99", description = "Price of the book")
     private BigDecimal price;
@@ -36,6 +35,6 @@ public class OfferRequest {
     private Long bookId;
 
     @NotNull(message = "Seller ID cannot be null.")
-    @Schema(example = "42", description = "ID of the seller (User)")
+    @Schema(example = "4", description = "ID of the seller (User)")
     private Long sellerId;
 }

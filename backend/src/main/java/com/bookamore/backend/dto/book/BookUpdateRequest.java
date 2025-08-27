@@ -8,15 +8,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class BookRequest {
+public class BookUpdateRequest {
 
-    @NotNull(message = "The title cannot be null.")
-    @NotBlank(message = "The title cannot be blank.")
     @Size(min = 1, max = 255, message = "The title must be between 1 and 255 characters.")
     @Schema(example = "Clean Code", description = "Book title")
     private String title;
 
-    @NotNull(message = "The year of release cannot be null.")
     @Min(value = 1450, message = "Year of release must be no earlier than 1450.")
     @Max(value = 2100, message = "Year of release must be no later than 2100.")
     @Schema(example = "2008", description = "Year the book was released")
@@ -30,15 +27,12 @@ public class BookRequest {
     @Schema(example = "9783161484100", description = "ISBN number of the book")
     private String isbn;
 
-    @NotNull(message = "Book condition cannot be null.")
     @Schema(example = "NEW", description = "Condition of the book")
     private BookCondition condition;
 
-    @NotEmpty(message = "Authors list cannot be empty.")
     @Schema(example = "[\"Robert C. Martin\"]", description = "List of authors")
     private List<String> authors;
 
-    @NotEmpty(message = "Genres list cannot be empty.")
     @Schema(example = "[\"Classic\", \"Novel\"]", description = "List of genres")
     private List<String> genres;
 

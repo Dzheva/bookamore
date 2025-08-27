@@ -1,6 +1,6 @@
 package com.bookamore.backend.service.impl;
 
-import com.bookamore.backend.dto.mapper.offer.OfferMapper;
+import com.bookamore.backend.mapper.offer.OfferMapper;
 import com.bookamore.backend.dto.book.BookRequest;
 import com.bookamore.backend.dto.offer.OfferRequest;
 import com.bookamore.backend.dto.offer.OfferUpdateRequest;

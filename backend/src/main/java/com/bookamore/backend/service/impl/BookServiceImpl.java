@@ -1,6 +1,7 @@
 package com.bookamore.backend.service.impl;
 
-import com.bookamore.backend.dto.mapper.book.BookMapper;
+import com.bookamore.backend.dto.book.BookUpdateRequest;
+import com.bookamore.backend.mapper.book.BookMapper;
 import com.bookamore.backend.dto.book.BookRequest;
 import com.bookamore.backend.dto.book.BookResponse;
 import com.bookamore.backend.entity.Book;
@@ -112,36 +113,6 @@ public class BookServiceImpl implements BookService {
         book.setImages(resolveImages(book));
     }
 
-    public List<BookResponse> createList(List<BookRequest> bookRequestList) {
-        List<BookResponse> createdBooks = new ArrayList<>();
-
-        for (BookRequest bookRequest : bookRequestList) {
-            createdBooks.add(create(bookRequest));
-        }
-
-        return createdBooks;
-    }
-
-    public List<BookResponse> getAll() {
-        return bookRepository.findAll().stream()
-                .map(bookMapper::toResponse).collect(Collectors.toList());
-    }
-
-    public Page<BookResponse> getBooksPage(Integer page, Integer size, String sortBy, String sortDir) {
-        Sort.Direction direction = Sort.Direction.fromString(sortDir);
-
-        if ("authorName".equalsIgnoreCase(sortBy)) {
-            return bookRepository.findAll(
-                    BookSpecifications.sortByAuthorName(direction),
-                    PageRequest.of(page, size)
-            ).map(bookMapper::toResponse);
-        }
-
-        Sort sort = Sort.by(direction, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return bookRepository.findAll(pageable).map(bookMapper::toResponse);
-    }
-
     public Book getBookEntityById(Long bookId) {
         return bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
@@ -154,11 +125,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Transactional
-    public BookResponse update(Long bookId, BookRequest bookRequest) {
+    public BookResponse update(Long bookId, BookUpdateRequest bookUpdateRequest) {
         Book existingBook = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
 
-        Book patch = bookMapper.toEntity(bookRequest);
+        Book patch = bookMapper.toEntity(bookUpdateRequest);
 
 
         boolean simpleFieldsModified = updateSimpleFields(existingBook, patch);
@@ -325,13 +296,4 @@ public class BookServiceImpl implements BookService {
 
         return true;
     }
-
-    @Transactional
-    public void delete(Long bookId) {
-        Book book = bookRepository.findById(bookId).orElseThrow(
-                () -> new ResourceNotFoundException("Book not found with id: " + bookId)
-        );
-        bookRepository.delete(book);
-    }
-
 }
