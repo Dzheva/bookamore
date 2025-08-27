@@ -2,18 +2,60 @@ import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { IoChevronBack } from "react-icons/io5";
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
+import { useLoginMutation } from '@app/store/api/AuthApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCredentials, setLoading, selectIsLoading } from '@app/store/slices/authSlice';
 
 const SignInPage: React.FC = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
+    const dispatch = useDispatch();
+    
+    // Використовуємо RTK Query для API викликів
+    const [login, { isLoading: isApiLoading, error }] = useLoginMutation();
+    
+    // Отримуємо стан завантаження з Redux
+    const isGlobalLoading = useSelector(selectIsLoading);
+    const isLoading = isApiLoading || isGlobalLoading;
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
     };
 
     const handleBackClick = () => {
-        navigate(-1); // Повернутися на попередню сторінку
+        navigate(-1);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email || !password) return;
+        
+        try {
+            // Встановлюємо стан завантаження
+            dispatch(setLoading(true));
+            
+            const result = await login({ email, password }).unwrap();
+            
+            if (result.status && result.token) {
+                // Зберігаємо креденшели в Redux (і автоматично в localStorage)
+                dispatch(setCredentials({ 
+                    user: { email }, 
+                    token: result.token 
+                }));
+                
+                // Перенаправляємо на сторінку, з якої прийшов користувач, або на головну
+                const from = location.state?.from?.pathname || '/';
+                navigate(from, { replace: true });
+            }
+        } catch (error) {
+            console.error('Login failed:', error);
+        } finally {
+            dispatch(setLoading(false));
+        }
     };
 
     return (
@@ -34,13 +76,16 @@ const SignInPage: React.FC = () => {
                         </p>
                     </div>
 
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="mb-2 block text-sm font-medium text-gray-700">Email</label>
                         <input
                             type="email"
                             placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 focus:border-blue-500 focus:outline-none"
+                            required
                         />
                     </div>
 
@@ -50,7 +95,10 @@ const SignInPage: React.FC = () => {
                             <input
                                 type={passwordVisible ? 'text' : 'password'}
                                 placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 pr-10 focus:border-blue-500 focus:outline-none"
+                                required
                             />
                             <button
                                 type="button"
@@ -61,6 +109,12 @@ const SignInPage: React.FC = () => {
                             </button>
                         </div>
                     </div>
+
+                    {error && (
+                        <div className="mb-4 text-red-500 text-sm">
+                            Login failed. Please check your credentials.
+                        </div>
+                    )}
 
                     <div className="mb-6 text-right">
                         <a href="/forgot-password" className="text-sm text-blue-500">
@@ -82,9 +136,10 @@ const SignInPage: React.FC = () => {
 
                     <button
                         type="submit"
-                        className="w-full rounded-lg bg-gray-800 p-3 font-medium text-white transition-colors hover:bg-gray-900"
+                        disabled={isLoading}
+                        className="w-full rounded-lg bg-gray-800 p-3 font-medium text-white transition-colors hover:bg-gray-900 disabled:opacity-50"
                     >
-                        Log In
+                        {isLoading ? 'Logging in...' : 'Log In'}
                     </button>
                 </form>
 

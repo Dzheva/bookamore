@@ -10,6 +10,8 @@ import {UpdatePasswordPage} from "@pages/UpdatePasswordPage/UpdatePasswordPage.t
 import {AllChatsPage} from "@pages/AllChatsPage/AllChatsPage.tsx";
 import {ChatPage} from "@pages/ChatPage/ChatPage.tsx";
 import {GenreResultsPage} from "@pages/GenreResultsPage/GenreResultsPage.tsx";
+import {NewOfferPage} from "@pages/NewOfferPage/NewOfferPage.tsx";
+import {ProtectedRoute} from "@shared/components/ProtectedRoute.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -21,8 +23,20 @@ export const router = createBrowserRouter([
         element: <OfferDetailsPage/>
     },
     {
+        path: '/offers/new',
+        element: (
+            <ProtectedRoute>
+                <NewOfferPage/>
+            </ProtectedRoute>
+        )
+    },
+    {
         path: '/favorites',
-        element: <FavoritesPage/>
+        element: (
+            <ProtectedRoute>
+                <FavoritesPage/>
+            </ProtectedRoute>
+        )
     },
     {
         path: '/genres/:genre',
@@ -50,10 +64,18 @@ export const router = createBrowserRouter([
     },
     {
         path: '/chats',
-        element: <AllChatsPage/>
+        element: (
+            <ProtectedRoute>
+                <AllChatsPage/>
+            </ProtectedRoute>
+        )
     },
     {
         path: '/chats/:chatId',
-        element: <ChatPage/>
+        element: (
+            <ProtectedRoute>
+                <ChatPage/>
+            </ProtectedRoute>
+        )
     }
 ])
