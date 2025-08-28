@@ -10,6 +10,12 @@ export default defineConfig({
     tailwindcss()
   ],
   server: {
+    host: '0.0.0.0', // Приймати з'єднання з будь-якого IP
+    port: 3000,
+    hmr: {
+      port: 3000,
+      host: 'localhost'
+    },
     proxy: {
       '/api/v1': {
         target: 'http://localhost:8080',
