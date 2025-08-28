@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router';
+
 interface CategoryButtonProps {
   label: string;
   isActive?: boolean;
@@ -22,6 +24,8 @@ function CategoryButton({ label, isActive = false, onClick }: CategoryButtonProp
 }
 
 export function Categories() {
+  const navigate = useNavigate();
+  
   const categories = [
     { id: 'all', label: 'All', active: true },
     { id: 'sci-fi', label: 'Sci-fi', active: false },
@@ -38,23 +42,30 @@ export function Categories() {
     { id: 'psychology', label: 'Psychology', active: false },
   ];
 
+  const handleCategoryClick = (categoryId: string) => {
+    if (categoryId === 'all') {
+      // Navigate to home or all offers page
+      navigate('/');
+    } else {
+      // Navigate to genre results page
+      navigate(`/genres/${categoryId}`);
+    }
+  };
+
   return (
-    <div className="bg-white w-full">
+    <div className="bg-white w-full border-b border-gray-100">
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="py-0">
+        <div className="py-3 sm:py-4">
           <h3 className="text-lg font-bold text-black mb-3">Categories</h3>
           
           {/* Scrollable categories */}
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+          <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
             {categories.map((category) => (
               <CategoryButton
                 key={category.id}
                 label={category.label}
                 isActive={category.active}
-                onClick={() => {
-                  // TODO: Додати логіку вибору категорії
-                  console.log(`Selected category: ${category.id}`);
-                }}
+                onClick={() => handleCategoryClick(category.id)}
               />
             ))}
           </div>

@@ -2,11 +2,14 @@ import { FiSearch, FiFilter, FiBarChart2 } from "react-icons/fi";
 import { SortDropdown } from "@shared/ui/dropdowns/SortDropdown";
 import { FilterDropdown } from "@shared/ui/dropdowns/FilterDropdown";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import type { SortOption } from "@shared/ui/dropdowns/SortDropdown";
 import type { FilterState } from "@shared/ui/dropdowns/FilterDropdown";
 
 
 export function Header() {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState<SortOption>('relevance');
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
@@ -14,6 +17,19 @@ export function Header() {
     condition: 'any',
     categories: []
   });
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearchSubmit(e as React.FormEvent);
+    }
+  };
 
   const handleSortClick = () => {
     setIsSortModalOpen(prev => !prev);
@@ -58,17 +74,22 @@ export function Header() {
 
         {/* Search Bar */}
         <div className="pb-3">
-          <div className="relative">
+          <form onSubmit={handleSearchSubmit} className="relative">
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleSearchKeyPress}
               placeholder="Search: name, author, seller"
               className="w-full bg-gray-100 rounded-xl px-4 py-2.5 pr-10 text-sm text-black outline-none border-none placeholder-gray-500"
             />
-            <FiSearch
-              size={20}
-              className="absolute right-3.5 top-1/2 transform -translate-y-1/2 text-gray-500"
-            />
-          </div>
+            <button 
+              type="submit"
+              className="absolute right-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              <FiSearch size={20} />
+            </button>
+          </form>
         </div>
 
         {/* Filter Controls */}

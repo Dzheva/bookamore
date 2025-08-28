@@ -16,14 +16,16 @@ const HomePage: React.FC = () => {
     ];
 
     return (
-        <div className="pb-20">
+        <div className="min-h-screen bg-gray-50 pb-20">
             <Header/>
             <Categories/>
 
             {/* Book sections */}
-            {bookSections.map((section) => (
-                <BookSection key={section.title} title={section.title}/>
-            ))}
+            <div className="space-y-2 sm:space-y-4">
+                {bookSections.map((section) => (
+                    <BookSection key={section.title} title={section.title}/>
+                ))}
+            </div>
 
             <BottomNav/>
         </div>

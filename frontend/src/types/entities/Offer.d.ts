@@ -32,7 +32,7 @@ export enum OfferStatus {
 
 
 
-type OfferSortBy =  "id" |
+export type OfferSortBy =  "id" |
     "createdDate" |
     "lastModifiedDate" |
     'price' |

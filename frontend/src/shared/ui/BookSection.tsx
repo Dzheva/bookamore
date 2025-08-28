@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router';
+
 interface BookCardProps {
   condition?: 'new' | 'used';
 }
@@ -22,9 +24,17 @@ interface BookSectionProps {
   title: string;
   books?: BookCardProps[];
   showViewAll?: boolean;
+  viewAllDestination?: string; // Added for flexible navigation
 }
 
-export function BookSection({ title, books = [], showViewAll = true }: BookSectionProps) {
+export function BookSection({ 
+  title, 
+  books = [], 
+  showViewAll = true, 
+  viewAllDestination 
+}: BookSectionProps) {
+  const navigate = useNavigate();
+
   // Mock data for demonstration
   const mockBooks: BookCardProps[] = books.length > 0 ? books : [
     { condition: 'new' },    // First book is new
@@ -33,22 +43,34 @@ export function BookSection({ title, books = [], showViewAll = true }: BookSecti
     {},                      // Fourth book without badge
   ];
 
+  const handleViewAllClick = () => {
+    if (viewAllDestination) {
+      navigate(viewAllDestination);
+    } else {
+      // Default behavior - navigate to search results with the section title as query
+      navigate(`/search?q=${encodeURIComponent(title.toLowerCase())}`);
+    }
+  };
+
   return (
-    <div className="bg-white w-full">
+    <div className="bg-white w-full border-b border-gray-100">
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="py-4">
+        <div className="py-4 sm:py-5">
           {/* Section header */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
             <h3 className="text-lg font-bold text-black">{title}</h3>
             {showViewAll && (
-              <button className="text-sm text-gray-500 hover:text-gray-700">
+              <button 
+                onClick={handleViewAllClick}
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
                 View all
               </button>
             )}
           </div>
           
           {/* Horizontal scrollable books list */}
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+          <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2">
             {mockBooks.map((book, index) => (
               <BookCard key={index} {...book} />
             ))}
