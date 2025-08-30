@@ -22,8 +22,8 @@ public class OpenApiConfig {
         var securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
         return new OpenAPI()
-                .info(new Info().title("Book Amore API").version("1.0.0").description(
-                        "API for the Book Amore application."))
+                .info(new Info().title("Bookamore API").version("1.0.0").description(
+                        "API for the Bookamore application."))
                 .addSecurityItem(securityRequirement);
     }
 }
