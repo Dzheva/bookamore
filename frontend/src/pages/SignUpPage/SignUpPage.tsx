@@ -3,11 +3,17 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { IoChevronBack } from "react-icons/io5";
 import { useNavigate } from 'react-router';
+import { useRegisterMutation } from '@app/store/api/AuthApi';
 
 const SignUpPage: React.FC = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate();
+    const [register, { isLoading, error }] = useRegisterMutation();
 
     const togglePasswordVisibility = () => {
         setPasswordVisible(!passwordVisible);
@@ -19,6 +25,24 @@ const SignUpPage: React.FC = () => {
 
     const handleBackClick = () => {
         navigate(-1); // Повернутися на попередню сторінку
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!name || !email || !password || !confirmPassword) return;
+        
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+        
+        try {
+            const result = await register({ name, email, password }).unwrap();
+            alert(`Registration successful! ${result.message}`);
+            navigate('/sign-in');
+        } catch (error) {
+            console.error('Registration failed:', error);
+        }
     };
 
     return (
@@ -38,13 +62,16 @@ const SignUpPage: React.FC = () => {
                         </p>
                     </div>
 
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <label className="mb-2 block text-sm font-medium text-gray-700">Name</label>
                         <input
                             type="text"
                             placeholder="Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 focus:border-blue-500 focus:outline-none"
+                            required
                         />
                     </div>
                     <div className="mb-4">
@@ -52,7 +79,10 @@ const SignUpPage: React.FC = () => {
                         <input
                             type="email"
                             placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 focus:border-blue-500 focus:outline-none"
+                            required
                         />
                     </div>
 
@@ -62,7 +92,11 @@ const SignUpPage: React.FC = () => {
                             <input
                                 type={passwordVisible ? 'text' : 'password'}
                                 placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                                 className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 pr-10 focus:border-blue-500 focus:outline-none"
+                                required
+                                minLength={6}
                             />
                             <button
                                 type="button"
@@ -80,7 +114,10 @@ const SignUpPage: React.FC = () => {
                             <input
                                 type={confirmPasswordVisible ? 'text' : 'password'}
                                 placeholder="Confirm password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 pr-10 focus:border-blue-500 focus:outline-none"
+                                required
                             />
                             <button
                                 type="button"
@@ -91,6 +128,12 @@ const SignUpPage: React.FC = () => {
                             </button>
                         </div>
                     </div>
+
+                    {error && (
+                        <div className="mb-4 text-red-500 text-sm">
+                            Registration failed. Please try again.
+                        </div>
+                    )}
 
                     <div className="relative mb-6 text-center text-gray-400">
                         <hr className="absolute top-1/2 w-full -translate-y-1/2 border-gray-200" />
@@ -106,9 +149,10 @@ const SignUpPage: React.FC = () => {
 
                     <button
                         type="submit"
-                        className="w-full rounded-lg bg-gray-800 p-3 font-medium text-white transition-colors hover:bg-gray-900"
+                        disabled={isLoading}
+                        className="w-full rounded-lg bg-gray-800 p-3 font-medium text-white transition-colors hover:bg-gray-900 disabled:opacity-50"
                     >
-                        Sign Up
+                        {isLoading ? 'Signing up...' : 'Sign Up'}
                     </button>
                 </form>
 

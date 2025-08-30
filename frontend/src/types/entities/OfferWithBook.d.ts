@@ -1,5 +1,5 @@
 import type {Offer, OfferRequest} from "@types/entities/Offer";
-import type {BookRequest} from "@types/entities/Book";
+import type {Book, BookRequest} from "@types/entities/Book";
 
 export type OfferWithBook = Omit<Offer, 'bookId'> & {book: Book}
 
