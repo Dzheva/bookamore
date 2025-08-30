@@ -4,7 +4,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx-dev.conf:/etc/nginx/nginx.conf
     depends_on:
       - backend
       - frontend
@@ -44,6 +44,8 @@ services:
       - POSTGRES_DB=bookamore-db
     networks:
       - app-network
+    ports:
+      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d bookamore-db"]
       interval: 10s
