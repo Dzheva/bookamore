@@ -4,9 +4,6 @@ import com.bookamore.backend.dto.book.BookRequest;
 import com.bookamore.backend.dto.book.BookResponse;
 import com.bookamore.backend.dto.book.BookUpdateRequest;
 import com.bookamore.backend.entity.Book;
-import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 public interface BookService {
 

@@ -8,7 +8,6 @@ import com.bookamore.backend.dto.offer.OfferWithBookResponse;
 import com.bookamore.backend.entity.Offer;
 import org.springframework.data.domain.Page;
 
-
 public interface OfferService {
 
     OfferResponse create(OfferRequest request);

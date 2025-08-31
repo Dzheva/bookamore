@@ -4,9 +4,17 @@ server:
 spring:
   profiles:
     active: local
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 management:
   endpoints:
     web:
       exposure:
         include: env,health,info
+
+file:
+  hash-algorithm: SHA-256
+  upload-dir: ./src/main/resources/uploads
