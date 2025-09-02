@@ -7,9 +7,12 @@ import { BottomNav } from '../../shared/ui/BottomNav';
 import { 
   getOffersBySearch,
   getOffersByCondition,
-  createMockResponse 
+  createMockResponse,
+  mockOffers,
+  mockRomanticOffers
 } from '../../shared/mocks/mockData';
 import type { QueryParams } from '../../types/entities/QueryParams';
+import type { OfferWithBook } from '../../types/entities/OfferWithBook';
 
 // Mock mode flag - set to true to use mocks instead of API
 const USE_MOCKS = true;
@@ -118,10 +121,18 @@ export function SearchResultsPage() {
   
   // Mock data logic
   const getMockData = () => {
-    let filteredOffers = searchQuery ? getOffersBySearch(searchQuery) : [];
+    let filteredOffers: OfferWithBook[] = [];
+    
+    // If we have a search query, filter by search
+    if (searchQuery) {
+      filteredOffers = getOffersBySearch(searchQuery);
+    } else {
+      // If no search query, start with all offers
+      filteredOffers = [...mockOffers, ...mockRomanticOffers];
+    }
     
     // Apply condition filter if set
-    if (currentCondition && filteredOffers.length > 0) {
+    if (currentCondition) {
       filteredOffers = getOffersByCondition(filteredOffers, currentCondition);
     }
     
@@ -207,9 +218,16 @@ export function SearchResultsPage() {
 
       {/* Results info and active filters */}
       <div className="bg-white px-4 sm:px-6 py-3 border-b border-gray-200">
-        <p className="text-sm text-gray-600 mb-2">
-          Results for "{searchQuery}":
-        </p>
+        {searchQuery && (
+          <p className="text-sm text-gray-600 mb-2">
+            Results for "{searchQuery}":
+          </p>
+        )}
+        {currentCondition && (
+          <p className="text-sm text-gray-600 mb-2">
+            Showing {currentCondition} books:
+          </p>
+        )}
         
         {/* Show only active filters as chips */}
         {currentCondition && (

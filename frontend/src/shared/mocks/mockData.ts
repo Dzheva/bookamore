@@ -299,22 +299,40 @@ export function createMockResponse<T>(content: T[], totalElements?: number): Lis
   };
 }
 
+// Get all available genres from the mock data
+export function getAllGenres(): string[] {
+  const allOffers = [...mockOffers, ...mockRomanticOffers];
+  const genresSet = new Set<string>();
+  
+  allOffers.forEach(offer => {
+    offer.book.genres.forEach(genre => genresSet.add(genre));
+  });
+  
+  return Array.from(genresSet).sort();
+}
+
 // Filter functions for different scenarios
 export function getOffersByGenre(genre: string): OfferWithBook[] {
-  switch (genre.toLowerCase()) {
-    case 'sci-fi':
-      return mockOffers.filter(offer => offer.book.genres.includes('sci-fi'));
-    case 'romantic':
-      return mockRomanticOffers;
-    case 'fantasy':
-      return mockOffers.filter(offer => offer.book.genres.includes('fantasy'));
-    default:
-      return mockOffers.slice(0, 5); // Return some default books
-  }
+  const allOffers = [...mockOffers, ...mockRomanticOffers];
+  return allOffers.filter(offer => 
+    offer.book.genres.some(bookGenre => 
+      bookGenre.toLowerCase() === genre.toLowerCase()
+    )
+  );
 }
 
 export function getOffersBySearch(query: string): OfferWithBook[] {
   const lowerQuery = query.toLowerCase();
+  
+  // Special case for "recommended" - return a curated selection
+  if (lowerQuery === 'recommended') {
+    // Return a mix of popular books (first few from each category)
+    return [
+      ...mockOffers.slice(0, 3),
+      ...mockRomanticOffers.slice(0, 2)
+    ];
+  }
+  
   return [...mockOffers, ...mockRomanticOffers].filter(offer => 
     offer.book.title.toLowerCase().includes(lowerQuery) ||
     offer.book.authors.some(author => author.toLowerCase().includes(lowerQuery)) ||
