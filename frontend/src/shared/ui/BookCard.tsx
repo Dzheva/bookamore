@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router';
 import type { OfferWithBook } from "@/types/entities/OfferWithBook";
 
 type BookCardProps = {
@@ -8,9 +9,22 @@ type BookCardProps = {
 
 export function BookCard({ offer, onContact, onFavorite }: BookCardProps) {
   const { book, price, type } = offer;
+  const navigate = useNavigate();
+  
+  const handleCardClick = () => {
+    navigate(`/offers/${offer.id}`);
+  };
+  
+  const handleButtonClick = (e: React.MouseEvent, callback: () => void) => {
+    e.stopPropagation(); // Prevent card click when clicking buttons
+    callback();
+  };
   
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm flex gap-4 p-4">
+    <div 
+      onClick={handleCardClick}
+      className="bg-white rounded-lg border border-gray-200 shadow-sm flex gap-4 p-4 cursor-pointer hover:shadow-md transition-shadow"
+    >
       {/* Book image */}
       <div className="w-20 h-28 bg-gray-200 rounded flex-shrink-0">
         {book.images?.[0] && (
@@ -31,7 +45,7 @@ export function BookCard({ offer, onContact, onFavorite }: BookCardProps) {
           <p className="text-sm text-gray-600 mb-2">Condition: {book.condition}</p>
           
           {/* Price and Exchange */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-4 sm:gap-6 md:gap-8 mb-3">
             <div className="flex flex-col">
               <span className="text-xs text-gray-500 mb-1">Price:</span>
               <span className="font-bold text-lg">{price} UAH</span>
@@ -50,13 +64,13 @@ export function BookCard({ offer, onContact, onFavorite }: BookCardProps) {
         {/* Action buttons */}
         <div className="flex items-center gap-2 mt-auto">
           <button 
-            onClick={onContact}
+            onClick={(e) => handleButtonClick(e, onContact)}
             className="flex-1 sm:flex-none sm:w-24 lg:w-28 bg-gray-800 text-white py-2.5 px-4 rounded-lg font-medium text-sm sm:text-base hover:bg-gray-700 transition-colors"
           >
             Contact
           </button>
           <button 
-            onClick={onFavorite}
+            onClick={(e) => handleButtonClick(e, onFavorite)}
             className="p-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex-shrink-0 transition-colors"
           >
             <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

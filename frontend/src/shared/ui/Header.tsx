@@ -1,14 +1,16 @@
 import { FiSearch, FiFilter, FiBarChart2 } from "react-icons/fi";
 import { SortDropdown } from "@shared/ui/dropdowns/SortDropdown";
 import { FilterDropdown } from "@shared/ui/dropdowns/FilterDropdown";
-import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { useSearchParams, useNavigate, useLocation } from "react-router";
 import type { SortOption } from "@shared/ui/dropdowns/SortDropdown";
 import type { FilterState } from "@shared/ui/dropdowns/FilterDropdown";
 
 
 export function Header() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState<SortOption>('relevance');
@@ -17,11 +19,58 @@ export function Header() {
     condition: 'any',
     categories: []
   });
+  const [exchangeOnly, setExchangeOnly] = useState(false);
+
+  // Initialize state from URL params
+  useEffect(() => {
+    const query = searchParams.get('q') || '';
+    const sort = searchParams.get('sort') as SortOption || 'relevance';
+    const condition = searchParams.get('condition') as FilterState['condition'] || 'any';
+    const categories = searchParams.get('categories')?.split(',').filter(Boolean) || [];
+    const exchange = searchParams.get('exchange') === 'true';
+
+    setSearchQuery(query);
+    setSelectedSort(sort);
+    setFilters({ condition, categories });
+    setExchangeOnly(exchange);
+  }, [searchParams]);
+
+  const updateURLParams = (updates: Partial<{
+    q: string;
+    sort: SortOption;
+    condition: string;
+    categories: string[];
+    exchange: boolean;
+  }>) => {
+    const newParams = new URLSearchParams(searchParams);
+    
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === undefined || value === null || value === '' || 
+          (Array.isArray(value) && value.length === 0) ||
+          (key === 'sort' && value === 'relevance') ||
+          (key === 'condition' && value === 'any') ||
+          (key === 'exchange' && value === false)) {
+        newParams.delete(key);
+      } else if (Array.isArray(value)) {
+        newParams.set(key, value.join(','));
+      } else {
+        newParams.set(key, String(value));
+      }
+    });
+
+    setSearchParams(newParams);
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      // Navigate to search results page if not already there
+      if (location.pathname !== '/search') {
+        navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      } else {
+        // Just update URL params if already on search page
+        updateURLParams({ q: searchQuery.trim() });
+      }
     }
   };
 
@@ -29,6 +78,24 @@ export function Header() {
     if (e.key === 'Enter') {
       handleSearchSubmit(e as React.FormEvent);
     }
+  };
+
+  const handleSortChange = (sort: SortOption) => {
+    setSelectedSort(sort);
+    updateURLParams({ sort });
+  };
+
+  const handleFiltersChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    updateURLParams({ 
+      condition: newFilters.condition,
+      categories: newFilters.categories
+    });
+  };
+
+  const handleExchangeOnlyChange = (checked: boolean) => {
+    setExchangeOnly(checked);
+    updateURLParams({ exchange: checked });
   };
 
   const handleSortClick = () => {
@@ -97,6 +164,8 @@ export function Header() {
           <label className="flex items-center gap-2 text-sm cursor-pointer ml-3">
             <input
               type="checkbox"
+              checked={exchangeOnly}
+              onChange={(e) => handleExchangeOnlyChange(e.target.checked)}
               className="w-4 h-4 accent-black cursor-pointer"
             />
             <span className="text-black">Exchange only</span>
@@ -118,7 +187,7 @@ export function Header() {
                 isOpen={isFilterDropdownOpen}
                 onClose={() => setIsFilterDropdownOpen(false)}
                 filters={filters}
-                onFiltersChange={setFilters}
+                onFiltersChange={handleFiltersChange}
               />
             </div>
 
@@ -137,7 +206,7 @@ export function Header() {
                 isOpen={isSortModalOpen}
                 onClose={() => setIsSortModalOpen(false)}
                 selectedSort={selectedSort}
-                onSortChange={setSelectedSort}
+                onSortChange={handleSortChange}
               />
             </div>
           </div>

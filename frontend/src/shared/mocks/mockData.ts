@@ -3,6 +3,23 @@ import type { ListResponse } from '@/types/entities/ListResponse.d';
 import { OfferType, OfferStatus } from '@/types/entities/Offer.d';
 import { BookCondition } from '@/types/entities/Book.d';
 
+// Mock sellers/owners data
+export const mockSellers = [
+  { id: 1, name: 'Alex Johnson', avatar: '' },
+  { id: 2, name: 'Maria Garcia', avatar: '' },
+  { id: 3, name: 'Jane Walker', avatar: '' },
+  { id: 4, name: 'John Smith', avatar: '' },
+  { id: 5, name: 'Emma Wilson', avatar: '' },
+  { id: 6, name: 'Michael Brown', avatar: '' },
+  { id: 7, name: 'Sarah Davis', avatar: '' },
+  { id: 8, name: 'David Miller', avatar: '' },
+  { id: 9, name: 'Lisa Anderson', avatar: '' },
+  { id: 10, name: 'Robert Taylor', avatar: '' },
+  { id: 11, name: 'Anna Thompson', avatar: '' },
+  { id: 12, name: 'Chris Martinez', avatar: '' },
+  { id: 13, name: 'Sophie Lee', avatar: '' }
+];
+
 // Mock book offers data
 export const mockOffers: OfferWithBook[] = [
   {
@@ -342,4 +359,95 @@ export function getOffersBySearch(query: string): OfferWithBook[] {
 
 export function getOffersByCondition(offers: OfferWithBook[], condition: 'new' | 'used'): OfferWithBook[] {
   return offers.filter(offer => offer.book.condition.toLowerCase() === condition);
+}
+
+// Get offer by ID
+export function getOfferWithBookById(id: number | string): OfferWithBook | null {
+  const offerId = typeof id === 'string' ? parseInt(id, 10) : id;
+  const allOffers = [...mockOffers, ...mockRomanticOffers];
+  return allOffers.find(offer => offer.id === offerId) || null;
+}
+
+// Sort offers
+export function sortOffers(offers: OfferWithBook[], sortBy: string): OfferWithBook[] {
+  const sorted = [...offers];
+  
+  switch (sortBy) {
+    case 'price-low':
+      return sorted.sort((a, b) => a.price - b.price);
+    case 'price-high':
+      return sorted.sort((a, b) => b.price - a.price);
+    case 'newest':
+      return sorted.sort((a, b) => b.id - a.id); // Use ID as proxy for creation order
+    case 'oldest':
+      return sorted.sort((a, b) => a.id - b.id);
+    case 'title':
+      return sorted.sort((a, b) => a.book.title.localeCompare(b.book.title));
+    default:
+      return sorted;
+  }
+}
+
+// Apply all filters and sorting
+export function applyFiltersAndSort(filters: {
+  exchange?: boolean;
+  condition?: 'new' | 'used';
+  categories?: string[];
+  sort?: string;
+  query?: string;
+  genre?: string;
+}): OfferWithBook[] {
+  let offers = [...mockOffers, ...mockRomanticOffers];
+
+  // Filter by search query
+  if (filters.query) {
+    offers = getOffersBySearch(filters.query);
+  }
+
+  // Filter by genre (from genre pages)
+  if (filters.genre) {
+    offers = getOffersByGenre(filters.genre);
+  }
+
+  // Filter by exchange availability
+  if (filters.exchange !== undefined) {
+    offers = offers.filter(offer => 
+      filters.exchange 
+        ? offer.type === 'EXCHANGE' || offer.type === 'SELL_EXCHANGE'
+        : offer.type === 'SELL'
+    );
+  }
+
+  // Filter by condition
+  if (filters.condition) {
+    offers = getOffersByCondition(offers, filters.condition);
+  }
+
+  // Filter by categories/genres
+  if (filters.categories && filters.categories.length > 0) {
+    offers = offers.filter(offer => 
+      offer.book.genres.some(genre => 
+        filters.categories!.some(category => 
+          genre.toLowerCase() === category.toLowerCase()
+        )
+      )
+    );
+  }
+
+  // Apply sorting
+  if (filters.sort) {
+    offers = sortOffers(offers, filters.sort);
+  }
+
+  return offers;
+}
+
+// Get seller by ID
+export function getSellerById(sellerId: number): typeof mockSellers[0] | null {
+  return mockSellers.find(seller => seller.id === sellerId) || null;
+}
+
+// Create mock response for single offer
+export function createMockOfferResponse(offer: OfferWithBook | null): OfferWithBook | null {
+  return offer;
 }

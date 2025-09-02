@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import React from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router';
 import { IoChevronBack } from 'react-icons/io5';
 import { useGetAllOffersWithBooksQuery } from '@app/store/api/OffersApi';
 import { BookCard } from '@shared/ui/BookCard';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { 
-  getOffersByGenre,
+  applyFiltersAndSort,
   createMockResponse 
 } from '../../shared/mocks/mockData';
 import type { OfferWithBook } from '@/types/entities/OfferWithBook';
@@ -56,20 +56,21 @@ function FilterChip({
 const GenreResultsPage: React.FC = () => {
   const { genre } = useParams<{ genre: string }>();
   const navigate = useNavigate();
-  const [condition, setCondition] = useState<string | null>(null);
+  const [searchParams] = useSearchParams();
 
-  // Mock data logic
+  // Get filter parameters from URL
+  const filters = {
+    genre: genre || undefined,
+    condition: searchParams.get('condition') as 'new' | 'used' | null || undefined,
+    exchange: searchParams.get('exchange') === 'true' ? true : searchParams.get('exchange') === 'false' ? false : undefined,
+    sort: searchParams.get('sort') || undefined,
+    categories: searchParams.get('categories')?.split(',') || undefined,
+  };
+
+  // Mock data logic using new filter function
   const getMockData = () => {
     if (!genre) return createMockResponse([]);
-    let filteredOffers = getOffersByGenre(genre);
-    
-    // Apply condition filter if set
-    if (condition) {
-      filteredOffers = filteredOffers.filter(offer => 
-        offer.book.condition.toLowerCase() === condition.toLowerCase()
-      );
-    }
-    
+    const filteredOffers = applyFiltersAndSort(filters);
     return createMockResponse(filteredOffers);
   };
 
@@ -83,7 +84,7 @@ const GenreResultsPage: React.FC = () => {
   const apiResult = useGetAllOffersWithBooksQuery(
     {
       genre: genre,
-      condition: condition,
+      condition: filters.condition,
     },
     { skip: USE_MOCKS } // Skip API call when using mocks
   );
@@ -97,7 +98,10 @@ const GenreResultsPage: React.FC = () => {
   };
 
   const handleRemoveConditionFilter = () => {
-    setCondition(null);
+    // Remove condition from URL parameters
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('condition');
+    navigate({ search: newParams.toString() }, { replace: true });
   };
 
   const handleContact = (offer: OfferWithBook) => {
@@ -137,9 +141,9 @@ const GenreResultsPage: React.FC = () => {
       
       {/* Filters */}
       <div className="px-4 py-3 bg-white">
-        {condition && (
+        {filters.condition && (
           <FilterChip 
-            label={condition} 
+            label={filters.condition} 
             onRemove={handleRemoveConditionFilter} 
           />
         )}

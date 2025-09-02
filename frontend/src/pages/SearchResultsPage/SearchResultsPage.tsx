@@ -5,14 +5,10 @@ import { useGetAllOffersWithBooksQuery } from '../../app/store/api/OffersApi';
 import { BookCard } from '../../shared/ui/BookCard';
 import { BottomNav } from '../../shared/ui/BottomNav';
 import { 
-  getOffersBySearch,
-  getOffersByCondition,
-  createMockResponse,
-  mockOffers,
-  mockRomanticOffers
+  applyFiltersAndSort,
+  createMockResponse
 } from '../../shared/mocks/mockData';
 import type { QueryParams } from '../../types/entities/QueryParams';
-import type { OfferWithBook } from '../../types/entities/OfferWithBook';
 
 // Mock mode flag - set to true to use mocks instead of API
 const USE_MOCKS = true;
@@ -107,9 +103,21 @@ export function SearchResultsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Get search query from URL params
+  // Get all filter parameters from URL
   const searchQuery = searchParams.get('q') || '';
   const currentCondition = searchParams.get('condition') as 'new' | 'used' | null;
+  const exchange = searchParams.get('exchange');
+  const sort = searchParams.get('sort');
+  const categories = searchParams.get('categories');
+  
+  // Build filter object for our new function
+  const filters = {
+    query: searchQuery || undefined,
+    condition: currentCondition || undefined,
+    exchange: exchange === 'true' ? true : exchange === 'false' ? false : undefined,
+    sort: sort || undefined,
+    categories: categories ? categories.split(',') : undefined,
+  };
   
   // Build API query parameters
   const queryParams: QueryParams = {
@@ -119,23 +127,9 @@ export function SearchResultsPage() {
     size: 20,
   };
   
-  // Mock data logic
+  // Mock data logic using new filter function
   const getMockData = () => {
-    let filteredOffers: OfferWithBook[] = [];
-    
-    // If we have a search query, filter by search
-    if (searchQuery) {
-      filteredOffers = getOffersBySearch(searchQuery);
-    } else {
-      // If no search query, start with all offers
-      filteredOffers = [...mockOffers, ...mockRomanticOffers];
-    }
-    
-    // Apply condition filter if set
-    if (currentCondition) {
-      filteredOffers = getOffersByCondition(filteredOffers, currentCondition);
-    }
-    
+    const filteredOffers = applyFiltersAndSort(filters);
     return createMockResponse(filteredOffers);
   };
 
