@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,10 +19,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
@@ -71,6 +72,7 @@ public class ImageServiceImpl implements ImageService {
 
     }
 
+    @Transactional
     public String saveImage(MultipartFile file) {
         // get file name
         String originalFileName = Objects.requireNonNull(file.getOriginalFilename());
@@ -98,9 +100,10 @@ public class ImageServiceImpl implements ImageService {
 
         // write file to disk
         try {
-            Files.copy(
-                    file.getInputStream(),
-                    targetLocation, StandardCopyOption.ATOMIC_MOVE);
+            Files.copy(file.getInputStream(), targetLocation);
+        } catch (FileAlreadyExistsException e) {
+            // TODO FileStorageException
+            throw new RuntimeException(e.getMessage());
         } catch (IOException e) {
             // TODO FileStorageException
             throw new RuntimeException(String.format(
@@ -172,4 +175,19 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
+    public void deleteImage(String fileName) {
+        Path targetLocation = uploadDir.resolve(fileName);
+
+        if (!Files.exists(targetLocation)) {
+            // TODO FileStorageException
+            throw new RuntimeException(String.format("File %s does not exists", fileName));
+        }
+
+        try {
+            Files.delete(targetLocation);
+        } catch (IOException e) {
+            // TODO FileStorageException
+            throw new RuntimeException(e);
+        }
+    }
 }

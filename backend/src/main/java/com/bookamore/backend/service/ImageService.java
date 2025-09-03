@@ -13,4 +13,6 @@ public interface ImageService {
     Resource getImageByName(String fileName);
 
     MediaType getMediaTypeByResource(Resource resource);
+
+    void deleteImage(String fileName);
 }
