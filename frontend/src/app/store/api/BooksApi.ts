@@ -1,8 +1,5 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
-import type {ListResponse} from "@/types/entities/ListResponse";
-import {convertObjectToSearchParams} from "@app/store/helpers/convertToSearchParams.ts";
-import type {Book, BookPatchRequest, BookRequest} from "@/types/entities/Book";
-import type {QueryParams} from "@/types/entities/QueryParams";
+import type {Book, BookPatchRequest} from "@/types/entities/Book";
 
 
 export const BooksApi = createApi({
@@ -11,24 +8,12 @@ export const BooksApi = createApi({
         baseUrl: `${import.meta.env.VITE_BASE_API_URL}/books`
     }),
     endpoints: (build) => ({
-        getAllBooks: build.query<ListResponse<Book>, QueryParams | void>({
-            query: (params) => {
-                return params ? `?${convertObjectToSearchParams(params)}` : '';
-            }
-        }),
         getBookById: build.query<Book, number | string>({
             query: (id) => `/${id}`
         }),
-        addBook: build.mutation<Book, BookRequest>({
-            query: (bookRequest) => ({
-                url: '',
-                method: "POST",
-                body: bookRequest
-            })
-        }),
         updateBookById: build.mutation<Book, BookPatchRequest>({
             query: (bookPatchRequest) =>  ({
-                url: `/update/${bookPatchRequest.id}`,
+                url: `/${bookPatchRequest.id}`,
                 method: "PATCH",
                 body: bookPatchRequest.book
             })
@@ -37,10 +22,7 @@ export const BooksApi = createApi({
 })
 
 export const {
-    useGetAllBooksQuery,
-    useLazyGetAllBooksQuery,
     useLazyGetBookByIdQuery,
     useGetBookByIdQuery,
-    useUpdateBookByIdMutation,
-    useAddBookMutation
+    useUpdateBookByIdMutation
 } = BooksApi
