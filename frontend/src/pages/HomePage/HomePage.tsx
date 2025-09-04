@@ -67,22 +67,24 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20">
-            <Header/>
-            <Categories/>
+            <div className="max-w-md mx-auto">
+                <Header/>
+                <Categories/>
 
-            {/* Book sections */}
-            <div className="space-y-2 sm:space-y-4">
-                {bookSections.map((section) => (
-                    <BookSection 
-                        key={section.title} 
-                        title={section.title}
-                        viewAllDestination={section.destination}
-                        books={section.books?.map(offer => ({ 
-                            condition: offer.book.condition.toLowerCase() as 'new' | 'used',
-                            offer 
-                        }))}
-                    />
-                ))}
+                {/* Book sections */}
+                <div className="space-y-2 sm:space-y-4">
+                    {bookSections.map((section) => (
+                        <BookSection 
+                            key={section.title} 
+                            title={section.title}
+                            viewAllDestination={section.destination}
+                            books={section.books?.map(offer => ({ 
+                                condition: offer.book.condition.toLowerCase() as 'new' | 'used',
+                                offer 
+                            }))}
+                        />
+                    ))}
+                </div>
             </div>
 
             <BottomNav/>

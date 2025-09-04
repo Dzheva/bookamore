@@ -24,19 +24,11 @@ export const router = createBrowserRouter([
     },
     {
         path: '/offers/new',
-        element: (
-            <ProtectedRoute>
-                <NewOfferPage/>
-            </ProtectedRoute>
-        )
+        element: <NewOfferPage/>
     },
     {
         path: '/favorites',
-        element: (
-            <ProtectedRoute>
-                <FavoritesPage/>
-            </ProtectedRoute>
-        )
+        element: <FavoritesPage/>
     },
     {
         path: '/genres/:genre',

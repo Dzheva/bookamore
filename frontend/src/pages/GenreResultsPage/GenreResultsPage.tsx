@@ -117,8 +117,16 @@ const GenreResultsPage: React.FC = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div>Loading...</div>
+      <div className="min-h-screen bg-gray-50">
+        <PageHeader onBack={handleBack} />
+        <div className="max-w-md mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -126,8 +134,16 @@ const GenreResultsPage: React.FC = () => {
   // Error state
   if (error) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div>Error loading results</div>
+      <div className="min-h-screen bg-gray-50">
+        <PageHeader onBack={handleBack} />
+        <div className="max-w-md mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <p className="text-red-600 mb-2">Error loading results</p>
+              <p className="text-gray-500 text-sm">Please try again later</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -139,39 +155,41 @@ const GenreResultsPage: React.FC = () => {
       {/* Header */}
       <PageHeader onBack={handleBack} />
       
-      {/* Filters */}
-      <div className="px-4 py-3 bg-white">
-        {filters.condition && (
-          <FilterChip 
-            label={filters.condition} 
-            onRemove={handleRemoveConditionFilter} 
-          />
-        )}
-      </div>
+      <div className="max-w-md mx-auto">
+        {/* Filters */}
+        <div className="px-4 py-3 bg-white">
+          {filters.condition && (
+            <FilterChip 
+              label={filters.condition} 
+              onRemove={handleRemoveConditionFilter} 
+            />
+          )}
+        </div>
 
-      {/* Results */}
-      <div className="px-4 sm:px-6 py-4 pb-20">
-        <h2 className="text-lg font-bold mb-4">
-          Results for "{genre}":
-        </h2>
-        
-        {/* Results grid */}
-        {offers.length > 0 ? (
-          <div className="space-y-3 sm:space-y-4">
-            {offers.map((offer) => (
-              <BookCard
-                key={offer.id}
-                offer={offer}
-                onContact={() => handleContact(offer)}
-                onFavorite={() => handleFavorite(offer)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-gray-500">No results found for "{genre}"</p>
-          </div>
-        )}
+        {/* Results */}
+        <div className="px-4 sm:px-6 py-4 pb-20">
+          <h2 className="text-lg font-bold mb-4">
+            Results for "{genre}":
+          </h2>
+          
+          {/* Results grid */}
+          {offers.length > 0 ? (
+            <div className="space-y-3 sm:space-y-4">
+              {offers.map((offer) => (
+                <BookCard
+                  key={offer.id}
+                  offer={offer}
+                  onContact={() => handleContact(offer)}
+                  onFavorite={() => handleFavorite(offer)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">No results found for "{genre}"</p>
+            </div>
+          )}
+        </div>
       </div>
       
       {/* Bottom Navigation */}
