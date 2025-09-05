@@ -148,16 +148,16 @@ This guide explains how to manage the Docker containers using the development co
 * **Start the containers**
 1. To build and start all services:
 ```bash
-docker-compose -f ./docker-compose-dev.yaml up --build
+docker-compose -f ./docker-compose-local.yaml up --build
 ```
 2. To build and start all services in detached mode:
 ```bash
-docker-compose -f ./docker-compose-dev.yaml up --build -d
+docker-compose -f ./docker-compose-local.yaml up --build -d
 ```
 
 * **Stop the containers**
 ```bash
-docker-compose -f ./docker-compose-dev.yaml down -v
+docker-compose -f ./docker-compose-local.yaml down -v
 ```
 ---
 
