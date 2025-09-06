@@ -5,9 +5,8 @@ import { useGetAllOffersWithBooksQuery } from '../../app/store/api/OffersApi';
 import { BookCard } from '../../shared/ui/BookCard';
 import { BottomNav } from '../../shared/ui/BottomNav';
 import { 
-  getOffersBySearch,
-  getOffersByCondition,
-  createMockResponse 
+  applyFiltersAndSort,
+  createMockResponse
 } from '../../shared/mocks/mockData';
 import type { QueryParams } from '../../types/entities/QueryParams';
 
@@ -104,9 +103,21 @@ export function SearchResultsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Get search query from URL params
+  // Get all filter parameters from URL
   const searchQuery = searchParams.get('q') || '';
   const currentCondition = searchParams.get('condition') as 'new' | 'used' | null;
+  const exchange = searchParams.get('exchange');
+  const sort = searchParams.get('sort');
+  const categories = searchParams.get('categories');
+  
+  // Build filter object for our new function
+  const filters = {
+    query: searchQuery || undefined,
+    condition: currentCondition || undefined,
+    exchange: exchange === 'true' ? true : exchange === 'false' ? false : undefined,
+    sort: sort || undefined,
+    categories: categories ? categories.split(',') : undefined,
+  };
   
   // Build API query parameters
   const queryParams: QueryParams = {
@@ -116,15 +127,9 @@ export function SearchResultsPage() {
     size: 20,
   };
   
-  // Mock data logic
+  // Mock data logic using new filter function
   const getMockData = () => {
-    let filteredOffers = searchQuery ? getOffersBySearch(searchQuery) : [];
-    
-    // Apply condition filter if set
-    if (currentCondition && filteredOffers.length > 0) {
-      filteredOffers = getOffersByCondition(filteredOffers, currentCondition);
-    }
-    
+    const filteredOffers = applyFiltersAndSort(filters);
     return createMockResponse(filteredOffers);
   };
 
@@ -167,10 +172,12 @@ export function SearchResultsPage() {
           searchQuery={searchQuery} 
           onBack={handleBack} 
         />
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading search results...</p>
+        <div className="max-w-md mx-auto">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading search results...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -185,10 +192,12 @@ export function SearchResultsPage() {
           searchQuery={searchQuery} 
           onBack={handleBack} 
         />
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <p className="text-red-600 mb-2">Failed to load search results</p>
-            <p className="text-gray-500 text-sm">Please try again later</p>
+        <div className="max-w-md mx-auto">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <p className="text-red-600 mb-2">Failed to load search results</p>
+              <p className="text-gray-500 text-sm">Please try again later</p>
+            </div>
           </div>
         </div>
       </div>
@@ -205,26 +214,34 @@ export function SearchResultsPage() {
         onBack={handleBack} 
       />
 
-      {/* Results info and active filters */}
-      <div className="bg-white px-4 sm:px-6 py-3 border-b border-gray-200">
-        <p className="text-sm text-gray-600 mb-2">
-          Results for "{searchQuery}":
-        </p>
-        
-        {/* Show only active filters as chips */}
-        {currentCondition && (
-          <div className="flex gap-2">
-            <FilterChip
-              label={currentCondition.charAt(0).toUpperCase() + currentCondition.slice(1)}
-              isActive={true}
-              onClick={() => handleConditionFilter(null)}
-            />
-          </div>
-        )}
-      </div>
+      <div className="max-w-md mx-auto">
+        {/* Results info and active filters */}
+        <div className="bg-white px-4 sm:px-6 py-3 border-b border-gray-200">
+          {searchQuery && (
+            <p className="text-sm text-gray-600 mb-2">
+              Results for "{searchQuery}":
+            </p>
+          )}
+          {currentCondition && (
+            <p className="text-sm text-gray-600 mb-2">
+              Showing {currentCondition} books:
+            </p>
+          )}
+          
+          {/* Show only active filters as chips */}
+          {currentCondition && (
+            <div className="flex gap-2">
+              <FilterChip
+                label={currentCondition.charAt(0).toUpperCase() + currentCondition.slice(1)}
+                isActive={true}
+                onClick={() => handleConditionFilter(null)}
+              />
+            </div>
+          )}
+        </div>
 
-      {/* Books list - vertical layout like in mockup */}
-      <div className="px-4 sm:px-6 py-4 pb-20">
+        {/* Books list - vertical layout like in mockup */}
+        <div className="px-4 sm:px-6 py-4 pb-20">
         {offers.length > 0 ? (
           <div className="space-y-3 sm:space-y-4">
             {offers.map((offer) => (
@@ -276,6 +293,7 @@ export function SearchResultsPage() {
             </button>
           </div>
         )}
+        </div>
       </div>
       
       {/* Bottom Navigation */}

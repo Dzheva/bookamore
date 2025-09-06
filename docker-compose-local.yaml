@@ -4,7 +4,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx-dev.conf:/etc/nginx/nginx.conf
+      - ./nginx-local.conf:/etc/nginx/nginx.conf
     depends_on:
       - backend
       - frontend
@@ -15,7 +15,7 @@ services:
     tty: true
     build:
       context: ./backend
-      dockerfile: Dockerfile-dev
+      dockerfile: Dockerfile-local
     depends_on:
       - bookamore-db
     expose:
@@ -57,7 +57,7 @@ services:
     tty: true
     build:
       context: ./frontend
-      dockerfile: Dockerfile-dev
+      dockerfile: Dockerfile-local
     expose:
       - "3000"
     environment:

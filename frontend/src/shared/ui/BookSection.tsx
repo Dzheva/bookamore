@@ -1,14 +1,35 @@
 import { useNavigate } from 'react-router';
+import type { OfferWithBook } from '@/types/entities/OfferWithBook';
 
 interface BookCardProps {
   condition?: 'new' | 'used';
+  offer?: OfferWithBook;
 }
 
-function BookCard({ condition }: BookCardProps) {
+function BookCard({ condition, offer }: BookCardProps) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (offer) {
+      navigate(`/offers/${offer.id}`);
+    }
+  };
+
   return (
-    <div className="bg-gray-200 rounded-lg aspect-[3/4] min-w-[120px] flex-shrink-0 relative">
-      {/* Book image placeholder */}
-      <div className="w-full h-full rounded-lg bg-gray-200"></div>
+    <div 
+      className="bg-gray-200 rounded-lg aspect-[3/4] min-w-[120px] flex-shrink-0 relative cursor-pointer hover:opacity-80 transition-opacity"
+      onClick={handleClick}
+    >
+      {/* Book image */}
+      {offer?.previewImage ? (
+        <img 
+          src={offer.previewImage} 
+          alt={offer.book.title}
+          className="w-full h-full rounded-lg object-cover"
+        />
+      ) : (
+        <div className="w-full h-full rounded-lg bg-gray-200"></div>
+      )}
       
       {/* Book condition badge */}
       {condition && (
@@ -35,7 +56,7 @@ export function BookSection({
 }: BookSectionProps) {
   const navigate = useNavigate();
 
-  // Mock data for demonstration
+  // Mock data for demonstration when no books provided
   const mockBooks: BookCardProps[] = books.length > 0 ? books : [
     { condition: 'new' },    // First book is new
     { condition: 'new' },    // Second book is new  

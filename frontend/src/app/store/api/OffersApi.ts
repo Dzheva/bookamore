@@ -44,13 +44,16 @@ export const OffersApi = createApi({
         }),
         updateOfferById: build.mutation<Offer, OfferPatchRequest>({
             query: (offerPatchRequest) =>  ({
-                url: `/update/${offerPatchRequest.id}`,
+                url: `/${offerPatchRequest.id}`,
                 method: "PATCH",
                 body: offerPatchRequest.offer
             })
         }),
         deleteOfferById: build.mutation<void, number | string>({
-            query: (id) => `/delete/${id}`
+            query: (id) => ({
+                url: `/${id}`,
+                method: "DELETE"
+            })
         })
     })
 });
