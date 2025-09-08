@@ -2,16 +2,18 @@ import {createBrowserRouter} from "react-router";
 import {HomePage} from "@pages/HomePage/HomePage.tsx";
 import {OfferDetailsPage} from "@pages/OfferDetailsPage/OfferDetailsPage.tsx";
 import {FavoritesPage} from "@pages/FavoritesPage/FavoritesPage.tsx";
-import {RestorePasswordPage} from "@pages/RestorePasswordPage/RestorePasswordPage.tsx";
 import {SearchResultsPage} from "@pages/SearchResultsPage/SearchResultsPage.tsx";
 import {SignInPage} from "@pages/SignInPage/SignInPage.tsx";
 import {SignUpPage} from "@pages/SignUpPage/SignUpPage.tsx";
+import {RestorePasswordPage} from "@pages/RestorePasswordPage/RestorePasswordPage.tsx";
+import {VerificationCodePage} from '@/pages/VerificationCodePage/VerificationCodePage';
 import {UpdatePasswordPage} from "@pages/UpdatePasswordPage/UpdatePasswordPage.tsx";
 import {AllChatsPage} from "@pages/AllChatsPage/AllChatsPage.tsx";
 import {ChatPage} from "@pages/ChatPage/ChatPage.tsx";
 import {GenreResultsPage} from "@pages/GenreResultsPage/GenreResultsPage.tsx";
 import {NewOfferPage} from "@pages/NewOfferPage/NewOfferPage.tsx";
 import {ProtectedRoute} from "@shared/components/ProtectedRoute.tsx";
+
 
 export const router = createBrowserRouter([
     {
@@ -39,6 +41,14 @@ export const router = createBrowserRouter([
         element: <RestorePasswordPage/>
     },
     {
+        path: '/verification-code',
+        element: <VerificationCodePage/>
+    },
+    {
+        path: '/update-password',
+        element: <UpdatePasswordPage/>
+    },
+    {
         path: '/search',
         element: <SearchResultsPage/>
     },
@@ -49,10 +59,6 @@ export const router = createBrowserRouter([
     {
         path: '/sign-up',
         element: <SignUpPage/>
-    },
-    {
-        path: '/update-password',
-        element: <UpdatePasswordPage/>
     },
     {
         path: '/chats',
