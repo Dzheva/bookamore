@@ -52,6 +52,10 @@ export function BottomNav() {
     navigate('/offers/new');
   };
 
+  const handleNotificationsClick = () => {
+    navigate('/chats');
+  };
+
   return (
     <>
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 z-50">
@@ -69,7 +73,10 @@ export function BottomNav() {
               icon={<FiPlusCircle size={32} />}
               onClick={handleNewOfferClick}
             />
-            <NavIcon icon={<FiBell size={32} />} />
+            <NavIcon 
+              icon={<FiBell size={32} />}
+              onClick={handleNotificationsClick}
+            />
             <NavIcon 
               icon={<LuCircleUserRound size={32} />}
               onClick={handleUserIconClick}

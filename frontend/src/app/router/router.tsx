@@ -11,7 +11,6 @@ import {AllChatsPage} from "@pages/AllChatsPage/AllChatsPage.tsx";
 import {ChatPage} from "@pages/ChatPage/ChatPage.tsx";
 import {GenreResultsPage} from "@pages/GenreResultsPage/GenreResultsPage.tsx";
 import {NewOfferPage} from "@pages/NewOfferPage/NewOfferPage.tsx";
-import {ProtectedRoute} from "@shared/components/ProtectedRoute.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -56,18 +55,10 @@ export const router = createBrowserRouter([
     },
     {
         path: '/chats',
-        element: (
-            <ProtectedRoute>
-                <AllChatsPage/>
-            </ProtectedRoute>
-        )
+        element: <AllChatsPage/>
     },
     {
         path: '/chats/:chatId',
-        element: (
-            <ProtectedRoute>
-                <ChatPage/>
-            </ProtectedRoute>
-        )
+        element: <ChatPage/>
     }
 ])

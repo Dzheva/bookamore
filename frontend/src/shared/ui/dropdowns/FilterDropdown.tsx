@@ -143,7 +143,7 @@ export function FilterDropdown({
   return (
     <div
       ref={dropdownRef}
-      className={`absolute top-full ${dropdownPosition} mt-1 bg-white rounded-xl w-72 sm:w-80 max-h-[90vh] flex flex-col shadow-lg border border-gray-200 z-50 overflow-hidden ${
+      className={`absolute top-full ${dropdownPosition} mt-1 bg-white rounded-xl w-72 sm:w-80 lg:w-96 max-h-[90vh] flex flex-col shadow-lg border border-gray-200 z-50 overflow-hidden ${
         isMobile ? "max-w-[calc(100vw-2rem)]" : ""
       }`}
     >

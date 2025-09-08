@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
-import { IoChevronBack } from 'react-icons/io5';
+import { IoChevronBack, IoSearchOutline, IoClose } from 'react-icons/io5';
 import { useGetAllOffersWithBooksQuery } from '../../app/store/api/OffersApi';
 import { BookCard } from '../../shared/ui/BookCard';
 import { BottomNav } from '../../shared/ui/BottomNav';
@@ -21,7 +21,9 @@ interface PageHeaderProps {
 
 function PageHeader({ searchQuery, onBack }: PageHeaderProps) {
   const navigate = useNavigate();
-  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+  const isSpecialFilter = searchQuery === 'recommended';
+  const displayQuery = isSpecialFilter ? '' : searchQuery;
+  const [localSearchQuery, setLocalSearchQuery] = useState(displayQuery);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,49 +35,38 @@ function PageHeader({ searchQuery, onBack }: PageHeaderProps) {
   return (
     <div className="bg-white border-b border-gray-200">
       {/* Top header */}
-      <div className="flex items-center gap-4 px-4 py-3">
+      <div className="flex items-center px-4 sm:px-6 lg:px-8 py-3">
         <button
           onClick={onBack}
-          className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Go back"
         >
-          <IoChevronBack className="w-6 h-6 text-gray-600" />
+          <IoChevronBack className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
         </button>
-        <h1 className="text-lg font-semibold text-gray-900 flex-1">
+        <h1 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 flex-1 text-center">
           BookAmore
         </h1>
+        <div className="w-6 sm:w-8"></div>
       </div>
       
       {/* Search bar */}
-      <div className="px-4 pb-3">
-        <form onSubmit={handleSearchSubmit} className="relative">
+      <div className="px-4 sm:px-6 lg:px-8 pb-3">
+        <form onSubmit={handleSearchSubmit} className="relative w-full max-w-2xl mx-auto lg:max-w-4xl">
           <input
             type="text"
             value={localSearchQuery}
             onChange={(e) => setLocalSearchQuery(e.target.value)}
             placeholder="Search books..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="w-full pl-10 pr-4 py-2 sm:py-2.5 lg:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 text-sm sm:text-base"
           />
-          <svg 
-            className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
-            />
-          </svg>
+          <IoSearchOutline className="absolute left-3 top-2.5 sm:top-3 lg:top-3.5 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
         </form>
       </div>
     </div>
   );
 }
 
-// Filter Chip Component
+// Filter Chip Component with close icon
 interface FilterChipProps {
   label: string;
   isActive?: boolean;
@@ -87,14 +78,17 @@ function FilterChip({ label, isActive = false, onClick }: FilterChipProps) {
     <button
       onClick={onClick}
       className={`
-        px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors
+        flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium whitespace-nowrap transition-colors
         ${isActive 
-          ? 'bg-gray-800 text-white' 
+          ? 'bg-gray-800 text-white shadow-sm hover:bg-gray-700' 
           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
         }
       `}
     >
-      {label}
+      <span>{label}</span>
+      {isActive && (
+        <IoClose className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+      )}
     </button>
   );
 }
@@ -206,6 +200,16 @@ export function SearchResultsPage() {
 
   const offers = offersResponse?.content || [];
 
+  // Helper to get display title for special filters
+  const getDisplayTitle = (query: string) => {
+    switch (query) {
+      case 'recommended':
+        return 'Recommended Books';
+      default:
+        return `Results for "${query}":`;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header with search bar */}
@@ -214,18 +218,13 @@ export function SearchResultsPage() {
         onBack={handleBack} 
       />
 
-      <div className="max-w-md mx-auto">
+      <div className="w-full max-w-md mx-auto lg:max-w-4xl xl:max-w-6xl">
         {/* Results info and active filters */}
-        <div className="bg-white px-4 sm:px-6 py-3 border-b border-gray-200">
+        <div className="px-4 sm:px-6 lg:px-8 py-3 border-gray-200">
           {searchQuery && (
-            <p className="text-sm text-gray-600 mb-2">
-              Results for "{searchQuery}":
-            </p>
-          )}
-          {currentCondition && (
-            <p className="text-sm text-gray-600 mb-2">
-              Showing {currentCondition} books:
-            </p>
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-4">
+              {getDisplayTitle(searchQuery)}
+            </h2>
           )}
           
           {/* Show only active filters as chips */}
@@ -240,10 +239,10 @@ export function SearchResultsPage() {
           )}
         </div>
 
-        {/* Books list - vertical layout like in mockup */}
-        <div className="px-4 sm:px-6 py-4 pb-20">
+        {/* Books list - responsive grid layout */}
+        <div className="px-4 sm:px-6 lg:px-8 py-4 pb-20">
         {offers.length > 0 ? (
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3 sm:space-y-4 lg:grid lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 lg:space-y-0">
             {offers.map((offer) => (
               <BookCard
                 key={offer.id}
@@ -262,24 +261,12 @@ export function SearchResultsPage() {
         ) : (
           <div className="text-center py-12">
             <div className="mb-4">
-              <svg 
-                className="w-16 h-16 text-gray-300 mx-auto" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={1.5} 
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
-                />
-              </svg>
+              <IoSearchOutline className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-base sm:text-lg lg:text-xl font-medium text-gray-900 mb-2">
               No books found
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-sm sm:text-base text-gray-600 mb-6 max-w-md mx-auto">
               {searchQuery 
                 ? `No results found for "${searchQuery}". Try a different search term.`
                 : 'Try searching for books, authors, or genres.'
@@ -287,7 +274,7 @@ export function SearchResultsPage() {
             </p>
             <button 
               onClick={handleBack}
-              className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="px-4 sm:px-6 py-2 sm:py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
             >
               Go Back
             </button>

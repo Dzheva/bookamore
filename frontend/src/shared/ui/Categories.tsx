@@ -11,10 +11,10 @@ function CategoryButton({ label, isActive = false, onClick }: CategoryButtonProp
     <button
       onClick={onClick}
       className={`
-        px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors
+        px-3 sm:px-4 lg:px-5 py-1.5 sm:py-2 lg:py-2.5 rounded-full text-sm sm:text-base lg:text-lg font-medium whitespace-nowrap transition-colors
         ${isActive 
-          ? 'bg-gray-800 text-white' 
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          ? 'bg-gray-800 text-white shadow-sm' 
+          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
         }
       `}
     >
@@ -54,12 +54,12 @@ export function Categories() {
 
   return (
     <div className="bg-white w-full border-b border-gray-100">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="py-3 sm:py-4">
-          <h3 className="text-lg font-bold text-black mb-3">Categories</h3>
+      <div className="px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="py-3 sm:py-4 lg:py-5">
+          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-black mb-3 lg:mb-4">Categories</h3>
           
           {/* Scrollable categories */}
-          <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-2">
+          <div className="flex gap-2 sm:gap-3 lg:gap-4 overflow-x-auto scrollbar-hide pb-2 lg:pb-3">
             {categories.map((category) => (
               <CategoryButton
                 key={category.id}
@@ -68,6 +68,11 @@ export function Categories() {
                 onClick={() => handleCategoryClick(category.id)}
               />
             ))}
+          </div>
+          
+          {/* Scroll indicator for mobile */}
+          <div className="flex justify-center mt-2 lg:hidden">
+            <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
           </div>
         </div>
       </div>

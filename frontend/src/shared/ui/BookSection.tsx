@@ -17,7 +17,7 @@ function BookCard({ condition, offer }: BookCardProps) {
 
   return (
     <div 
-      className="bg-gray-200 rounded-lg aspect-[3/4] min-w-[120px] flex-shrink-0 relative cursor-pointer hover:opacity-80 transition-opacity"
+      className="bg-gray-200 rounded-lg aspect-[3/4] min-w-[100px] sm:min-w-[120px] lg:min-w-[140px] flex-shrink-0 relative cursor-pointer hover:opacity-80 transition-opacity"
       onClick={handleClick}
     >
       {/* Book image */}
@@ -33,7 +33,7 @@ function BookCard({ condition, offer }: BookCardProps) {
       
       {/* Book condition badge */}
       {condition && (
-        <div className="absolute bottom-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center text-xs font-bold text-black border">
+        <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-full flex items-center justify-center text-xs sm:text-xs lg:text-sm font-bold text-black border shadow-sm">
           {condition === 'new' ? 'NEW' : 'USED'}
         </div>
       )}
@@ -75,15 +75,15 @@ export function BookSection({
 
   return (
     <div className="bg-white w-full border-b border-gray-100">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="py-4 sm:py-5">
+      <div className="px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="py-4 sm:py-5 lg:py-6">
           {/* Section header */}
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <h3 className="text-lg font-bold text-black">{title}</h3>
+          <div className="flex items-center justify-between mb-3 sm:mb-4 lg:mb-5">
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-black">{title}</h3>
             {showViewAll && (
               <button 
                 onClick={handleViewAllClick}
-                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                className="text-sm sm:text-base text-gray-500 hover:text-gray-700 transition-colors font-medium"
               >
                 View all
               </button>
@@ -91,10 +91,15 @@ export function BookSection({
           </div>
           
           {/* Horizontal scrollable books list */}
-          <div className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide pb-2">
+          <div className="flex gap-3 sm:gap-4 lg:gap-5 overflow-x-auto scrollbar-hide pb-2">
             {mockBooks.map((book, index) => (
               <BookCard key={index} {...book} />
             ))}
+          </div>
+          
+          {/* Scroll indicator for mobile */}
+          <div className="flex justify-center mt-3 lg:hidden">
+            <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
           </div>
         </div>
       </div>
