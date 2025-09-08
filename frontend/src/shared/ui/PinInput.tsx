@@ -2,9 +2,10 @@ import { useCallback, useRef, useState, type FC } from 'react';
 
 type Props = {
     onComplete?: (pin: string) => void;
+    className?: string;
 };
 
-export const PinInput: FC<Props> = ({ onComplete = () => {} }) => {
+export const PinInput: FC<Props> = ({ onComplete = () => {}, className = '' }) => {
     const [values, setValues] = useState<string[]>(Array(4).fill(''));
     const inputsRef = useRef<HTMLInputElement[]>([]);
 
@@ -37,7 +38,7 @@ export const PinInput: FC<Props> = ({ onComplete = () => {} }) => {
     };
 
     return (
-        <div className='relative flex justify-between w-full'>
+        <div className={`relative flex justify-between w-full ${className}`}>
             {values.map((value, i) => (
                 <input
                     key={i}
@@ -49,6 +50,7 @@ export const PinInput: FC<Props> = ({ onComplete = () => {} }) => {
                     onChange={({ target }) => handleChange(target.value, i)}
                     onKeyDown={(e) => handleKeyDown(e, i)}
                     className='size-12 text-center text-xl rounded-xl bg-gray-100 focus:border-blue-500 focus:outline-none'
+                    required
                 />
             ))}
         </div>
