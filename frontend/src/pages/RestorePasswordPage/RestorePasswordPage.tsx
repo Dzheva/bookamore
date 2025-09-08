@@ -51,7 +51,7 @@ const RestorePasswordPage: React.FC = () => {
 
                         {/* {error && (
                             <div className='mb-4 text-red-500 text-sm'>
-                                Email failed. Please check your credentials.
+                                Email failed.
                             </div>
                         )} */}
 

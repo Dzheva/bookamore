@@ -44,7 +44,7 @@ const VerificationCodePage: React.FC = () => {
 
                         {/* {error && (
 							<div className='mb-4 text-red-500 text-sm'>
-								Email failed. Please check your credentials.
+								Pin failed.
 							</div>
 						)} */}
 
@@ -53,7 +53,7 @@ const VerificationCodePage: React.FC = () => {
                             // disabled={isLoading}
                             className='w-full rounded-lg bg-gray-800 p-3 font-medium text-white transition-colors hover:bg-gray-900 disabled:opacity-50 cursor-pointer'
                         >
-                            {/* {isLoading ? 'Loading...' : 'Send code'} */}
+                            {/* {isLoading ? 'Loading...' : 'Confirm'} */}
                             Confirm
                         </button>
                     </form>
