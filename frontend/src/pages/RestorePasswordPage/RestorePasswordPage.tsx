@@ -1,8 +1,8 @@
-import { useState, type FC, type FormEvent } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { IoChevronBack } from 'react-icons/io5';
 
-const RestorePasswordPage: FC = () => {
+const RestorePasswordPage: React.FC = () => {
     const [email, setEmail] = useState('');
     const navigate = useNavigate();
 
@@ -10,7 +10,7 @@ const RestorePasswordPage: FC = () => {
         navigate(-1);
     };
 
-    const handleSubmit = async (e: FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!email) return;
 
