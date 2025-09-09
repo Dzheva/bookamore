@@ -67,12 +67,12 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20">
-            <div className="max-w-md mx-auto">
+            <div className="w-full max-w-md mx-auto lg:max-w-6xl xl:max-w-7xl">
                 <Header/>
                 <Categories/>
 
                 {/* Book sections */}
-                <div className="space-y-2 sm:space-y-4">
+                <div className="space-y-2 sm:space-y-4 lg:space-y-6">
                     {bookSections.map((section) => (
                         <BookSection 
                             key={section.title} 
