@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -69,4 +71,13 @@ public class JwtTokenService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public static void main(String[] args) {
+
+            SecureRandom random = new SecureRandom();
+            byte[] keyBytes = new byte[32]; // 32 байти = 256 біт
+            random.nextBytes(keyBytes);
+            String jwtSecretBase64 = Base64.getEncoder().encodeToString(keyBytes);
+            System.out.println("Your JWT_SECRET (Base64 encoded): " + jwtSecretBase64);
+
+    }
 }

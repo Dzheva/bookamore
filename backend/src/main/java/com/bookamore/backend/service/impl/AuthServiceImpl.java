@@ -22,7 +22,6 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final JwtTokenService tokenService;
     private final PasswordEncoder encoder;
-
     @Override
     public SignUpResponse signUp(SignUpRequest request) {
         User user = userService.create(userMapper.signUpRequestToUser(request));
@@ -39,8 +38,5 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-    private User getAuthUser() {
-        JwtUserDetails principal = (JwtUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUser();
-    }
+
 }

@@ -37,8 +37,9 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest rq,
                                     @NonNull HttpServletResponse rs,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-
         extractTokenFromRequest(rq).ifPresent(token -> {
+
+            System.out.println(token);
             try {
                 String username = jwtTokenService.extractUsername(token);
 
