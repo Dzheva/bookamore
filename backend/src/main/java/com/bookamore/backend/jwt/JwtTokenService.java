@@ -68,5 +68,4 @@ public class JwtTokenService {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
 }

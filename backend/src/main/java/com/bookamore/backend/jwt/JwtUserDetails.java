@@ -1,7 +1,5 @@
 package com.bookamore.backend.jwt;
 
-import com.bookamore.backend.entity.User;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,9 +8,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 @RequiredArgsConstructor
-@Getter
 public class JwtUserDetails implements UserDetails {
-    private final User user;
+    private final String email;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -26,7 +23,7 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return this.email;
     }
 
     @Override

@@ -1,12 +1,12 @@
 --################
 -- Insert users
 --################
-INSERT INTO users (created_date, id, last_modified_date, email, name, password) VALUES
-(NOW(), 1, NOW(), 'john.doe@example.com', 'John', '$2a$10$jffLzQglZFxgmWZnowGHVOonKz23d98sGmUvb4Mkr1TYjFa54C.Dy'),  -- password: "myPassword123"
-(NOW(), 2, NOW(), 'jane.smith@example.com', 'Jane', '$2a$10$z1WEUVqtwdO7qW1enYaQxeP5kVJrQWU/eaxTZP4o3/xCwBOfXe/nS'), -- password: "myPassword123"
-(NOW(), 3, NOW(), 'mike.johnson@example.com', 'Mike', '$2a$10$DbWcjZTeLurHvWjB4Vq32uOA82YeUIS0XWHVdZ3zNa13W4NJj.ff.'), -- password: "myPassword123"
-(NOW(), 4, NOW(), 'sarah.williams@example.com', 'Sarah', '$2a$10$VsAlph6j0w0IPflwq9umCuZHvRMUjbasPYeG/.R0NXNH.DNOPXP/2'), -- password: "myPassword123"
-(NOW(), 5, NOW(), 'david.brown@example.com', 'David', '$2a$10$G.31YSoEEpL71aRIkQj1qOw1iuhLoxmW61eWAHPjyQD.ZxcNqgOuS'); -- password: "myPassword123"
+INSERT INTO users (created_date, id, uuid, last_modified_date, email, name, password) VALUES
+(NOW(), 1, '4f9df656-218a-413f-b9f8-81c471dbcb4d', NOW(), 'john.doe@example.com', 'John', '$2a$10$jffLzQglZFxgmWZnowGHVOonKz23d98sGmUvb4Mkr1TYjFa54C.Dy'),  -- password: "myPassword123"
+(NOW(), 2, '5bb285d9-52d5-4364-bb3b-61c609eb2711', NOW(), 'jane.smith@example.com', 'Jane', '$2a$10$z1WEUVqtwdO7qW1enYaQxeP5kVJrQWU/eaxTZP4o3/xCwBOfXe/nS'), -- password: "myPassword123"
+(NOW(), 3, 'b5c6a8e1-a5cd-4dc9-af64-02db880ff104', NOW(), 'mike.johnson@example.com', 'Mike', '$2a$10$DbWcjZTeLurHvWjB4Vq32uOA82YeUIS0XWHVdZ3zNa13W4NJj.ff.'), -- password: "myPassword123"
+(NOW(), 4, 'e55bebd8-75ad-4821-beff-47d2324abf3a', NOW(), 'sarah.williams@example.com', 'Sarah', '$2a$10$VsAlph6j0w0IPflwq9umCuZHvRMUjbasPYeG/.R0NXNH.DNOPXP/2'), -- password: "myPassword123"
+(NOW(), 5, '7e2ee2c5-bba1-4e19-9e67-6f68d915ba58', NOW(), 'david.brown@example.com', 'David', '$2a$10$G.31YSoEEpL71aRIkQj1qOw1iuhLoxmW61eWAHPjyQD.ZxcNqgOuS'); -- password: "myPassword123"
 SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
 -- END Insert users
 -------------------------------------------------------------------
