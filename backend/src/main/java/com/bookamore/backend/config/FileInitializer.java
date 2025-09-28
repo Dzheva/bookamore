@@ -44,6 +44,10 @@ public class FileInitializer {
 
         String configUploadDir = fileConfig.getUploadDir();
 
+        if (configUploadDir == null) {
+            log.error("Failed to fetch upload directory! Configuration: {}", this.fileConfig);
+            System.exit(1);
+        }
 
         log.info("Trying to resolve upload directory '{}'", configUploadDir);
 
