@@ -141,7 +141,7 @@ docker exec -it <CONTAINER_NAME> bash
 ```
 
 ---
-## Profile 'Dev'
+## Profile 'Local'
 
 This guide explains how to manage the Docker containers using the development configuration.
 
