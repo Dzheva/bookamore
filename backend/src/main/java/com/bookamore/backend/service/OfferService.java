@@ -7,6 +7,7 @@ import com.bookamore.backend.dto.offer.OfferResponse;
 import com.bookamore.backend.dto.offer.OfferWithBookResponse;
 import com.bookamore.backend.entity.Offer;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public interface OfferService {
@@ -30,4 +31,8 @@ public interface OfferService {
     OfferResponse update(Long offerId, OfferUpdateRequest request);
 
     void delete(Long offerId);
+
+    String savePreviewImage(Long offerId, MultipartFile previewImage);
+
+    void deletePreviewImage(Long offerId);
 }

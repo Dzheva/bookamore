@@ -16,6 +16,7 @@ import java.util.List;
 public class Book extends BaseEntity {
 
     @OneToOne(mappedBy = "book")
+    @ToString.Exclude
     private Offer offer;
 
     @Column(nullable = false)
@@ -50,5 +51,9 @@ public class Book extends BaseEntity {
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookImage> images = new ArrayList<>();
 
+    @ToString.Include(name = "offerId")
+    private String bookIdToString() {
+        return offer == null ? "null" : String.valueOf(offer.getId());
+    }
 
 }

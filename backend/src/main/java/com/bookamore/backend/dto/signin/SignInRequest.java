@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class SignInRequest {
     @NotBlank(message = "The email cannot be blank.")
-    @Schema(example = "john@example.com")
+    @Schema(example = "john.doe@example.com")
     private String email;
     @NotBlank(message = "The password cannot be blank.")
     @Schema(example = "myPassword123")

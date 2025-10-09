@@ -32,9 +32,6 @@ public class OfferWithBookRequest {
     @Schema(example = "19.99", description = "Price of the book")
     private BigDecimal price;
 
-    @Schema(example = "cover.jpg", description = "Preview image file name")
-    private String previewImage;
-
     @Valid
     @NotNull(message = "Book information must be provided.")
     @Schema(description = "Book details for the offer", implementation = BookRequest.class)

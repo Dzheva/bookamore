@@ -10,3 +10,13 @@ management:
     web:
       exposure:
         include: env,health,info
+
+file:
+  hash-algorithm: SHA-256
+  upload-dir: ./src/main/resources/uploads
+  # Octal POSIX permissions for upload subdirectories
+  sub-dirs-perms: 775
+  sub-dirs:
+    offer-previews: offers
+    books-images: books
+    #user-avatars: user-avatars

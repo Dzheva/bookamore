@@ -27,9 +27,6 @@ public class OfferRequest {
     @Schema(example = "19.99", description = "Price of the book")
     private BigDecimal price;
 
-    @Schema(example = "cover.jpg", description = "Preview image file name")
-    private String previewImage;
-
     @NotNull(message = "Book ID cannot be null.")
     @Schema(example = "1", description = "ID of the related book")
     private Long bookId;

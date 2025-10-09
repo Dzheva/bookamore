@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/v1/offers")
@@ -144,6 +145,24 @@ public class OfferController {
     public ResponseEntity<Void> deleteOffer(@PathVariable Long offerId) {
 
         offerService.delete(offerId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /*
+     * Offer preview image controller
+     */
+
+    // upload preview image
+    @PostMapping(value = "/{offerId}/previewImage", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> uploadPreviewImage(@PathVariable Long offerId,
+                                                     @RequestParam("previewImage") MultipartFile previewImage) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(offerService.savePreviewImage(offerId, previewImage));
+    }
+
+    // delete preview image
+    @DeleteMapping(value = "/{offerId}/previewImage")
+    public ResponseEntity<Void> deletePreviewImage(@PathVariable Long offerId) {
+        offerService.deletePreviewImage(offerId);
         return ResponseEntity.noContent().build();
     }
 }

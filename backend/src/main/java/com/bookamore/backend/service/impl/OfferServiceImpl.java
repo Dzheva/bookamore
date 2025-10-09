@@ -18,19 +18,25 @@ import com.bookamore.backend.repository.OfferRepository;
 import com.bookamore.backend.repository.UserRepository;
 import com.bookamore.backend.repository.spec.OfferSpecification;
 import com.bookamore.backend.service.BookService;
+import com.bookamore.backend.service.ImageService;
 import com.bookamore.backend.service.OfferService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OfferServiceImpl implements OfferService {
@@ -40,12 +46,16 @@ public class OfferServiceImpl implements OfferService {
     private final UserRepository userRepository;
 
     private final BookService bookService;
+    private final ImageService imageService;
 
     private final OfferMapper offerMapper;
 
     private static final Set<String> BOOK_FIELDS = Set.of(
             "title", "yearOfRelease", "description", "condition", "authorName"
     );
+
+    @Value("${file.sub-dirs.offer-previews}")
+    private String offerPreviewsSubDir;
 
     @Transactional
     public OfferResponse create(OfferRequest request) {
@@ -206,5 +216,43 @@ public class OfferServiceImpl implements OfferService {
                 () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
         );
         offerRepository.delete(offer);
+    }
+
+    @Transactional
+    public String savePreviewImage(Long offerId, MultipartFile previewImage) {
+
+        Offer existingOffer = offerRepository.findById(offerId).orElseThrow(
+                () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
+        );
+
+        // TODO remove existing image
+
+        String savedPreviewImagePath = imageService.saveImage(previewImage, offerPreviewsSubDir);
+
+        existingOffer.setPreviewImage(savedPreviewImagePath);
+
+        offerRepository.save(existingOffer);
+
+        return savedPreviewImagePath;
+    }
+
+    @Transactional
+    public void deletePreviewImage(Long offerId) {
+        Offer existingOffer = offerRepository.findById(offerId).orElseThrow(
+                () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
+        );
+
+        String previewImagePath = existingOffer.getPreviewImage();
+
+        try {
+            String fileName = previewImagePath.substring(previewImagePath.lastIndexOf('/') + 1);
+            imageService.deleteImage(fileName, offerPreviewsSubDir);
+        } catch (Exception ex) {
+            log.warn(String.format("An error occurred while deleting image '%s' at subdirectory '%s' : %s",
+                    previewImagePath, this.offerPreviewsSubDir, ex));
+        }
+
+        existingOffer.setPreviewImage(null);
+        offerRepository.save(existingOffer);
     }
 }
