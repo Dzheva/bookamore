@@ -1,27 +1,27 @@
 package com.bookamore.backend.service.impl;
 
-import com.bookamore.backend.dto.book.BookUpdateRequest;
-import com.bookamore.backend.mapper.book.BookMapper;
 import com.bookamore.backend.dto.book.BookRequest;
 import com.bookamore.backend.dto.book.BookResponse;
+import com.bookamore.backend.dto.book.BookUpdateRequest;
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.BookAuthor;
 import com.bookamore.backend.entity.BookGenre;
 import com.bookamore.backend.entity.BookImage;
 import com.bookamore.backend.entity.enums.BookCondition;
 import com.bookamore.backend.exception.ResourceNotFoundException;
+import com.bookamore.backend.mapper.book.BookMapper;
 import com.bookamore.backend.repository.BookAuthorRepository;
 import com.bookamore.backend.repository.BookGenreRepository;
 import com.bookamore.backend.repository.BookRepository;
-import com.bookamore.backend.repository.spec.BookSpecifications;
 import com.bookamore.backend.service.BookService;
+import com.bookamore.backend.service.ImageService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
@@ -36,6 +37,13 @@ public class BookServiceImpl implements BookService {
     private final BookGenreRepository bookGenreRepository;
     private final BookAuthorRepository bookAuthorRepository;
     private final BookMapper bookMapper;
+
+    private final ImageService imageService;
+
+    @Value("${file.sub-dirs.books-images}")
+    private String bookImagesSubDir;
+
+    private static final int BOOK_IMAGES_MAX_COUNT = 4;
 
     @Transactional
     public Book createBook(BookRequest bookRequest) {
@@ -139,8 +147,6 @@ public class BookServiceImpl implements BookService {
         childrenModified |= updateAuthors(existingBook, patch);
 
         childrenModified |= updateGenres(existingBook, patch);
-
-        childrenModified |= updateImages(existingBook, patch);
 
         boolean anyModified = childrenModified | simpleFieldsModified;
 
@@ -264,36 +270,105 @@ public class BookServiceImpl implements BookService {
         return true;
     }
 
-    private boolean updateImages(Book existingBook, Book patch) {
+    /*
+     * Book Images Service Part
+     */
 
-        List<BookImage> patchImages = patch.getImages();
+    @Transactional
+    public List<String> saveImages(Long bookId, List<MultipartFile> images) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
 
-        if (patchImages == null || patchImages.equals(existingBook.getImages())) {
-            return false;
+        List<BookImage> bookImages = book.getImages();
+
+        if (images.size() > BOOK_IMAGES_MAX_COUNT) {
+            throw new IllegalArgumentException("Too many images provided!"); // TODO improve message
+        } else if (!bookImages.isEmpty() && (bookImages.size() + images.size()) > BOOK_IMAGES_MAX_COUNT) {
+            throw new IllegalArgumentException("Too many images provided!"); // TODO improve message
         }
-        if (patchImages.stream().anyMatch(i -> i.getPath() == null)) {
-            throw new IllegalArgumentException("One or more provided images has no name (path == null)");
+
+        for (MultipartFile image : images) {
+            String savedImagePath = imageService.saveImage(image, this.bookImagesSubDir);
+
+            BookImage bookImage = new BookImage();
+            bookImage.setBook(book);
+            bookImage.setPath(savedImagePath);
+
+            bookImages.add(bookImage);
         }
 
-        Set<String> patchPaths = patchImages.stream().map(BookImage::getPath).collect(Collectors.toSet());
+        book.setImages(bookImages);
+        bookRepository.save(book);
 
-        List<BookImage> existingImages = existingBook.getImages();
-        existingImages.removeIf(image -> !patchPaths.contains(image.getPath()));  // remove old image
+        return bookImages.stream().map(BookImage::getPath).toList();
+    }
 
-        Set<String> existingPaths = existingImages.stream()
-                .map(BookImage::getPath).collect(Collectors.toSet());
+    @Transactional
+    public List<String> replaceImages(Long bookId, List<MultipartFile> images) {
 
-        for (String path : patchPaths) {
-            if (existingPaths.contains(path)) {
-                continue;
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
+
+        List<BookImage> bookImages = book.getImages();
+
+        // check count of provided images
+        if (images.size() > BOOK_IMAGES_MAX_COUNT) {
+            throw new IllegalArgumentException("Too many images provided!"); // TODO improve message
+        }
+
+        // remove old images
+        for (BookImage imageToRemove : new ArrayList<>(bookImages)) {
+
+            String path = imageToRemove.getPath();
+            String fileName = path.substring(path.lastIndexOf('/') + 1);
+
+            try {
+                imageService.deleteImage(fileName, this.bookImagesSubDir);
+            } catch (Exception ex) {
+                log.warn(String.format("An error occurred while deleting image '%s' at subdirectory '%s' : %s",
+                        path, this.bookImagesSubDir, ex));
             }
 
-            BookImage newImage = new BookImage();
-            newImage.setPath(path);
-            newImage.setBook(existingBook);
-            existingImages.add(newImage);  // add new image
+            bookImages.remove(imageToRemove);
         }
 
-        return true;
+        // save new images
+        for (MultipartFile image : images) {
+            String savedImagePath = imageService.saveImage(image, this.bookImagesSubDir);
+
+            BookImage bookImage = new BookImage();
+            bookImage.setBook(book);
+            bookImage.setPath(savedImagePath);
+
+            bookImages.add(bookImage);
+        }
+        book.setImages(bookImages);
+        bookRepository.save(book);
+
+        return bookImages.stream().map(BookImage::getPath).toList();
+    }
+
+    @Transactional
+    public void deleteImage(Long bookId, String imagePath) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
+
+        List<BookImage> bookImages = book.getImages();
+
+        BookImage bookImage = bookImages.stream().filter(i -> i.getPath().equals(imagePath)).findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Book with ID %d does not have an image with the path '%s'", bookId, imagePath)
+                ));
+
+        String fileName = imagePath.substring(imagePath.lastIndexOf('/') + 1);
+        try {
+            imageService.deleteImage(fileName, this.bookImagesSubDir);
+        } catch (Exception ex) {
+            log.warn(String.format("An error occurred while deleting image '%s' at subdirectory '%s' : %s",
+                    imagePath, this.bookImagesSubDir, ex));
+        }
+
+        bookImages.remove(bookImage);
+        bookRepository.save(book);
     }
 }

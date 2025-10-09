@@ -76,7 +76,7 @@ public class ImageLocalStorageRepositoryImpl implements ImageRepository {
         return resource;
     }
 
-    public void deleteImage(String fileName, String subDir) {
+    public void deleteImage(String fileName, String subDir) throws IOException {
         Path targetLocation = uploadDir.resolve(subDir).normalize().resolve(fileName).normalize();
 
         if (!Files.exists(targetLocation)) {
@@ -84,11 +84,7 @@ public class ImageLocalStorageRepositoryImpl implements ImageRepository {
             throw new RuntimeException(String.format("File %s does not exists", fileName));
         }
 
-        try {
-            Files.delete(targetLocation);
-        } catch (IOException e) {
-            // TODO FileStorageException
-            throw new RuntimeException(e);
-        }
+        Files.delete(targetLocation);
+
     }
 }

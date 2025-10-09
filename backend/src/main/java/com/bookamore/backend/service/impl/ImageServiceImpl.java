@@ -34,6 +34,8 @@ public class ImageServiceImpl implements ImageService {
 
     private MessageDigest digest;
 
+    private final static String IMAGE_PATH_TEMPLATE = "/img/%s/%s"; // '/img/{SUB_DIRECTORY}/{FILE_NAME}'
+
     @PostConstruct
     public void init() {
         try {
@@ -55,7 +57,9 @@ public class ImageServiceImpl implements ImageService {
         // generate hash name
         String hashFileName = generateHashFileName(originalFileName, subDir);
 
-        return imageRepository.saveImage(file, hashFileName, subDir);
+        String savedFileName = imageRepository.saveImage(file, hashFileName, subDir);
+
+        return String.format(IMAGE_PATH_TEMPLATE, subDir, savedFileName);
     }
 
     private String generateHashFileName(String originalFileName, String subDir) {
@@ -120,7 +124,7 @@ public class ImageServiceImpl implements ImageService {
         }
     }
 
-    public void deleteImage(String fileName, String subDir) {
+    public void deleteImage(String fileName, String subDir) throws IOException {
         imageRepository.deleteImage(fileName, subDir);
     }
 }

@@ -3,6 +3,8 @@ package com.bookamore.backend.repository;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 public interface ImageRepository {
 
     String saveImage(MultipartFile file, String fileName, String subDir);
@@ -11,5 +13,5 @@ public interface ImageRepository {
 
     Resource readImage(String fileName, String subDir);
 
-    void deleteImage(String fileName, String subDir);
+    void deleteImage(String fileName, String subDir) throws IOException;
 }

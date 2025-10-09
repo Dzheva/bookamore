@@ -21,6 +21,7 @@ import com.bookamore.backend.service.BookService;
 import com.bookamore.backend.service.ImageService;
 import com.bookamore.backend.service.OfferService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,10 +31,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OfferServiceImpl implements OfferService {
@@ -241,7 +244,14 @@ public class OfferServiceImpl implements OfferService {
 
         String previewImagePath = existingOffer.getPreviewImage();
 
-        imageService.deleteImage(previewImagePath, offerPreviewsSubDir);
+        try {
+            String fileName = previewImagePath.substring(previewImagePath.lastIndexOf('/') + 1);
+            imageService.deleteImage(fileName, offerPreviewsSubDir);
+        } catch (Exception ex) {
+            log.warn(String.format("An error occurred while deleting image '%s' at subdirectory '%s' : %s",
+                    previewImagePath, this.offerPreviewsSubDir, ex));
+        }
+
         existingOffer.setPreviewImage(null);
         offerRepository.save(existingOffer);
     }
