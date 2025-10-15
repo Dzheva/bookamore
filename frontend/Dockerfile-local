@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # Відкриваємо порт для Vite dev server
-EXPOSE 3000
+# EXPOSE 3000
 
 # Запускаємо dev server з правильним host для Docker
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
