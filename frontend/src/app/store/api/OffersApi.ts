@@ -5,11 +5,22 @@ import type { ListResponse } from "@/types/entities/ListResponse";
 import type {Offer, OfferPatchRequest, OfferRequest} from "@/types/entities/Offer";
 import type {OfferWithBook, OfferWithBookRequest} from "@/types/entities/OfferWithBook";
 import type {QueryParams} from "@/types/entities/QueryParams";
+import type { RootState } from "../store";
 
 export const OffersApi = createApi({
     reducerPath: 'offerApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${import.meta.env.VITE_BASE_API_URL}/offers`
+        baseUrl: `${import.meta.env.VITE_BASE_API_URL}/offers`,
+        prepareHeaders: (headers, { getState }) => {
+            const state = getState() as RootState;
+            const token = state.auth.token;
+
+            if (token) {
+                headers.set('authorization', `Bearer ${token}`);
+            }
+
+            return headers;
+        },
     }),
     endpoints: (build) => ({
         getAllOffers: build.query<ListResponse<Offer>, QueryParams | void>({
