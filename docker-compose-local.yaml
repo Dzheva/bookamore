@@ -5,6 +5,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx-local.conf:/etc/nginx/nginx.conf
+      - ./backend/src/main/resources/uploads:/usr/share/nginx/html/uploads:ro
     depends_on:
       - backend
       - frontend

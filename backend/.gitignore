@@ -57,3 +57,6 @@ logs/               # Dedicated directory for application logs
 
 # ENVIROMENT
 /src/main/resources/.env
+
+# UPLOAD DIRECTORY
+/src/main/resources/uploads/
