@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,64 +29,67 @@ public class FileInitializer {
 
     @PostConstruct
     private void prepareOutputDirectories() {
-        resolveRootUploadDir();
+        initializeRootUploadDir();
+        validateRootUploadDir(uploadDir);
         createSubDirsIfNotExists();
     }
 
     @Bean
     public ImageRepository imageRepository() {
-        return new ImageLocalStorageRepositoryImpl(this.uploadDir);
+        return new ImageLocalStorageRepositoryImpl(uploadDir);
     }
 
-    private void resolveRootUploadDir() {
+    private void initializeRootUploadDir() {
 
+        // Read configuration and determine the absolute path
         String configUploadDir = fileConfig.getUploadDir();
 
         if (configUploadDir == null) {
-            log.error("Failed to fetch upload directory! Configuration: {}", this.fileConfig);
-            System.exit(1);
+            log.error("Failed to fetch upload directory! Configuration: {}", fileConfig);
+            throw new IllegalStateException("Application startup failed: Upload directory configuration missing.");
         }
 
         log.info("Trying to resolve upload directory '{}'", configUploadDir);
 
-        this.uploadDir = Paths.get(configUploadDir).toAbsolutePath().normalize();
+        uploadDir = Paths.get(configUploadDir).toAbsolutePath().normalize();
+    }
 
-        File uploadDirectory = new File(uploadDir.toAbsolutePath().toString());
+    private void validateRootUploadDir(Path path) {
 
-        if (!uploadDirectory.exists() || !uploadDirectory.isDirectory()) {
+        if (!Files.exists(path) || !Files.isDirectory(path)) {
+            log.error("Critical error: Upload directory does not exist or is not a directory. Path: '{}'.",
+                    path.toAbsolutePath());
 
-            log.error("Critical error: Upload directory does not exist." +
-                            " Called path: '{}'. Config path: '{}'. Shutting down.",
-                    uploadDirectory.getAbsolutePath(), configUploadDir,
-                    new FileNotFoundException("Directory not found"));
-
-            System.exit(1);  // The application must stop immediately if the upload directory does not exist.
-        } else {
-            log.info("Upload directory is '{}'", uploadDir.toString());
+            throw new IllegalStateException("Application startup failed: Root upload directory is invalid or missing at "
+                    + path.toAbsolutePath());
         }
+        log.info("Upload directory is successfully validated: '{}'", path.toString());
     }
 
     private void createSubDirsIfNotExists() {
 
-        if (this.uploadDir == null) {
+        if (uploadDir == null) {
             log.error("Root upload directory was not resolved");
-            System.exit(1);
+            throw new IllegalStateException("Root upload directory was not resolved");
         }
 
-        /*
-         * POSIX permissions examples
-         * (755 = rwxr-xr-x)
-         * (750 = rwxr-x---)
-         * (775 = rwxrwxr-x)
-         */
-        String subDirsRwxPerms = octalToRwx(fileConfig.getSubDirsPerms());
-        Set<PosixFilePermission> perms = PosixFilePermissions.fromString(subDirsRwxPerms);
-        FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions.asFileAttribute(perms);
+        // Check if the system supports POSIX
+        boolean supportsPosix = uploadDir.getFileSystem()
+                .supportedFileAttributeViews()
+                .contains("posix");
+
+        // Prepare attributes if they are supported
+        FileAttribute<?>[] attributes = null;
+        if (supportsPosix) {
+            String subDirsRwxPerms = octalToRwx(fileConfig.getSubDirsPerms());
+            Set<PosixFilePermission> perms = PosixFilePermissions.fromString(subDirsRwxPerms);
+            FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions.asFileAttribute(perms);
+            attributes = new FileAttribute<?>[]{fileAttributes};
+        }
 
         Map<String, String> subDirs = fileConfig.getSubDirs();
 
         for (String subDirKey : subDirs.keySet()) {
-
             String subDirName = subDirs.get(subDirKey);
             Path subDirLocation = uploadDir.resolve(subDirName);
 
@@ -96,9 +97,20 @@ public class FileInitializer {
                 if (!Files.exists(subDirLocation)) {
                     log.info("Creating subdirectory '{}'", subDirName);
                 }
-                Files.createDirectories(subDirLocation, fileAttributes);
+
+                if (attributes != null) {
+                    Files.createDirectories(subDirLocation, attributes);
+                } else {
+                    Files.createDirectories(subDirLocation);
+                }
+
             } catch (IOException ex) {
                 log.error("An error occurred while creating subdirectory '{}': {}", subDirLocation, ex.getMessage());
+                throw new IllegalStateException(
+                        String.format("Application startup failed: Upload subdirectory is invalid or missing at '%s'",
+                                subDirLocation
+                        )
+                );
             }
         }
     }
