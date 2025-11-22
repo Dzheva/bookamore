@@ -26,7 +26,4 @@ public class OfferUpdateRequest {
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0.")
     @Schema(example = "19.99", description = "Price of the book")
     private BigDecimal price;
-
-    @Schema(example = "cover.jpg", description = "Preview image file name")
-    private String previewImage;
 }
