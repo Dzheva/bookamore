@@ -15,8 +15,6 @@ import { useGetOfferWithBookByIdQuery } from '../../app/store/api/OffersApi';
 import { BottomNav } from '../../shared/ui/BottomNav';
 import { getOfferWithBookById, createMockOfferResponse, getOffersByGenre, getSellerById } from '../../shared/mocks/mockData';
 
-const USE_MOCKS = true;
-
 function Dots({ count, active, onPick }: { count: number; active: number; onPick: (i: number) => void }) {
   return (
     <div className="flex items-center gap-2">
@@ -41,15 +39,25 @@ const OfferDetailsPage: React.FC = () => {
   const [isAboutOpen, setIsAboutOpen] = useState(true);
   const [imgIndex, setImgIndex] = useState(0);
 
-  const getMockData = () => (offerId ? createMockOfferResponse(getOfferWithBookById(offerId)) : null);
+  // Try API first, fallback to mocks only on error
+  const apiResult = useGetOfferWithBookByIdQuery(offerId || '', { skip: !offerId });
+  
+  // Determine which data source to use with proper typing
+  let finalData: typeof apiResult.data = apiResult.data;
+  let isLoading = apiResult.isLoading;
+  let error = apiResult.error;
 
-  const mockResult = USE_MOCKS
-    ? { data: getMockData(), isLoading: false, error: undefined }
-    : null;
+  // Fallback to mocks only if API call has an error and offerId exists
+  if (error && offerId && !finalData) {
+    const mockOffer = getOfferWithBookById(offerId);
+    if (mockOffer) {
+      finalData = createMockOfferResponse(mockOffer) as typeof apiResult.data;
+      isLoading = false;
+      error = undefined;
+    }
+  }
 
-  const apiResult = useGetOfferWithBookByIdQuery(offerId || '', { skip: USE_MOCKS || !offerId });
-
-  const { data: offer, isLoading, error } = USE_MOCKS ? mockResult! : apiResult;
+  const offer = finalData;
 
   const handleBack = () => navigate(-1);
   const handleFavoriteToggle = () => setIsFavorite((v) => !v);
