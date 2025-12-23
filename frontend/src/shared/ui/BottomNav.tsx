@@ -1,95 +1,92 @@
-import React, { useState } from "react";
-import { FiPlusCircle, FiBell } from "react-icons/fi";
-import {GoHomeFill} from "react-icons/go"
-import { LuCircleUserRound, LuHeart } from "react-icons/lu";
+import { useState } from "react";
+import { NavLink } from "react-router";
+import clsx from "clsx";
+
 import { AuthPrompt } from "./AuthPrompt";
-import { useSelector } from 'react-redux';
-import { selectIsAuthenticated } from '@app/store/slices/authSlice';
-import { useNavigate } from 'react-router';
-
-interface NavIconProps {
-  icon: React.ReactNode;
-  onClick?: () => void;
-}
-
-function NavIcon({ icon, onClick }: NavIconProps) {
-  return (
-    <li 
-      className="text-gray-700 hover:text-black cursor-pointer transition-colors duration-200"
-      onClick={onClick}
-    >
-      {icon}
-    </li>
-  );
-}
+import { HomeSvg } from "./bottomNavImg/HomeSvg";
+import { FavoritesSvg } from "./bottomNavImg/FavoritesSvg";
+import { SellSvg } from "./bottomNavImg/SellSvg";
+import { ChatsSvg } from "./bottomNavImg/ChatsSvg";
+import { FaceSvg } from "./bottomNavImg/FaceSvg";
 
 export function BottomNav() {
   const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
-  const navigate = useNavigate();
-  
-  
-  const isAuthenticated = useSelector(selectIsAuthenticated);
 
-  const handleUserIconClick = () => {
-    if (!isAuthenticated) {
-      setIsAuthPromptOpen(true);
-    } else {
-      // Якщо користувач увійшов - можна перейти на профіль або інші дії
-      // Поки що просто показуємо в консолі
-      console.log('User is logged in - navigate to profile');
-    }
-  };
+  const containerStyle = () =>
+    clsx("pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]");
 
-  const handleHomeClick = () => {
-    navigate('/');
-  };
+  const textStyle = () =>
+    clsx("text-[#E9EADB] font-[KyivType Sans]");
 
-  const handleFavoritesClick = () => {
-    navigate('/favorites');
-  };
+  const isActiveStyle = ({ isActive }: { isActive: boolean }) =>
+    clsx(
+      "flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]",
+      isActive
+        ? "bg-[#E9EADB] text-[#28666E]"
+        : "bg-[#28666E] text-[#E9EADB]"
+    );
 
-  const handleNewOfferClick = () => {
-    navigate('/offers/new');
-  };
-
-  const handleNotificationsClick = () => {
-    navigate('/chats');
-  };
+  const isAuth = true;
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 z-50">
-        <div className="px-4 sm:px-6 lg:px-8">
-          <ul className="flex justify-around items-center h-14">
-            <NavIcon 
-              icon={<GoHomeFill size={32} />}
-              onClick={handleHomeClick}
-            />
-            <NavIcon 
-              icon={<LuHeart size={32} />}
-              onClick={handleFavoritesClick}
-            />
-            <NavIcon 
-              icon={<FiPlusCircle size={32} />}
-              onClick={handleNewOfferClick}
-            />
-            <NavIcon 
-              icon={<FiBell size={32} />}
-              onClick={handleNotificationsClick}
-            />
-            <NavIcon 
-              icon={<LuCircleUserRound size={32} />}
-              onClick={handleUserIconClick}
-            />
-          </ul>
-        </div>
+      <nav
+        className="
+          fixed bottom-0 left-0 right-0
+          bg-[#28666E]
+          min-w-[375px] h-[65px]
+          pt-[6px]
+          flex justify-around
+        "
+      >
+        <NavLink className={isActiveStyle} to="/">
+          <div className={containerStyle()}>
+            <HomeSvg />
+          </div>
+          <p className={textStyle()}>Home</p>
+        </NavLink>
+
+        <NavLink className={isActiveStyle} to="/favorites">
+          <div className={containerStyle()}>
+            <FavoritesSvg />
+          </div>
+          <p className={textStyle()}>Favorites</p>
+        </NavLink>
+
+        <NavLink className={isActiveStyle} to="/offers/new">
+          <div className={containerStyle()}>
+            <SellSvg />
+          </div>
+          <p className={textStyle()}>Sell</p>
+        </NavLink>
+
+        <NavLink className={isActiveStyle} to="/chats">
+          <div className={containerStyle()}>
+            <ChatsSvg />
+          </div>
+          <p className={textStyle()}>Chats</p>
+        </NavLink>
+
+        <NavLink
+          to={!isAuth ? "/sign-in" : "#"}
+          className={isActiveStyle}
+        >
+          <div className={containerStyle()}>
+            <FaceSvg />
+          </div>
+
+          {isAuth && <p className={textStyle()}>Profile</p>}
+        </NavLink>
       </nav>
 
       {/* Auth Prompt Modal */}
-      <AuthPrompt 
+      <AuthPrompt
         isOpen={isAuthPromptOpen}
         onClose={() => setIsAuthPromptOpen(false)}
       />
     </>
   );
 }
+
+// git add package.json package-lock.json BottomNav.tsx ChatSvg.tsx FaceSvg.tsx FavoritesSvg.tsx Hom
+//  eSvg.tsx SellSvg.tsx
