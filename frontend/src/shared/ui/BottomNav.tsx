@@ -8,25 +8,34 @@ import { FavoritesSvg } from "./bottomNavImg/FavoritesSvg";
 import { SellSvg } from "./bottomNavImg/SellSvg";
 import { ChatsSvg } from "./bottomNavImg/ChatsSvg";
 import { FaceSvg } from "./bottomNavImg/FaceSvg";
+import { useSelector } from "react-redux";
+import { selectIsAuthenticated } from "@/app/store/slices/authSlice";
 
-export function BottomNav() {
+interface BottomNavProps {
+  isProfilePage?: boolean;
+}
+
+export function BottomNav({ isProfilePage = false }: BottomNavProps) {
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
 
-  const containerStyle = () =>
-    clsx("pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]");
+  const handleUserIconClick = () => {
+    if (!isAuthenticated) {
+      setIsAuthPromptOpen(true);
+    } else {
+      console.log("User is logged in - navigate to profile");
+    }
+  };
 
-  const textStyle = () =>
-    clsx("text-[#E9EADB] font-[KyivType Sans]");
+  const containerStyle = () => clsx("pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]");
+
+  const textStyle = () => clsx("text-[#E9EADB] font-[KyivType Sans]");
 
   const isActiveStyle = ({ isActive }: { isActive: boolean }) =>
     clsx(
       "flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]",
-      isActive
-        ? "bg-[#E9EADB] text-[#28666E]"
-        : "bg-[#28666E] text-[#E9EADB]"
+      isActive ? "bg-[#E9EADB] text-[#28666E]" : "bg-[#28666E] text-[#E9EADB]"
     );
-
-  const isAuth = true;
 
   return (
     <>
@@ -67,19 +76,17 @@ export function BottomNav() {
           <p className={textStyle()}>Chats</p>
         </NavLink>
 
-        <NavLink
-          to={!isAuth ? "/sign-in" : "#"}
-          className={isActiveStyle}
-        >
-          <div className={containerStyle()}>
+        <div className={isActiveStyle({ isActive: isProfilePage })}>
+          <div
+            className={`${containerStyle()} cursor-pointer`}
+            onClick={handleUserIconClick}
+          >
             <FaceSvg />
           </div>
-
-          {isAuth && <p className={textStyle()}>Profile</p>}
-        </NavLink>
+          <p className={`${textStyle()}`}>Profile</p>
+        </div>
       </nav>
 
-      {/* Auth Prompt Modal */}
       <AuthPrompt
         isOpen={isAuthPromptOpen}
         onClose={() => setIsAuthPromptOpen(false)}
@@ -87,6 +94,3 @@ export function BottomNav() {
     </>
   );
 }
-
-// git add package.json package-lock.json BottomNav.tsx ChatSvg.tsx FaceSvg.tsx FavoritesSvg.tsx Hom
-//  eSvg.tsx SellSvg.tsx
