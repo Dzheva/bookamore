@@ -86,7 +86,9 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
           <p className={`${textStyle()}`}>Profile</p>
         </div>
       </nav>
-
+      {/* 
+<h1></h1>
+*/}
       <AuthPrompt
         isOpen={isAuthPromptOpen}
         onClose={() => setIsAuthPromptOpen(false)}
