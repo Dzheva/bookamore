@@ -10,6 +10,7 @@ export default defineConfig({
     tailwindcss()
   ],
   server: {
+    allowedHosts: true,
     host: '0.0.0.0', // Приймати з'єднання з будь-якого IP
     port: 3000,
     hmr: {
