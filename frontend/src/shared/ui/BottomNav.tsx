@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 import clsx from "clsx";
-
 import { AuthPrompt } from "./AuthPrompt";
 import { HomeSvg } from "./bottomNavImg/HomeSvg";
 import { FavoritesSvg } from "./bottomNavImg/FavoritesSvg";
@@ -11,34 +10,25 @@ import { FaceSvg } from "./bottomNavImg/FaceSvg";
 import { useSelector } from "react-redux";
 import { selectIsAuthenticated } from "@/app/store/slices/authSlice";
 
-// import { useNavigate } from 'react-router-dom';
-// import as * from 'react-router-dom'
-
-
 interface BottomNavProps {
   isProfilePage?: boolean;
 }
 
 export function BottomNav({ isProfilePage = false }: BottomNavProps) {
-  const navig = useNavigate();
+  const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
 
   const handleUserIconClick = () => {
-    if (isAuthenticated) {
+    if (!isAuthenticated) {
       setIsAuthPromptOpen(true);
     } else {
-
-      navig('/profile')
-      // const navigate = useNavigate();
-      // navigate('/chats');
+      navigate('/profile')
     }
   };
 
   const containerStyle = () => clsx("pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]");
-
   const textStyle = () => clsx("text-[#E9EADB] font-[KyivType Sans]");
-
   const isActiveStyle = ({ isActive }: { isActive: boolean }) =>
     clsx(
       "flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]",
@@ -84,18 +74,6 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
           <p className={textStyle()}>Chats</p>
         </NavLink>
 
-
-        {/* <NavLink className={isActiveStyle} to='/profile'>
-          <div
-            className={`${containerStyle()} cursor-pointer`}
-            onClick={handleUserIconClick}
-          >
-            <FaceSvg />
-          </div>
-          <p className={`${textStyle()}`}>Profile</p>
-
-        </NavLink> */}
-
         <div className={isActiveStyle({ isActive: isProfilePage })}>
           <div
             className={`${containerStyle()} cursor-pointer`}
@@ -106,9 +84,7 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
           <p className={`${textStyle()}`}>Profile</p>
         </div>
       </nav>
-      {/* 
-<h1></h1>
-*/}
+
       <AuthPrompt
         isOpen={isAuthPromptOpen}
         onClose={() => setIsAuthPromptOpen(false)}
