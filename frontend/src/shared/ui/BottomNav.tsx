@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import clsx from "clsx";
 
 import { AuthPrompt } from "./AuthPrompt";
@@ -11,19 +11,27 @@ import { FaceSvg } from "./bottomNavImg/FaceSvg";
 import { useSelector } from "react-redux";
 import { selectIsAuthenticated } from "@/app/store/slices/authSlice";
 
+// import { useNavigate } from 'react-router-dom';
+// import as * from 'react-router-dom'
+
+
 interface BottomNavProps {
   isProfilePage?: boolean;
 }
 
 export function BottomNav({ isProfilePage = false }: BottomNavProps) {
+  const navig = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
 
   const handleUserIconClick = () => {
-    if (!isAuthenticated) {
+    if (isAuthenticated) {
       setIsAuthPromptOpen(true);
     } else {
-      console.log("User is logged in - navigate to profile");
+
+      navig('/profile')
+      // const navigate = useNavigate();
+      // navigate('/chats');
     }
   };
 
@@ -75,6 +83,18 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
           </div>
           <p className={textStyle()}>Chats</p>
         </NavLink>
+
+
+        {/* <NavLink className={isActiveStyle} to='/profile'>
+          <div
+            className={`${containerStyle()} cursor-pointer`}
+            onClick={handleUserIconClick}
+          >
+            <FaceSvg />
+          </div>
+          <p className={`${textStyle()}`}>Profile</p>
+
+        </NavLink> */}
 
         <div className={isActiveStyle({ isActive: isProfilePage })}>
           <div
