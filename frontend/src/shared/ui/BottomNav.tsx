@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import clsx from "clsx";
-
 import { AuthPrompt } from "./AuthPrompt";
 import { HomeSvg } from "./bottomNavImg/HomeSvg";
 import { FavoritesSvg } from "./bottomNavImg/FavoritesSvg";
@@ -16,6 +15,7 @@ interface BottomNavProps {
 }
 
 export function BottomNav({ isProfilePage = false }: BottomNavProps) {
+  const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
 
@@ -23,14 +23,12 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
     if (!isAuthenticated) {
       setIsAuthPromptOpen(true);
     } else {
-      console.log("User is logged in - navigate to profile");
+      navigate('/profile')
     }
   };
 
   const containerStyle = () => clsx("pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]");
-
   const textStyle = () => clsx("text-[#E9EADB] font-[KyivType Sans]");
-
   const isActiveStyle = ({ isActive }: { isActive: boolean }) =>
     clsx(
       "flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]",
@@ -86,9 +84,7 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
           <p className={`${textStyle()}`}>Profile</p>
         </div>
       </nav>
-      {/* 
-<h1></h1>
-*/}
+
       <AuthPrompt
         isOpen={isAuthPromptOpen}
         onClose={() => setIsAuthPromptOpen(false)}
