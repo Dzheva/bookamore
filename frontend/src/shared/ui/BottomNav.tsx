@@ -23,7 +23,7 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
     if (!isAuthenticated) {
       setIsAuthPromptOpen(true);
     } else {
-      navigate('/profile')
+      navigate("/profile");
     }
   };
 
