@@ -5,7 +5,7 @@ import { BottomNav } from "@shared/ui/BottomNav";
 import type { OfferType, OfferStatus } from "@/types/entities/Offer.d.ts";
 import type { OfferWithBookRequest } from "@/types/entities/OfferWithBook.d.ts";
 import type { BookCondition } from "@/types/entities/Book.d.ts";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
@@ -76,7 +76,7 @@ const NewOfferPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex items-center border-b border-gray-200">
-        <NavBackBtn />
+        <BackButton />
         <h1 className="text-base sm:text-lg lg:text-xl font-semibold flex-1 text-center">
           Sell a book
         </h1>

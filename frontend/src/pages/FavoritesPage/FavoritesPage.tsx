@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { IoTrashOutline } from "react-icons/io5";
 import { BottomNav } from "@shared/ui/BottomNav";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 // Mock data для demonstration
 const mockFavorites = [
@@ -63,7 +63,7 @@ const FavoritesPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex items-center border-b border-gray-200">
-        <NavBackBtn />
+        <BackButton />
         <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold flex-1 text-center">
           My Favorites
         </h1>

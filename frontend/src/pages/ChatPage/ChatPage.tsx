@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { IoSend, IoAttach } from "react-icons/io5";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 // Mock data types
 interface Message {
@@ -362,7 +362,7 @@ const ChatPage: React.FC = () => {
     <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
       <div className="bg-white px-4 py-3 flex items-center border-b border-gray-200 flex-shrink-0">
-        <NavBackBtn />
+        <BackButton />
 
         {/* User info */}
         <div className="flex items-center flex-1">

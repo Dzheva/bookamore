@@ -19,7 +19,7 @@ import {
   getOffersByGenre,
   getSellerById,
 } from "../../shared/mocks/mockData";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 function Dots({
   count,
@@ -128,7 +128,7 @@ const OfferDetailsPage: React.FC = () => {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="px-4 sm:px-6 lg:px-8 py-3 flex items-center border-b border-gray-100">
-        <NavBackBtn />
+        <BackButton />
 
         <h1 className="text-base sm:text-lg lg:text-xl font-semibold flex-1 text-center">
           Book Details

@@ -9,7 +9,7 @@ import {
   createMockResponse,
 } from "../../shared/mocks/mockData";
 import type { QueryParams } from "../../types/entities/QueryParams";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 // Mock mode flag - set to true to use mocks instead of API
 const USE_MOCKS = true;
@@ -37,7 +37,7 @@ function PageHeader({ searchQuery }: PageHeaderProps) {
     <div className="bg-white border-b border-gray-200">
       {/* Top header */}
       <div className="flex items-center px-4 sm:px-6 lg:px-8 py-3">
-        <NavBackBtn />
+        <BackButton />
 
         <h1 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 flex-1 text-center">
           BookAmore
