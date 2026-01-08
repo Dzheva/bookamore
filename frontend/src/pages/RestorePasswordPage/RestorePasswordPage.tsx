@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 const RestorePasswordPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -18,7 +18,7 @@ const RestorePasswordPage: React.FC = () => {
     <div className="flex min-h-screen flex-col items-center bg-white">
       <div className="w-full max-w-sm">
         <div className="w-full pt-4 pb-2 px-4">
-          <NavBackBtn />
+          <BackButton />
         </div>
 
         <div className="px-6">

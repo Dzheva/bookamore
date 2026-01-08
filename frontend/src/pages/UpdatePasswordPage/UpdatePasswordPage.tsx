@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 const UpdatePasswordPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -38,7 +38,7 @@ const UpdatePasswordPage: React.FC = () => {
                         <IoChevronBack className='text-2xl' />
                     </button>
                 </div> */}
-        <NavBackBtn />
+        <BackButton />
 
         <div className="px-6">
           <div className="flex flex-col items-center">

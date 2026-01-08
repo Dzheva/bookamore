@@ -3,7 +3,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router";
 import { useRegisterMutation } from "@app/store/api/AuthApi";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 const SignUpPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -49,7 +49,7 @@ const SignUpPage: React.FC = () => {
                         <IoChevronBack className="text-2xl" />
                     </button>
                 </div> */}
-        <NavBackBtn />
+        <BackButton />
 
         <div className="px-6">
           <div className="flex flex-col items-center">

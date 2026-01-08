@@ -9,7 +9,7 @@ import {
   setLoading,
   selectIsLoading,
 } from "@app/store/slices/authSlice";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 const SignInPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -68,7 +68,7 @@ const SignInPage: React.FC = () => {
                         <IoChevronBack className="text-2xl" />
                     </button>
                 </div> */}
-        <NavBackBtn />
+        <BackButton />
 
         <div className="px-6">
           <div className="flex flex-col items-center">

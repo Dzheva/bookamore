@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { PinInput } from "@/shared/ui/PinInput";
-import NavBackBtn from "@/shared/ui/NavBackBtn";
+import BackButton from "@/shared/ui/BackButton";
 
 const VerificationCodePage: React.FC = () => {
   const [currentPin, setCurrentPin] = useState("");
@@ -25,7 +25,7 @@ const VerificationCodePage: React.FC = () => {
                         <IoChevronBack className='text-2xl' />
                     </button>
                 </div> */}
-        <NavBackBtn />
+        <BackButton />
 
         <div className="px-6">
           <div className="flex flex-col items-center">
