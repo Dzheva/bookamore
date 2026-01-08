@@ -14,7 +14,6 @@ services:
     restart: unless-stopped
 
   backend:
-    tty: true
     build:
       context: ./backend
       dockerfile: Dockerfile-prod
@@ -23,12 +22,9 @@ services:
     expose:
       - "8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://bookamore-db:5432/bookamore-db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-    volumes:
-      - ./backend:/app
-      - ~/.m2:/root/.m2
+      SPRING_DATASOURCE_URL: jdbc:postgresql://bookamore-db:5432/bookamore-db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
     networks:
       - app-network
 
