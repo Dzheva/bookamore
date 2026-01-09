@@ -4,7 +4,6 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx-prod.conf:/etc/nginx/nginx.conf:ro
       - uploads:/usr/share/nginx/html/uploads:ro
     depends_on:
       - backend
