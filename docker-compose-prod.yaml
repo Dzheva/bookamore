@@ -1,16 +1,4 @@
 services:
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-    volumes:
-      - uploads:/usr/share/nginx/html/uploads:ro
-    depends_on:
-      - backend
-    networks:
-      - app-network
-    restart: unless-stopped
-
   backend:
     build:
       context: ./backend
@@ -46,6 +34,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile-prod
+    ports:
+      - "80:80"  # Moved from the nginx service to here
+    volumes:
+      - uploads:/usr/share/nginx/html/uploads:ro # Matches your nginx 'alias'
+    depends_on:
+      - backend
     networks:
       - app-network
     restart: unless-stopped
