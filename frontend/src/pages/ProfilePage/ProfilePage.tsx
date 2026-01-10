@@ -8,7 +8,7 @@ const ProfilePage = () => {
         <BackButton />
 
         <h1 className="text-base sm:text-lg lg:text-xl font-semibold flex-1 text-center">
-          Book Details
+          Profile{" "}
         </h1>
         <div className="w-6 sm:w-8"></div>
       </div>
