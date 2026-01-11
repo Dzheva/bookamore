@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { IoTrashOutline } from "react-icons/io5";
 import { BottomNav } from "@shared/ui/BottomNav";
 import BackButton from "@/shared/ui/BackButton";
+import noImages from "@/assest/images/noImage.jpg";
 
 // Mock data для demonstration
 const mockFavorites = [
@@ -104,9 +105,7 @@ const FavoritesPage: React.FC = () => {
                         className="w-full h-full object-cover rounded-lg lg:rounded-t-lg lg:rounded-b-none"
                       />
                     ) : (
-                      <span className="text-xs text-gray-400 text-center px-1">
-                        No Image
-                      </span>
+                      <img src={noImages} alt="no Image" />
                     )}
                   </div>
 
