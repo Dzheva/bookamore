@@ -20,6 +20,7 @@ import {
   getSellerById,
 } from "../../shared/mocks/mockData";
 import BackButton from "@/shared/ui/BackButton";
+import noImages from "@/assest/images/noImage.jpg";
 
 function Dots({
   count,
@@ -143,7 +144,7 @@ const OfferDetailsPage: React.FC = () => {
           <div className="flex flex-col lg:flex-row lg:gap-8">
             {/* image */}
             <div className="w-full lg:w-1/3">
-              <div className="w-32 sm:w-40 lg:w-full flex-shrink-0 h-44 sm:h-56 lg:h-80 rounded-xl bg-gray-100 flex items-center justify-center mx-auto lg:mx-0">
+              <div className="w-32 sm:w-40 lg:w-full flex-shrink-0 h-44 sm:h-56 lg:h-80 rounded-xl   flex items-center justify-center mx-auto lg:mx-0">
                 {images.length > 0 && images[imgIndex] ? (
                   <img
                     src={images[imgIndex]}
@@ -151,9 +152,7 @@ const OfferDetailsPage: React.FC = () => {
                     className="w-full h-full object-cover rounded-xl"
                   />
                 ) : (
-                  <span className="text-2xl sm:text-4xl lg:text-6xl text-gray-400">
-                    ФОТО
-                  </span>
+                  <img src={noImages} alt="no Image" />
                 )}
               </div>
 
@@ -358,7 +357,7 @@ const OfferDetailsPage: React.FC = () => {
                     className="w-24 lg:w-full flex-shrink-0 cursor-pointer"
                     onClick={() => navigate(`/offers/${similarOffer.id}`)}
                   >
-                    <div className="w-full h-32 lg:h-40 xl:h-48 rounded-lg bg-gray-100 flex items-center justify-center mb-1 lg:mb-2">
+                    <div className="w-full h-32 lg:h-40 xl:h-48 rounded-lg flex items-center justify-center mb-1 lg:mb-2">
                       {similarOffer.book.images?.length > 0 &&
                       similarOffer.book.images[0] ? (
                         <img
@@ -367,9 +366,7 @@ const OfferDetailsPage: React.FC = () => {
                           className="w-full h-full object-cover rounded-lg"
                         />
                       ) : (
-                        <span className="text-xs text-gray-400 text-center px-1">
-                          {similarOffer.book.title}
-                        </span>
+                        <img src={noImages} alt="no Image" />
                       )}
                     </div>
                     <p className="text-xs lg:text-sm text-gray-600 truncate">
