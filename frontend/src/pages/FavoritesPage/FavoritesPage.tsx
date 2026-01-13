@@ -105,7 +105,11 @@ const FavoritesPage: React.FC = () => {
                         className="w-full h-full object-cover rounded-lg lg:rounded-t-lg lg:rounded-b-none"
                       />
                     ) : (
-                      <img src={noImages} alt="no Image" />
+                      <img
+                        src={noImages}
+                        alt="no Image"
+                        className="w-full h-full object-cover rounded-lg lg:rounded-t-lg lg:rounded-b-none"
+                      />
                     )}
                   </div>
 

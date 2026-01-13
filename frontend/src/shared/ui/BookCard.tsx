@@ -23,13 +23,14 @@ export function BookCard({ offer, onContact, onFavorite }: BookCardProps) {
   return (
     <div
       onClick={handleCardClick}
-      className="bg-white rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow
+      className="bg-white rounded-lg border border-gray-200 shadow-sm cursor-pointer 
+      hover:shadow-md transition-shadow
                  flex gap-3 sm:gap-4 p-3 sm:p-4 
                  lg:flex-col lg:gap-0 lg:p-0 lg:h-full"
     >
       {/* Book image */}
       <div
-        className="w-16 sm:w-20 h-20 sm:h-28 rounded flex-shrink-0
+        className="flex justify-center w-16 sm:w-20 h-20 sm:h-28 rounded flex-shrink-0
                       lg:w-full lg:h-48 xl:h-56 lg:rounded-t-lg lg:rounded-b-none"
       >
         {book.images?.[0] ? (
@@ -39,7 +40,11 @@ export function BookCard({ offer, onContact, onFavorite }: BookCardProps) {
             className="w-full h-full object-cover rounded lg:rounded-t-lg lg:rounded-b-none"
           />
         ) : (
-          <img src={noImages} alt="no Image" />
+          <img
+            src={noImages}
+            alt="no Image"
+            className="  h-full object-cover rounded lg:rounded-t-lg lg:rounded-b-none"
+          />
         )}
       </div>
 
