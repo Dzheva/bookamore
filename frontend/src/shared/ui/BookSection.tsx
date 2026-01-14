@@ -18,7 +18,8 @@ function BookCard({ condition, offer }: BookCardProps) {
 
   return (
     <div
-      className=" rounded-lg aspect-[3/4] min-w-[100px] sm:min-w-[120px] lg:min-w-[140px]  relative cursor-pointer hover:opacity-80 transition-opacity"
+      className=" rounded-lg aspect-[3/4] w-[100px] sm:w-[120px] lg:w-[140px] 
+       relative cursor-pointer hover:opacity-80 transition-opacity"
       onClick={handleClick}
     >
       {/* Book image */}
@@ -29,9 +30,11 @@ function BookCard({ condition, offer }: BookCardProps) {
           className="w-full h-full rounded-lg object-cover"
         />
       ) : (
-        <div className="w-full h-full rounded-lg ">
-          <img src={noImages} alt="no Image" />
-        </div>
+        <img
+          src={noImages}
+          alt="no Image"
+          className="w-full h-full rounded-lg object-cover"
+        />
       )}
 
       {/* Book condition badge */}
