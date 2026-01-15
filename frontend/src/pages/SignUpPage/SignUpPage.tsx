@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router";
 import { useRegisterMutation } from "@app/store/api/AuthApi";
 import BackButton from "@/shared/ui/BackButton";
+import { PasswordValidator } from "../../modules/auth/ui/PasswordValidator";
 
 const SignUpPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -57,7 +58,6 @@ const SignUpPage: React.FC = () => {
               Create account
             </h2>
             <p className="mb-10 text-center text-sm text-gray-500">
-              {/* eget Morbi lacus vel placerat fringilla varius quis risus enim */}
             </p>
           </div>
 
@@ -103,6 +103,10 @@ const SignUpPage: React.FC = () => {
                   required
                   minLength={6}
                 />
+                 <div className="mb-4">
+                  {/* Наш новий модуль підказки */}
+                  <PasswordValidator password={password} />
+                </div>
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
