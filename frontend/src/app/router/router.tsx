@@ -12,7 +12,10 @@ import { AllChatsPage } from "@pages/AllChatsPage/AllChatsPage.tsx";
 import { ChatPage } from "@pages/ChatPage/ChatPage.tsx";
 import { GenreResultsPage } from "@pages/GenreResultsPage/GenreResultsPage.tsx";
 import { NewOfferPage } from "@pages/NewOfferPage/NewOfferPage.tsx";
-import ProfilePage from "@/pages/ProfilePage/ProfilePage";
+import  ProfilePage  from  "@/pages/ProfilePage/ProfilePage";
+import  MyAnnouncementsPage  from  "@/pages/MyAnnouncementsPage/MyAnnouncementsPage";   
+import  OrdersPage  from  "@/pages/OrdersPage/OrdersPage";
+import  SettingsPage  from  "@/pages/SettingsPage/SettingsPage";
 
 
 export const router = createBrowserRouter([
@@ -71,5 +74,18 @@ export const router = createBrowserRouter([
     {
         path: '/profile',
         element: <ProfilePage />
+    },
+     {
+        path: '/my-announcements',
+        element: <MyAnnouncementsPage />
+    },
+    {
+        path: '/orders',
+        element: <OrdersPage />
+    },
+    {
+        path: '/settings',
+        element: <SettingsPage />
     }
+   
 ])
