@@ -5,25 +5,27 @@ interface PasswordValidatorProps {
   password: string;
 }
 
-export const PasswordValidator: React.FC<PasswordValidatorProps> = ({ password }) => {
+export const PasswordValidator: React.FC<PasswordValidatorProps> = ({
+  password,
+}) => {
   // Логіка перевірки збігається з вашим Backend (@Pattern)
   const requirements = [
-    { 
-      label: "At least 6 characters", 
-      isValid: password.length >= 6 
+    {
+      label: 'At least 6 characters',
+      isValid: password.length >= 6,
     },
-    { 
-      label: "At least 1 uppercase letter (A-Z)", 
-      isValid: /[A-Z]/.test(password) 
+    {
+      label: 'At least 1 uppercase letter (A-Z)',
+      isValid: /[A-Z]/.test(password),
     },
-    { 
-      label: "At least 1 lowercase letter (a-z)", 
-      isValid: /[a-z]/.test(password) 
+    {
+      label: 'At least 1 lowercase letter (a-z)',
+      isValid: /[a-z]/.test(password),
     },
     // Можна додати спецсимволи, якщо вирішите їх вимагати пізніше
-    { 
-      label: "Supports special characters (!@#$%)", 
-      isValid: /[!@#$%^&*(),.?":{}|<>]/.test(password) 
+    {
+      label: 'Supports special characters (!@#$%)',
+      isValid: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     },
   ];
 
@@ -36,10 +38,10 @@ export const PasswordValidator: React.FC<PasswordValidatorProps> = ({ password }
       </p>
       <div className="grid grid-cols-1 gap-1.5">
         {requirements.map((req, index) => (
-          <ValidationRequirement 
-            key={index} 
-            label={req.label} 
-            isValid={req.isValid} 
+          <ValidationRequirement
+            key={index}
+            label={req.label}
+            isValid={req.isValid}
           />
         ))}
       </div>

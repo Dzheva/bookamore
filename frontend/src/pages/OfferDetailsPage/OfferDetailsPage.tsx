@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router";
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router';
 import {
   IoChevronBack,
   IoHeart,
@@ -9,18 +9,18 @@ import {
   IoChevronUp,
   IoSwapHorizontalOutline,
   IoChevronForward,
-} from "react-icons/io5";
+} from 'react-icons/io5';
 
-import { useGetOfferWithBookByIdQuery } from "../../app/store/api/OffersApi";
-import { BottomNav } from "../../shared/ui/BottomNav";
+import { useGetOfferWithBookByIdQuery } from '../../app/store/api/OffersApi';
+import { BottomNav } from '../../shared/ui/BottomNav';
 import {
   getOfferWithBookById,
   createMockOfferResponse,
   getOffersByGenre,
   getSellerById,
-} from "../../shared/mocks/mockData";
-import BackButton from "@/shared/ui/BackButton";
-import noImages from "@/assest/images/noImage.jpg";
+} from '../../shared/mocks/mockData';
+import BackButton from '@/shared/ui/BackButton';
+import noImages from '@/assest/images/noImage.jpg';
 
 function Dots({
   count,
@@ -39,8 +39,8 @@ function Dots({
           onClick={() => onPick(i)}
           className={`w-2.5 h-2.5 rounded-full border ${
             i === active
-              ? "bg-gray-800 border-gray-800"
-              : "bg-white border-gray-400"
+              ? 'bg-gray-800 border-gray-800'
+              : 'bg-white border-gray-400'
           }`}
           aria-label={`go to image ${i + 1}`}
         />
@@ -57,7 +57,7 @@ const OfferDetailsPage: React.FC = () => {
   const [imgIndex, setImgIndex] = useState(0);
 
   // Try API first, fallback to mocks only on error
-  const apiResult = useGetOfferWithBookByIdQuery(offerId || "", {
+  const apiResult = useGetOfferWithBookByIdQuery(offerId || '', {
     skip: !offerId,
   });
 
@@ -79,7 +79,7 @@ const OfferDetailsPage: React.FC = () => {
   const offer = finalData;
 
   const handleFavoriteToggle = () => setIsFavorite((v) => !v);
-  const handleContact = () => console.log("Contact seller for offer:", offerId);
+  const handleContact = () => console.log('Contact seller for offer:', offerId);
 
   if (isLoading) {
     return (
@@ -121,8 +121,8 @@ const OfferDetailsPage: React.FC = () => {
   // Get seller information
   const seller = getSellerById(offer.sellerId) || {
     id: 0,
-    name: "Unknown Seller",
-    avatar: "",
+    name: 'Unknown Seller',
+    avatar: '',
   };
 
   return (
@@ -199,7 +199,7 @@ const OfferDetailsPage: React.FC = () => {
               </div>
 
               <p className="text-sm sm:text-base lg:text-lg text-gray-500 mb-4 font-semibold">
-                {book.authors?.join(", ")}
+                {book.authors?.join(', ')}
               </p>
 
               {/* price + exchange button */}
@@ -207,8 +207,8 @@ const OfferDetailsPage: React.FC = () => {
                 <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
                   {offer.price} UAH
                 </p>
-                {(offer.type === "SELL_EXCHANGE" ||
-                  offer.type === "EXCHANGE") && (
+                {(offer.type === 'SELL_EXCHANGE' ||
+                  offer.type === 'EXCHANGE') && (
                   <div className="flex items-center text-sm lg:text-base text-gray-600 bg-gray-50 px-2 py-1 lg:px-3 lg:py-2 rounded">
                     <IoSwapHorizontalOutline className="w-4 h-4 lg:w-5 lg:h-5 mr-1 text-gray-500" />
                     Exchange
@@ -267,7 +267,7 @@ const OfferDetailsPage: React.FC = () => {
               <div className="flex flex-wrap gap-2">
                 {(book.genres?.length
                   ? book.genres
-                  : ["Fantasy", "Fantasy"]
+                  : ['Fantasy', 'Fantasy']
                 ).map((g: string, i: number) => (
                   <span
                     key={`${g}-${i}`}
@@ -302,10 +302,10 @@ const OfferDetailsPage: React.FC = () => {
           {isAboutOpen && (
             <div className="mt-2 lg:mt-4 text-sm lg:text-base text-gray-600">
               <p>
-                {book.description || "No description available for this book."}
+                {book.description || 'No description available for this book.'}
               </p>
               <p className="text-xs lg:text-sm font-semibold text-gray-800 mt-4">
-                Date added: {new Date().toLocaleDateString("en-GB")}
+                Date added: {new Date().toLocaleDateString('en-GB')}
               </p>
             </div>
           )}
@@ -329,9 +329,9 @@ const OfferDetailsPage: React.FC = () => {
               ) : (
                 <span className="text-sm lg:text-base font-medium text-gray-500">
                   {seller.name
-                    .split(" ")
+                    .split(' ')
                     .map((n) => n[0])
-                    .join("")
+                    .join('')
                     .slice(0, 2)}
                 </span>
               )}

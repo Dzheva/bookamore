@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router";
-import type { OfferWithBook } from "@/types/entities/OfferWithBook";
-import noImages from "@/assest/images/noImage.jpg";
+import { useNavigate } from 'react-router';
+import type { OfferWithBook } from '@/types/entities/OfferWithBook';
+import noImages from '@/assest/images/noImage.jpg';
 type BookCardProps = {
   offer: OfferWithBook;
   onContact: () => void;
@@ -56,7 +56,7 @@ export function BookCard({ offer, onContact, onFavorite }: BookCardProps) {
             {book.title}
           </h3>
           <p className="text-gray-600 text-xs sm:text-sm mb-1 truncate lg:text-sm lg:mb-2">
-            by {book.authors.join(", ")}
+            by {book.authors.join(', ')}
           </p>
           <p className="text-xs sm:text-sm text-gray-600 mb-2 lg:text-sm lg:mb-3">
             Condition: {book.condition}
@@ -72,7 +72,7 @@ export function BookCard({ offer, onContact, onFavorite }: BookCardProps) {
                 {price} UAH
               </span>
             </div>
-            {type === "EXCHANGE" && (
+            {type === 'EXCHANGE' && (
               <button className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 bg-gray-100 rounded-full text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors lg:self-start">
                 <svg
                   className="w-3 h-3 sm:w-4 sm:h-4"

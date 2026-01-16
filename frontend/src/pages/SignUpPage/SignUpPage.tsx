@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
-import { useNavigate } from "react-router";
-import { useRegisterMutation } from "@app/store/api/AuthApi";
-import BackButton from "@/shared/ui/BackButton";
-import { PasswordValidator } from "../../modules/auth/ui/PasswordValidator";
+import React, { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc';
+import { useNavigate } from 'react-router';
+import { useRegisterMutation } from '@app/store/api/AuthApi';
+import BackButton from '@/shared/ui/BackButton';
+import { PasswordValidator } from '../../modules/auth/ui/PasswordValidator';
 
 const SignUpPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
   const [register, { isLoading, error }] = useRegisterMutation();
 
@@ -29,16 +29,16 @@ const SignUpPage: React.FC = () => {
     if (!name || !email || !password || !confirmPassword) return;
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      alert('Passwords do not match');
       return;
     }
 
     try {
       const result = await register({ name, email, password }).unwrap();
       alert(`Registration successful! ${result.message}`);
-      navigate("/sign-in");
+      navigate('/sign-in');
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error('Registration failed:', error);
     }
   };
 
@@ -57,8 +57,7 @@ const SignUpPage: React.FC = () => {
             <h2 className="mb-2 text-3xl font-bold text-gray-800">
               Create account
             </h2>
-            <p className="mb-10 text-center text-sm text-gray-500">
-            </p>
+            <p className="mb-10 text-center text-sm text-gray-500"></p>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -95,7 +94,7 @@ const SignUpPage: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={passwordVisible ? "text" : "password"}
+                  type={passwordVisible ? 'text' : 'password'}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -103,7 +102,7 @@ const SignUpPage: React.FC = () => {
                   required
                   minLength={6}
                 />
-                 <div className="mb-4">
+                <div className="mb-4">
                   {/* Наш новий модуль підказки */}
                   <PasswordValidator password={password} />
                 </div>
@@ -123,7 +122,7 @@ const SignUpPage: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={confirmPasswordVisible ? "text" : "password"}
+                  type={confirmPasswordVisible ? 'text' : 'password'}
                   placeholder="Confirm password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -163,23 +162,23 @@ const SignUpPage: React.FC = () => {
               disabled={isLoading}
               className="w-full rounded-lg bg-gray-800 p-3 font-medium text-white transition-colors hover:bg-gray-900 disabled:opacity-50"
             >
-              {isLoading ? "Signing up..." : "Sign Up"}
+              {isLoading ? 'Signing up...' : 'Sign Up'}
             </button>
           </form>
 
           <p className="mt-8 text-center text-xs text-gray-500">
-            By continuing, you agree to our{" "}
+            By continuing, you agree to our{' '}
             <a href="#" className="font-semibold text-gray-800 underline">
               Terms
-            </a>{" "}
-            and{" "}
+            </a>{' '}
+            and{' '}
             <a href="#" className="font-semibold text-gray-800 underline">
               Privacy Policy
             </a>
           </p>
 
           <div className="mt-6 mb-10 text-center text-sm">
-            <span className="text-gray-500">Already have an account?</span>{" "}
+            <span className="text-gray-500">Already have an account?</span>{' '}
             <a href="/sign-in" className="font-bold text-gray-800">
               Log in
             </a>

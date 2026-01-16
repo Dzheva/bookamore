@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
-import { useAddOfferWithBookMutation } from "@app/store/api/OffersApi";
-import { BottomNav } from "@shared/ui/BottomNav";
-import type { OfferType, OfferStatus } from "@/types/entities/Offer.d.ts";
-import type { OfferWithBookRequest } from "@/types/entities/OfferWithBook.d.ts";
-import type { BookCondition } from "@/types/entities/Book.d.ts";
-import BackButton from "@/shared/ui/BackButton";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useAddOfferWithBookMutation } from '@app/store/api/OffersApi';
+import { BottomNav } from '@shared/ui/BottomNav';
+import type { OfferType, OfferStatus } from '@/types/entities/Offer.d.ts';
+import type { OfferWithBookRequest } from '@/types/entities/OfferWithBook.d.ts';
+import type { BookCondition } from '@/types/entities/Book.d.ts';
+import BackButton from '@/shared/ui/BackButton';
 
 const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,12 +14,12 @@ const NewOfferPage: React.FC = () => {
 
   // Form state
   const [formData, setFormData] = useState({
-    title: "",
-    author: "",
-    condition: "NEW" as BookCondition,
-    dealType: "SELL" as OfferType,
-    price: "",
-    description: "",
+    title: '',
+    author: '',
+    condition: 'NEW' as BookCondition,
+    dealType: 'SELL' as OfferType,
+    price: '',
+    description: '',
     photos: [] as File[],
   });
 
@@ -40,14 +40,14 @@ const NewOfferPage: React.FC = () => {
     e.preventDefault();
 
     if (!formData.title || !formData.author || !formData.price) {
-      alert("Please fill in all required fields");
+      alert('Please fill in all required fields');
       return;
     }
 
     try {
       const offerWithBookRequest: OfferWithBookRequest = {
         type: formData.dealType,
-        status: "OPEN" as OfferStatus,
+        status: 'OPEN' as OfferStatus,
         description: formData.description,
         price: parseFloat(formData.price),
         previewImage: formData.photos[0] || null,
@@ -55,7 +55,7 @@ const NewOfferPage: React.FC = () => {
           title: formData.title,
           yearOfRelease: new Date().getFullYear(), // Default to current year
           description: formData.description,
-          isbn: "", // Optional
+          isbn: '', // Optional
           condition: formData.condition,
           authors: [formData.author],
           genres: [], // Empty for now
@@ -67,8 +67,8 @@ const NewOfferPage: React.FC = () => {
       const result = await addOfferWithBook(offerWithBookRequest).unwrap();
       navigate(`/offers/${result.id}`);
     } catch (error) {
-      console.error("Error creating offer:", error);
-      alert("Failed to create offer. Please try again.");
+      console.error('Error creating offer:', error);
+      alert('Failed to create offer. Please try again.');
     }
   };
 
@@ -94,7 +94,7 @@ const NewOfferPage: React.FC = () => {
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => handleInputChange("title", e.target.value)}
+              onChange={(e) => handleInputChange('title', e.target.value)}
               placeholder="Babel"
               className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               required
@@ -109,7 +109,7 @@ const NewOfferPage: React.FC = () => {
             <input
               type="text"
               value={formData.author}
-              onChange={(e) => handleInputChange("author", e.target.value)}
+              onChange={(e) => handleInputChange('author', e.target.value)}
               placeholder="Rebecca Kuang"
               className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               required
@@ -124,7 +124,7 @@ const NewOfferPage: React.FC = () => {
             <select
               value={formData.condition}
               onChange={(e) =>
-                handleInputChange("condition", e.target.value as BookCondition)
+                handleInputChange('condition', e.target.value as BookCondition)
               }
               className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none text-sm sm:text-base"
             >
@@ -145,9 +145,9 @@ const NewOfferPage: React.FC = () => {
                   type="radio"
                   name="dealType"
                   value="SELL"
-                  checked={formData.dealType === "SELL"}
+                  checked={formData.dealType === 'SELL'}
                   onChange={(e) =>
-                    handleInputChange("dealType", e.target.value as OfferType)
+                    handleInputChange('dealType', e.target.value as OfferType)
                   }
                   className="mr-3 text-blue-600 focus:ring-blue-500 w-4 h-4 sm:w-5 sm:h-5"
                 />
@@ -160,9 +160,9 @@ const NewOfferPage: React.FC = () => {
                   type="radio"
                   name="dealType"
                   value="EXCHANGE"
-                  checked={formData.dealType === "EXCHANGE"}
+                  checked={formData.dealType === 'EXCHANGE'}
                   onChange={(e) =>
-                    handleInputChange("dealType", e.target.value as OfferType)
+                    handleInputChange('dealType', e.target.value as OfferType)
                   }
                   className="mr-3 text-blue-600 focus:ring-blue-500 w-4 h-4 sm:w-5 sm:h-5"
                 />
@@ -175,9 +175,9 @@ const NewOfferPage: React.FC = () => {
                   type="radio"
                   name="dealType"
                   value="SELL_EXCHANGE"
-                  checked={formData.dealType === "SELL_EXCHANGE"}
+                  checked={formData.dealType === 'SELL_EXCHANGE'}
                   onChange={(e) =>
-                    handleInputChange("dealType", e.target.value as OfferType)
+                    handleInputChange('dealType', e.target.value as OfferType)
                   }
                   className="mr-3 text-blue-600 focus:ring-blue-500 w-4 h-4 sm:w-5 sm:h-5"
                 />
@@ -194,7 +194,7 @@ const NewOfferPage: React.FC = () => {
             <input
               type="number"
               value={formData.price}
-              onChange={(e) => handleInputChange("price", e.target.value)}
+              onChange={(e) => handleInputChange('price', e.target.value)}
               placeholder="250"
               className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
               required
@@ -210,7 +210,7 @@ const NewOfferPage: React.FC = () => {
             </label>
             <textarea
               value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
+              onChange={(e) => handleInputChange('description', e.target.value)}
               placeholder="Used, in good condition..."
               rows={4}
               className="w-full px-3 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base"
@@ -264,7 +264,7 @@ const NewOfferPage: React.FC = () => {
             disabled={isSubmitting}
             className="w-full py-3 sm:py-4 lg:py-5 bg-gray-900 text-white font-semibold rounded-lg hover:bg-black transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg lg:text-xl"
           >
-            {isSubmitting ? "Publishing..." : "Publish"}
+            {isSubmitting ? 'Publishing...' : 'Publish'}
           </button>
         </form>
       </div>

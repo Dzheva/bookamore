@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { FaTrashAlt, FaEdit, FaSyncAlt } from "react-icons/fa";
-import BackButton from "@/shared/ui/BackButton";
-import { BottomNav } from "@/shared/ui/BottomNav";
+import { useNavigate } from 'react-router-dom';
+import { FaTrashAlt, FaEdit, FaSyncAlt } from 'react-icons/fa';
+import BackButton from '@/shared/ui/BackButton';
+import { BottomNav } from '@/shared/ui/BottomNav';
 
 // Типізація для оголошення
 interface Announcement {
@@ -22,12 +22,12 @@ const MyAnnouncementsPage = () => {
   const availableBooks: Announcement[] = [
     {
       id: 1,
-      title: "Babel",
-      author: "Rebecca Kuang",
-      condition: "New",
-      price: "300 UAH",
+      title: 'Babel',
+      author: 'Rebecca Kuang',
+      condition: 'New',
+      price: '300 UAH',
       image:
-        "https://m.media-amazon.com/images/I/71uM-S699NL._AC_UF1000,1000_QL80_.jpg", // Приклад обкладинки
+        'https://m.media-amazon.com/images/I/71uM-S699NL._AC_UF1000,1000_QL80_.jpg', // Приклад обкладинки
       isAvailable: true,
     },
   ];
@@ -35,12 +35,12 @@ const MyAnnouncementsPage = () => {
   const unavailableBooks: Announcement[] = [
     {
       id: 2,
-      title: "Babel",
-      author: "Rebecca Kuang",
-      condition: "New",
-      price: "300 UAH",
+      title: 'Babel',
+      author: 'Rebecca Kuang',
+      condition: 'New',
+      price: '300 UAH',
       image:
-        "https://m.media-amazon.com/images/I/71uM-S699NL._AC_UF1000,1000_QL80_.jpg",
+        'https://m.media-amazon.com/images/I/71uM-S699NL._AC_UF1000,1000_QL80_.jpg',
       isAvailable: false,
       canExchange: true,
     },
@@ -60,7 +60,7 @@ const MyAnnouncementsPage = () => {
       <div className="px-4 py-6">
         {/* Кнопка додавання нової книги */}
         <button
-          onClick={() => navigate("/offers/new")}
+          onClick={() => navigate('/offers/new')}
           className="w-full bg-[#004261] text-white py-4 rounded-xl font-semibold text-lg mb-8 shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
         >
           Add a new book
@@ -97,12 +97,12 @@ const MyAnnouncementsPage = () => {
 // Допоміжний компонент картки оголошення
 const AnnouncementCard = ({ book }: { book: Announcement }) => {
   const cardColor = book.isAvailable
-    ? "border-[#A1D9D6] bg-[#F2FBFB]"
-    : "border-[#FFD9A1] bg-[#FFF9F2]";
-  const accentColor = book.isAvailable ? "text-[#008080]" : "text-[#E68A00]";
+    ? 'border-[#A1D9D6] bg-[#F2FBFB]'
+    : 'border-[#FFD9A1] bg-[#FFF9F2]';
+  const accentColor = book.isAvailable ? 'text-[#008080]' : 'text-[#E68A00]';
   const btnBorderColor = book.isAvailable
-    ? "border-[#A1D9D6]"
-    : "border-[#FFD9A1]";
+    ? 'border-[#A1D9D6]'
+    : 'border-[#FFD9A1]';
 
   return (
     <div className="flex flex-col">
@@ -136,16 +136,16 @@ const AnnouncementCard = ({ book }: { book: Announcement }) => {
           {/* Перемикач статусу */}
           <div className="flex items-center justify-end gap-2 mb-2">
             <span className="text-xs font-medium text-slate-500">
-              {book.isAvailable ? "Available" : "Unavailable"}
+              {book.isAvailable ? 'Available' : 'Unavailable'}
             </span>
             <div
               className={`w-10 h-5 rounded-full relative p-1 ${
-                book.isAvailable ? "bg-[#004261]" : "bg-slate-300"
+                book.isAvailable ? 'bg-[#004261]' : 'bg-slate-300'
               }`}
             >
               <div
                 className={`w-3 h-3 bg-white rounded-full transition-all ${
-                  book.isAvailable ? "translate-x-5" : "translate-x-0"
+                  book.isAvailable ? 'translate-x-5' : 'translate-x-0'
                 }`}
               />
             </div>

@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { FiChevronUp } from "react-icons/fi";
+import { useEffect, useRef, useState } from 'react';
+import { FiChevronUp } from 'react-icons/fi';
 
-export type SortOption = "relevance" | "lowest-price" | "highest-price";
+export type SortOption = 'relevance' | 'lowest-price' | 'highest-price';
 
 interface SortDropdownProps {
   isOpen: boolean;
@@ -11,9 +11,9 @@ interface SortDropdownProps {
 }
 
 const sortOptions = [
-  { value: "relevance" as const, label: "Relevance" },
-  { value: "lowest-price" as const, label: "Lowest Price" },
-  { value: "highest-price" as const, label: "Highest Price" },
+  { value: 'relevance' as const, label: 'Relevance' },
+  { value: 'lowest-price' as const, label: 'Lowest Price' },
+  { value: 'highest-price' as const, label: 'Highest Price' },
 ];
 
 export function SortDropdown({
@@ -24,7 +24,7 @@ export function SortDropdown({
 }: SortDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState("right-0");
+  const [dropdownPosition, setDropdownPosition] = useState('right-0');
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -33,8 +33,8 @@ export function SortDropdown({
     };
 
     checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Adjust dropdown position based on screen space
@@ -46,7 +46,7 @@ export function SortDropdown({
 
       // If dropdown goes off screen to the right, position it to the left
       if (rect.right > viewportWidth - 16) {
-        setDropdownPosition("right-0");
+        setDropdownPosition('right-0');
       }
     }
   }, [isOpen]);
@@ -68,22 +68,22 @@ export function SortDropdown({
     };
 
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         onClose();
       }
     };
 
     if (isOpen) {
       // Handle both mouse and touch events for better mobile support
-      document.addEventListener("mousedown", handleOutsideClick);
-      document.addEventListener("touchstart", handleOutsideClick);
-      document.addEventListener("keydown", handleEscKey);
+      document.addEventListener('mousedown', handleOutsideClick);
+      document.addEventListener('touchstart', handleOutsideClick);
+      document.addEventListener('keydown', handleEscKey);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-      document.removeEventListener("touchstart", handleOutsideClick);
-      document.removeEventListener("keydown", handleEscKey);
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+      document.removeEventListener('keydown', handleEscKey);
     };
   }, [isOpen, onClose]);
 
@@ -93,7 +93,7 @@ export function SortDropdown({
     <div
       ref={dropdownRef}
       className={`absolute top-full ${dropdownPosition} mt-2 w-48 sm:w-52 bg-white border border-gray-200 rounded-3xl shadow-xl z-50 ${
-        isMobile ? "max-w-[calc(100vw-2rem)]" : ""
+        isMobile ? 'max-w-[calc(100vw-2rem)]' : ''
       }`}
       role="menu"
       aria-orientation="vertical"
@@ -115,29 +115,29 @@ export function SortDropdown({
             onClick={() => handleSortChange(option.value)}
             className={`
               w-full text-left px-4 py-3 text-sm transition-colors flex items-center
-              ${isMobile ? "min-h-[44px]" : "py-2"} 
-              ${isMobile ? "active:bg-gray-100" : "hover:bg-gray-50"}
+              ${isMobile ? 'min-h-[44px]' : 'py-2'} 
+              ${isMobile ? 'active:bg-gray-100' : 'hover:bg-gray-50'}
               ${
                 selectedSort === option.value
-                  ? "text-gray-900 font-medium bg-gray-50"
-                  : "text-gray-700"
+                  ? 'text-gray-900 font-medium bg-gray-50'
+                  : 'text-gray-700'
               }
-              ${index === sortOptions.length - 1 ? "rounded-b-3xl" : ""}
+              ${index === sortOptions.length - 1 ? 'rounded-b-3xl' : ''}
             `}
             role="menuitem"
           >
             <div
               className={`w-4 h-4 rounded-full border-2 mr-3 flex items-center justify-center ${
                 selectedSort === option.value
-                  ? "border-gray-800"
-                  : "border-gray-300"
+                  ? 'border-gray-800'
+                  : 'border-gray-300'
               }`}
             >
               {selectedSort === option.value && (
                 <div className="w-2 h-2 bg-gray-800 rounded-full"></div>
               )}
             </div>
-            <span className={`${isMobile ? "text-base" : "text-sm"}`}>
+            <span className={`${isMobile ? 'text-base' : 'text-sm'}`}>
               {option.label}
             </span>
           </button>

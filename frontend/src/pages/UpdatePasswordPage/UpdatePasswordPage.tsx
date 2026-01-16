@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import BackButton from "@/shared/ui/BackButton";
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import BackButton from '@/shared/ui/BackButton';
 
 const UpdatePasswordPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
@@ -23,11 +23,11 @@ const UpdatePasswordPage: React.FC = () => {
     if (!password || !confirmPassword) return;
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      alert('Passwords do not match');
       return;
     }
 
-    navigate("/");
+    navigate('/');
   };
 
   return (
@@ -58,7 +58,7 @@ const UpdatePasswordPage: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={passwordVisible ? "text" : "password"}
+                  type={passwordVisible ? 'text' : 'password'}
                   placeholder="New Password"
                   value={password}
                   onChange={({ target }) => setPassword(target.value)}
@@ -82,7 +82,7 @@ const UpdatePasswordPage: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={confirmPasswordVisible ? "text" : "password"}
+                  type={confirmPasswordVisible ? 'text' : 'password'}
                   placeholder="Confirm password"
                   value={confirmPassword}
                   onChange={({ target }) => setConfirmPassword(target.value)}

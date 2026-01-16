@@ -1,5 +1,5 @@
-import BackButton from "@/shared/ui/BackButton";
-import { BottomNav } from "@/shared/ui/BottomNav";
+import BackButton from '@/shared/ui/BackButton';
+import { BottomNav } from '@/shared/ui/BottomNav';
 
 // Типізація для замовлення
 interface OrderItem {
@@ -10,7 +10,7 @@ interface OrderItem {
   condition: string;
   price: string;
   image: string;
-  status: "Reserved" | "Completed";
+  status: 'Reserved' | 'Completed';
 }
 
 const OrdersPage = () => {
@@ -18,25 +18,25 @@ const OrdersPage = () => {
   const orders: OrderItem[] = [
     {
       id: 1,
-      date: "21.03.2025",
-      title: "Babel",
-      author: "Rebecca Kuang",
-      condition: "New",
-      price: "300 UAH",
+      date: '21.03.2025',
+      title: 'Babel',
+      author: 'Rebecca Kuang',
+      condition: 'New',
+      price: '300 UAH',
       image:
-        "https://m.media-amazon.com/images/I/71uM-S699NL._AC_UF1000,1000_QL80_.jpg",
-      status: "Reserved",
+        'https://m.media-amazon.com/images/I/71uM-S699NL._AC_UF1000,1000_QL80_.jpg',
+      status: 'Reserved',
     },
     {
       id: 2,
-      date: "16.01.2025",
-      title: "Babel",
-      author: "Rebecca Kuang",
-      condition: "New",
-      price: "300 UAH",
+      date: '16.01.2025',
+      title: 'Babel',
+      author: 'Rebecca Kuang',
+      condition: 'New',
+      price: '300 UAH',
       image:
-        "https://m.media-amazon.com/images/I/71uM-S699NL._AC_UF1000,1000_QL80_.jpg",
-      status: "Completed",
+        'https://m.media-amazon.com/images/I/71uM-S699NL._AC_UF1000,1000_QL80_.jpg',
+      status: 'Completed',
     },
   ];
 
@@ -75,13 +75,13 @@ const OrdersPage = () => {
 
 // Допоміжний компонент картки
 const OrderCard = ({ order }: { order: OrderItem }) => {
-  const isReserved = order.status === "Reserved";
+  const isReserved = order.status === 'Reserved';
 
   // Стилізація залежно від статусу
-  const borderColor = isReserved ? "border-[#A1D9D6]" : "border-[#FFD9A1]";
+  const borderColor = isReserved ? 'border-[#A1D9D6]' : 'border-[#FFD9A1]';
   const badgeColor = isReserved
-    ? "bg-[#E6F4F4] text-[#008080]"
-    : "bg-gray-100 text-slate-500";
+    ? 'bg-[#E6F4F4] text-[#008080]'
+    : 'bg-gray-100 text-slate-500';
 
   return (
     <div

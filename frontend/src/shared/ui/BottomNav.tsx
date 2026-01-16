@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { NavLink, useNavigate } from "react-router";
-import clsx from "clsx";
-import { AuthPrompt } from "./AuthPrompt";
-import { HomeSvg } from "./bottomNavImg/HomeSvg";
-import { FavoritesSvg } from "./bottomNavImg/FavoritesSvg";
-import { SellSvg } from "./bottomNavImg/SellSvg";
-import { ChatsSvg } from "./bottomNavImg/ChatsSvg";
-import { FaceSvg } from "./bottomNavImg/FaceSvg";
-import { useSelector } from "react-redux";
-import { selectIsAuthenticated } from "@/app/store/slices/authSlice";
+import { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router';
+import clsx from 'clsx';
+import { AuthPrompt } from './AuthPrompt';
+import { HomeSvg } from './bottomNavImg/HomeSvg';
+import { FavoritesSvg } from './bottomNavImg/FavoritesSvg';
+import { SellSvg } from './bottomNavImg/SellSvg';
+import { ChatsSvg } from './bottomNavImg/ChatsSvg';
+import { FaceSvg } from './bottomNavImg/FaceSvg';
+import { useSelector } from 'react-redux';
+import { selectIsAuthenticated } from '@/app/store/slices/authSlice';
 
 interface BottomNavProps {
   isProfilePage?: boolean;
@@ -23,16 +23,16 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
     if (!isAuthenticated) {
       setIsAuthPromptOpen(true);
     } else {
-      navigate("/profile");
+      navigate('/profile');
     }
   };
 
-  const containerStyle = () => clsx("pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]");
-  const textStyle = () => clsx("text-[#E9EADB] font-[KyivType Sans]");
+  const containerStyle = () => clsx('pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]');
+  const textStyle = () => clsx('text-[#E9EADB] font-[KyivType Sans]');
   const isActiveStyle = ({ isActive }: { isActive: boolean }) =>
     clsx(
-      "flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]",
-      isActive ? "bg-[#E9EADB] text-[#28666E]" : "bg-[#28666E] text-[#E9EADB]"
+      'flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]',
+      isActive ? 'bg-[#E9EADB] text-[#28666E]' : 'bg-[#28666E] text-[#E9EADB]'
     );
 
   return (

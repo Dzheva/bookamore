@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import BackButton from "@/shared/ui/BackButton";
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import BackButton from '@/shared/ui/BackButton';
 
 const RestorePasswordPage: React.FC = () => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -11,7 +11,7 @@ const RestorePasswordPage: React.FC = () => {
     if (!email) return;
 
     console.log(email);
-    navigate("/verification-code");
+    navigate('/verification-code');
   };
 
   return (

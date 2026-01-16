@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate } from "react-router";
-import { IoSend, IoAttach } from "react-icons/io5";
-import BackButton from "@/shared/ui/BackButton";
+import React, { useState, useRef, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router';
+import { IoSend, IoAttach } from 'react-icons/io5';
+import BackButton from '@/shared/ui/BackButton';
 
 // Mock data types
 interface Message {
@@ -9,7 +9,7 @@ interface Message {
   text: string;
   timestamp: Date;
   isFromMe: boolean;
-  status: "sent" | "delivered" | "read";
+  status: 'sent' | 'delivered' | 'read';
 }
 
 interface ChatUser {
@@ -28,167 +28,167 @@ interface ChatData {
 
 // Mock users data
 const mockUsers: Record<string, ChatUser> = {
-  "1": {
-    id: "1",
-    name: "Jane Walker",
+  '1': {
+    id: '1',
+    name: 'Jane Walker',
     isOnline: true,
   },
-  "2": {
-    id: "2",
-    name: "Jane Walker",
+  '2': {
+    id: '2',
+    name: 'Jane Walker',
     isOnline: true,
   },
-  "3": {
-    id: "3",
-    name: "John Smith",
+  '3': {
+    id: '3',
+    name: 'John Smith',
     isOnline: false,
   },
-  "4": {
-    id: "4",
-    name: "Sarah Johnson",
+  '4': {
+    id: '4',
+    name: 'Sarah Johnson',
     isOnline: true,
   },
 };
 
 // Mock chat data
 const mockChatData: Record<string, ChatData> = {
-  "1": {
-    id: "1",
-    user: mockUsers["1"],
-    bookTitle: "Dune",
+  '1': {
+    id: '1',
+    user: mockUsers['1'],
+    bookTitle: 'Dune',
     messages: [
       {
-        id: "msg1",
-        text: "Hi",
-        timestamp: new Date("2025-03-13T10:30:00"),
+        id: 'msg1',
+        text: 'Hi',
+        timestamp: new Date('2025-03-13T10:30:00'),
         isFromMe: false,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg2",
-        text: "Hello!",
-        timestamp: new Date("2025-03-13T10:31:00"),
+        id: 'msg2',
+        text: 'Hello!',
+        timestamp: new Date('2025-03-13T10:31:00'),
         isFromMe: true,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg3",
+        id: 'msg3',
         text: "I'll buy it!!!",
-        timestamp: new Date("2025-03-13T10:32:00"),
+        timestamp: new Date('2025-03-13T10:32:00'),
         isFromMe: true,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg4",
-        text: "Deal then! Thanks!)",
-        timestamp: new Date("2025-03-21T21:34:00"),
+        id: 'msg4',
+        text: 'Deal then! Thanks!)',
+        timestamp: new Date('2025-03-21T21:34:00'),
         isFromMe: false,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg5",
-        text: "Got it",
-        timestamp: new Date("2025-03-21T21:35:00"),
+        id: 'msg5',
+        text: 'Got it',
+        timestamp: new Date('2025-03-21T21:35:00'),
         isFromMe: true,
-        status: "delivered",
+        status: 'delivered',
       },
       {
-        id: "msg6",
-        text: "Thanks!)",
-        timestamp: new Date("2025-03-21T21:36:00"),
+        id: 'msg6',
+        text: 'Thanks!)',
+        timestamp: new Date('2025-03-21T21:36:00'),
         isFromMe: true,
-        status: "sent",
+        status: 'sent',
       },
     ],
   },
-  "2": {
-    id: "2",
-    user: mockUsers["2"],
-    bookTitle: "Foundation",
+  '2': {
+    id: '2',
+    user: mockUsers['2'],
+    bookTitle: 'Foundation',
     messages: [
       {
-        id: "msg7",
-        text: "Is this book still available?",
-        timestamp: new Date("2025-03-20T15:22:00"),
+        id: 'msg7',
+        text: 'Is this book still available?',
+        timestamp: new Date('2025-03-20T15:22:00'),
         isFromMe: true,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg8",
-        text: "Yes, it is! Are you interested?",
-        timestamp: new Date("2025-03-20T15:25:00"),
+        id: 'msg8',
+        text: 'Yes, it is! Are you interested?',
+        timestamp: new Date('2025-03-20T15:25:00'),
         isFromMe: false,
-        status: "read",
+        status: 'read',
       },
     ],
   },
-  "3": {
-    id: "3",
-    user: mockUsers["3"],
-    bookTitle: "The Martian",
+  '3': {
+    id: '3',
+    user: mockUsers['3'],
+    bookTitle: 'The Martian',
     messages: [
       {
-        id: "msg9",
-        text: "Is this book still available?",
-        timestamp: new Date("2025-03-20T15:22:00"),
+        id: 'msg9',
+        text: 'Is this book still available?',
+        timestamp: new Date('2025-03-20T15:22:00'),
         isFromMe: false,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg10",
-        text: "Yes! Would you like to buy it?",
-        timestamp: new Date("2025-03-20T15:25:00"),
+        id: 'msg10',
+        text: 'Yes! Would you like to buy it?',
+        timestamp: new Date('2025-03-20T15:25:00'),
         isFromMe: true,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg11",
-        text: "How much?",
-        timestamp: new Date("2025-03-20T15:30:00"),
+        id: 'msg11',
+        text: 'How much?',
+        timestamp: new Date('2025-03-20T15:30:00'),
         isFromMe: false,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg12",
-        text: "250 UAH, good condition",
-        timestamp: new Date("2025-03-20T15:32:00"),
+        id: 'msg12',
+        text: '250 UAH, good condition',
+        timestamp: new Date('2025-03-20T15:32:00'),
         isFromMe: true,
-        status: "delivered",
+        status: 'delivered',
       },
     ],
   },
-  "4": {
-    id: "4",
-    user: mockUsers["4"],
-    bookTitle: "Babel",
+  '4': {
+    id: '4',
+    user: mockUsers['4'],
+    bookTitle: 'Babel',
     messages: [
       {
-        id: "msg13",
+        id: 'msg13',
         text: "I'm interested in your book",
-        timestamp: new Date("2025-03-19T12:10:00"),
+        timestamp: new Date('2025-03-19T12:10:00'),
         isFromMe: true,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg14",
-        text: "Great! Which one?",
-        timestamp: new Date("2025-03-19T12:12:00"),
+        id: 'msg14',
+        text: 'Great! Which one?',
+        timestamp: new Date('2025-03-19T12:12:00'),
         isFromMe: false,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg15",
-        text: "Babel by Rebecca Kuang",
-        timestamp: new Date("2025-03-19T12:13:00"),
+        id: 'msg15',
+        text: 'Babel by Rebecca Kuang',
+        timestamp: new Date('2025-03-19T12:13:00'),
         isFromMe: true,
-        status: "read",
+        status: 'read',
       },
       {
-        id: "msg16",
+        id: 'msg16',
         text: "Perfect! I'll take it",
-        timestamp: new Date("2025-03-19T12:15:00"),
+        timestamp: new Date('2025-03-19T12:15:00'),
         isFromMe: true,
-        status: "sent",
+        status: 'sent',
       },
     ],
   },
@@ -201,9 +201,9 @@ interface MessageBubbleProps {
 
 function MessageBubble({ message }: MessageBubbleProps) {
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: false,
     });
   };
@@ -211,28 +211,28 @@ function MessageBubble({ message }: MessageBubbleProps) {
   return (
     <div
       className={`flex mb-4 ${
-        message.isFromMe ? "justify-end" : "justify-start"
+        message.isFromMe ? 'justify-end' : 'justify-start'
       }`}
     >
       <div
         className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
           message.isFromMe
-            ? "bg-blue-500 text-white rounded-br-md"
-            : "bg-gray-200 text-gray-900 rounded-bl-md"
+            ? 'bg-blue-500 text-white rounded-br-md'
+            : 'bg-gray-200 text-gray-900 rounded-bl-md'
         }`}
       >
         <p className="text-sm">{message.text}</p>
         <div
           className={`flex items-center justify-end mt-1 text-xs ${
-            message.isFromMe ? "text-blue-100" : "text-gray-500"
+            message.isFromMe ? 'text-blue-100' : 'text-gray-500'
           }`}
         >
           <span>{formatTime(message.timestamp)}</span>
           {message.isFromMe && (
             <span className="ml-1">
-              {message.status === "sent" && "✓"}
-              {message.status === "delivered" && "✓✓"}
-              {message.status === "read" && "✓✓"}
+              {message.status === 'sent' && '✓'}
+              {message.status === 'delivered' && '✓✓'}
+              {message.status === 'read' && '✓✓'}
             </span>
           )}
         </div>
@@ -248,10 +248,10 @@ interface DateSeparatorProps {
 
 function DateSeparator({ date }: DateSeparatorProps) {
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+    return date.toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
     });
   };
 
@@ -285,7 +285,7 @@ function groupMessagesByDate(messages: Message[]) {
 const ChatPage: React.FC = () => {
   const { chatId } = useParams();
   const navigate = useNavigate();
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [chatData, setChatData] = useState<ChatData | null>(null);
 
@@ -298,7 +298,7 @@ const ChatPage: React.FC = () => {
 
   // Auto-scroll to bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatData?.messages]);
 
   const handleBack = () => {
@@ -313,7 +313,7 @@ const ChatPage: React.FC = () => {
       text: newMessage.trim(),
       timestamp: new Date(),
       isFromMe: true,
-      status: "sent",
+      status: 'sent',
     };
 
     setChatData((prev) =>
@@ -325,11 +325,11 @@ const ChatPage: React.FC = () => {
         : null
     );
 
-    setNewMessage("");
+    setNewMessage('');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -369,9 +369,9 @@ const ChatPage: React.FC = () => {
           <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center mr-3">
             <span className="text-gray-600 font-medium text-sm">
               {chatData.user.name
-                .split(" ")
+                .split(' ')
                 .map((n) => n[0])
-                .join("")}
+                .join('')}
             </span>
           </div>
           <div>
@@ -413,7 +413,7 @@ const ChatPage: React.FC = () => {
               placeholder="Type a message..."
               className="w-full px-4 py-3 border border-gray-300 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               rows={1}
-              style={{ minHeight: "44px", maxHeight: "120px" }}
+              style={{ minHeight: '44px', maxHeight: '120px' }}
             />
           </div>
 
@@ -422,8 +422,8 @@ const ChatPage: React.FC = () => {
             disabled={!newMessage.trim()}
             className={`flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
               newMessage.trim()
-                ? "bg-blue-500 text-white hover:bg-blue-600"
-                : "bg-gray-200 text-gray-400"
+                ? 'bg-blue-500 text-white hover:bg-blue-600'
+                : 'bg-gray-200 text-gray-400'
             }`}
           >
             <IoSend className="w-5 h-5" />

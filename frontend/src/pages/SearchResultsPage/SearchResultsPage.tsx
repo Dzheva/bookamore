@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router";
-import { IoSearchOutline, IoClose } from "react-icons/io5";
-import { useGetAllOffersWithBooksQuery } from "../../app/store/api/OffersApi";
-import { BookCard } from "../../shared/ui/BookCard";
-import { BottomNav } from "../../shared/ui/BottomNav";
+import { useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router';
+import { IoSearchOutline, IoClose } from 'react-icons/io5';
+import { useGetAllOffersWithBooksQuery } from '../../app/store/api/OffersApi';
+import { BookCard } from '../../shared/ui/BookCard';
+import { BottomNav } from '../../shared/ui/BottomNav';
 import {
   applyFiltersAndSort,
   createMockResponse,
-} from "../../shared/mocks/mockData";
-import type { QueryParams } from "../../types/entities/QueryParams";
-import BackButton from "@/shared/ui/BackButton";
+} from '../../shared/mocks/mockData';
+import type { QueryParams } from '../../types/entities/QueryParams';
+import BackButton from '@/shared/ui/BackButton';
 
 // Mock mode flag - set to true to use mocks instead of API
 const USE_MOCKS = true;
@@ -22,8 +22,8 @@ interface PageHeaderProps {
 
 function PageHeader({ searchQuery }: PageHeaderProps) {
   const navigate = useNavigate();
-  const isSpecialFilter = searchQuery === "recommended";
-  const displayQuery = isSpecialFilter ? "" : searchQuery;
+  const isSpecialFilter = searchQuery === 'recommended';
+  const displayQuery = isSpecialFilter ? '' : searchQuery;
   const [localSearchQuery, setLocalSearchQuery] = useState(displayQuery);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -80,8 +80,8 @@ function FilterChip({ label, isActive = false, onClick }: FilterChipProps) {
         flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium whitespace-nowrap transition-colors
         ${
           isActive
-            ? "bg-gray-800 text-white shadow-sm hover:bg-gray-700"
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            ? 'bg-gray-800 text-white shadow-sm hover:bg-gray-700'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
         }
       `}
     >
@@ -96,23 +96,23 @@ export function SearchResultsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get all filter parameters from URL
-  const searchQuery = searchParams.get("q") || "";
-  const currentCondition = searchParams.get("condition") as
-    | "new"
-    | "used"
+  const searchQuery = searchParams.get('q') || '';
+  const currentCondition = searchParams.get('condition') as
+    | 'new'
+    | 'used'
     | null;
-  const exchange = searchParams.get("exchange");
-  const sort = searchParams.get("sort");
-  const categories = searchParams.get("categories");
+  const exchange = searchParams.get('exchange');
+  const sort = searchParams.get('sort');
+  const categories = searchParams.get('categories');
 
   // Build filter object for our new function
   const filters = {
     query: searchQuery || undefined,
     condition: currentCondition || undefined,
     exchange:
-      exchange === "true" ? true : exchange === "false" ? false : undefined,
+      exchange === 'true' ? true : exchange === 'false' ? false : undefined,
     sort: sort || undefined,
-    categories: categories ? categories.split(",") : undefined,
+    categories: categories ? categories.split(',') : undefined,
   };
 
   // Build API query parameters
@@ -154,13 +154,13 @@ export function SearchResultsPage() {
     navigate(-1);
   };
 
-  const handleConditionFilter = (condition: "new" | "used" | null) => {
+  const handleConditionFilter = (condition: 'new' | 'used' | null) => {
     const newParams = new URLSearchParams(searchParams);
 
     if (condition) {
-      newParams.set("condition", condition);
+      newParams.set('condition', condition);
     } else {
-      newParams.delete("condition");
+      newParams.delete('condition');
     }
 
     setSearchParams(newParams);
@@ -205,8 +205,8 @@ export function SearchResultsPage() {
   // Helper to get display title for special filters
   const getDisplayTitle = (query: string) => {
     switch (query) {
-      case "recommended":
-        return "Recommended Books";
+      case 'recommended':
+        return 'Recommended Books';
       default:
         return `Results for "${query}":`;
     }
@@ -250,11 +250,11 @@ export function SearchResultsPage() {
                   key={offer.id}
                   offer={offer}
                   onContact={() => {
-                    console.log("Contact for offer:", offer.id);
+                    console.log('Contact for offer:', offer.id);
                     // TODO: Implement contact functionality
                   }}
                   onFavorite={() => {
-                    console.log("Toggle favorite for offer:", offer.id);
+                    console.log('Toggle favorite for offer:', offer.id);
                     // TODO: Implement favorite functionality
                   }}
                 />
@@ -271,7 +271,7 @@ export function SearchResultsPage() {
               <p className="text-sm sm:text-base text-gray-600 mb-6 max-w-md mx-auto">
                 {searchQuery
                   ? `No results found for "${searchQuery}". Try a different search term.`
-                  : "Try searching for books, authors, or genres."}
+                  : 'Try searching for books, authors, or genres.'}
               </p>
               <button
                 onClick={handleBack}
