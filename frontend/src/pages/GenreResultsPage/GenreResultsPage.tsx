@@ -1,47 +1,42 @@
 import React from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router';
-import { IoChevronBack, IoLibraryOutline, IoClose } from 'react-icons/io5';
+import { IoLibraryOutline, IoClose } from 'react-icons/io5';
 import { useGetAllOffersWithBooksQuery } from '@app/store/api/OffersApi';
 import { BookCard } from '@shared/ui/BookCard';
 import { BottomNav } from '@shared/ui/BottomNav';
-import { 
+import {
   applyFiltersAndSort,
-  createMockResponse 
+  createMockResponse,
 } from '../../shared/mocks/mockData';
 import type { OfferWithBook } from '@/types/entities/OfferWithBook';
+import BackButton from '@/shared/ui/BackButton';
 
 // Mock mode flag - set to true to use mocks instead of API
 const USE_MOCKS = true;
 
 // Local header component
-function PageHeader({ onBack }: { onBack: () => void }) {
+function PageHeader() {
   return (
     <header className="flex items-center px-4 sm:px-6 lg:px-8 py-3 bg-white border-b border-gray-200">
-      <button 
-        onClick={onBack} 
-        className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors"
-        aria-label="Go back"
-      >
-        <IoChevronBack className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-      </button>
+      <BackButton />
       <h1 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 flex-1 text-center">
-          BookAmore
-        </h1>
+        BookAmore
+      </h1>
       <div className="w-6 sm:w-8"></div>
     </header>
   );
 }
 
 // Filter chip component
-function FilterChip({ 
-  label, 
-  onRemove 
-}: { 
-  label: string; 
-  onRemove: () => void; 
+function FilterChip({
+  label,
+  onRemove,
+}: {
+  label: string;
+  onRemove: () => void;
 }) {
   return (
-    <button 
+    <button
       onClick={onRemove}
       className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-800 text-white rounded-full text-sm sm:text-base font-medium whitespace-nowrap transition-colors hover:bg-gray-700"
     >
@@ -59,8 +54,14 @@ const GenreResultsPage: React.FC = () => {
   // Get filter parameters from URL
   const filters = {
     genre: genre || undefined,
-    condition: searchParams.get('condition') as 'new' | 'used' | null || undefined,
-    exchange: searchParams.get('exchange') === 'true' ? true : searchParams.get('exchange') === 'false' ? false : undefined,
+    condition:
+      (searchParams.get('condition') as 'new' | 'used' | null) || undefined,
+    exchange:
+      searchParams.get('exchange') === 'true'
+        ? true
+        : searchParams.get('exchange') === 'false'
+          ? false
+          : undefined,
     sort: searchParams.get('sort') || undefined,
     categories: searchParams.get('categories')?.split(',') || undefined,
   };
@@ -73,11 +74,13 @@ const GenreResultsPage: React.FC = () => {
   };
 
   // Use mocks or real API
-  const mockResult = USE_MOCKS ? {
-    data: getMockData(),
-    isLoading: false,
-    error: undefined
-  } : null;
+  const mockResult = USE_MOCKS
+    ? {
+        data: getMockData(),
+        isLoading: false,
+        error: undefined,
+      }
+    : null;
 
   const apiResult = useGetAllOffersWithBooksQuery(
     {
@@ -116,7 +119,7 @@ const GenreResultsPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PageHeader onBack={handleBack} />
+        <PageHeader />
         <div className="w-full max-w-md mx-auto lg:max-w-4xl xl:max-w-6xl">
           <div className="flex justify-center items-center h-64">
             <div className="text-center">
@@ -133,12 +136,16 @@ const GenreResultsPage: React.FC = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PageHeader onBack={handleBack} />
+        <PageHeader />
         <div className="w-full max-w-md mx-auto lg:max-w-4xl xl:max-w-6xl">
           <div className="flex justify-center items-center h-64">
             <div className="text-center">
-              <p className="text-red-600 mb-2 text-sm sm:text-base">Error loading results</p>
-              <p className="text-gray-500 text-xs sm:text-sm">Please try again later</p>
+              <p className="text-red-600 mb-2 text-sm sm:text-base">
+                Error loading results
+              </p>
+              <p className="text-gray-500 text-xs sm:text-sm">
+                Please try again later
+              </p>
             </div>
           </div>
         </div>
@@ -151,15 +158,15 @@ const GenreResultsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <PageHeader onBack={handleBack} />
-      
+      <PageHeader />
+
       <div className="w-full max-w-md mx-auto lg:max-w-4xl xl:max-w-6xl">
         {/* Filters */}
         {filters.condition && (
           <div className="px-4 sm:px-6 lg:px-8 py-3">
-            <FilterChip 
-              label={filters.condition} 
-              onRemove={handleRemoveConditionFilter} 
+            <FilterChip
+              label={filters.condition}
+              onRemove={handleRemoveConditionFilter}
             />
           </div>
         )}
@@ -169,7 +176,7 @@ const GenreResultsPage: React.FC = () => {
           <h2 className="text-base sm:text-lg lg:text-xl font-bold mb-4">
             Results for "{genre}":
           </h2>
-          
+
           {/* Results grid */}
           {offers.length > 0 ? (
             <div className="space-y-3 sm:space-y-4 lg:grid lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 lg:space-y-0">
@@ -203,7 +210,7 @@ const GenreResultsPage: React.FC = () => {
           )}
         </div>
       </div>
-      
+
       {/* Bottom Navigation */}
       <BottomNav />
     </div>
@@ -211,4 +218,3 @@ const GenreResultsPage: React.FC = () => {
 };
 
 export { GenreResultsPage };
-
