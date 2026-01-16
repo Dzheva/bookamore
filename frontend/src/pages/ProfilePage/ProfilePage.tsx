@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import {
   FaChevronRight,
   FaPencilAlt,
@@ -7,35 +7,35 @@ import {
   FaRegComments,
   FaCog,
   FaBook,
-} from "react-icons/fa";
-import BackButton from "@/shared/ui/BackButton";
-import { BottomNav } from "@/shared/ui/BottomNav";
+} from 'react-icons/fa';
+import BackButton from '@/shared/ui/BackButton';
+import { BottomNav } from '@/shared/ui/BottomNav';
 
 // Масив пунктів меню з іконками Font Awesome
 const menuItems = [
   {
-    title: "My Announcements",
-    path: "/my-announcements",
+    title: 'My Announcements',
+    path: '/my-announcements',
     icon: <FaBook className="w-5 h-5" />,
   },
   {
-    title: "My Orders",
-    path: "/orders",
+    title: 'My Orders',
+    path: '/orders',
     icon: <FaBoxOpen className="w-5 h-5" />,
   },
   {
-    title: "My Favorites",
-    path: "/favorites",
+    title: 'My Favorites',
+    path: '/favorites',
     icon: <FaRegHeart className="w-5 h-5" />,
   },
   {
-    title: "My Chats",
-    path: "/chats/:chatId",
+    title: 'My Chats',
+    path: '/chats/:chatId',
     icon: <FaRegComments className="w-5 h-5" />,
   },
   {
-    title: "Settings",
-    path: "/settings",
+    title: 'Settings',
+    path: '/settings',
     icon: <FaCog className="w-5 h-5" />,
   },
 ];
@@ -43,9 +43,9 @@ const menuItems = [
 const ProfilePage = () => {
   // Тимчасові дані користувача
   const user = {
-    name: "Jane Walker",
-    email: "janewalker@gmail.com",
-    avatar: "https://v0.dev/placeholder.svg", // Сюди підставиться реальне фото пізніше
+    name: 'Jane Walker',
+    email: 'janewalker@gmail.com',
+    avatar: 'https://v0.dev/placeholder.svg', // Сюди підставиться реальне фото пізніше
   };
 
   return (

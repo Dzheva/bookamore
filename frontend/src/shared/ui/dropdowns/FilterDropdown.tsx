@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from "react";
-import { FiX, FiChevronDown } from "react-icons/fi";
+import { useEffect, useState, useRef } from 'react';
+import { FiX, FiChevronDown } from 'react-icons/fi';
 
-export type ConditionFilter = "new" | "used" | "any";
+export type ConditionFilter = 'new' | 'used' | 'any';
 
 export interface FilterState {
   condition: ConditionFilter;
@@ -16,24 +16,24 @@ interface FilterDropdownProps {
 }
 
 const conditionOptions = [
-  { value: "new" as const, label: "New" },
-  { value: "used" as const, label: "Used" },
-  { value: "any" as const, label: "Any" },
+  { value: 'new' as const, label: 'New' },
+  { value: 'used' as const, label: 'Used' },
+  { value: 'any' as const, label: 'Any' },
 ];
 
 const categoryOptions = [
-  "Fantasy",
-  "Science",
-  "Romantic",
-  "Children",
-  "Historical",
-  "Detective",
-  "Biography",
-  "Horror",
-  "Comedy",
-  "Drama",
-  "Adventure",
-  "Psychology",
+  'Fantasy',
+  'Science',
+  'Romantic',
+  'Children',
+  'Historical',
+  'Detective',
+  'Biography',
+  'Horror',
+  'Comedy',
+  'Drama',
+  'Adventure',
+  'Psychology',
 ];
 
 export function FilterDropdown({
@@ -47,7 +47,7 @@ export function FilterDropdown({
   const [isCategoryExpanded, setIsCategoryExpanded] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState("right-0");
+  const [dropdownPosition, setDropdownPosition] = useState('right-0');
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -56,8 +56,8 @@ export function FilterDropdown({
     };
 
     checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // Update local filters when props change
@@ -74,9 +74,9 @@ export function FilterDropdown({
 
       // If dropdown goes off screen to the right, position it to the left
       if (rect.right > viewportWidth - 16) {
-        setDropdownPosition("right-0");
+        setDropdownPosition('right-0');
       } else {
-        setDropdownPosition("left-1/2 transform -translate-x-1/2");
+        setDropdownPosition('left-1/2 transform -translate-x-1/2');
       }
     }
   }, [isOpen]);
@@ -93,22 +93,22 @@ export function FilterDropdown({
     };
 
     const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         onClose();
       }
     };
 
     if (isOpen) {
       // Handle both mouse and touch events for better mobile support
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("touchstart", handleClickOutside);
-      document.addEventListener("keydown", handleEscKey);
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener('keydown', handleEscKey);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-      document.removeEventListener("keydown", handleEscKey);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleEscKey);
     };
   }, [isOpen, onClose]);
 
@@ -127,7 +127,7 @@ export function FilterDropdown({
 
   const handleReset = () => {
     const resetFilters: FilterState = {
-      condition: "any",
+      condition: 'any',
       categories: [],
     };
     setLocalFilters(resetFilters);
@@ -144,7 +144,7 @@ export function FilterDropdown({
     <div
       ref={dropdownRef}
       className={`absolute top-full ${dropdownPosition} mt-1 bg-white rounded-xl w-72 sm:w-80 lg:w-96 max-h-[90vh] flex flex-col shadow-lg border border-gray-200 z-50 overflow-hidden ${
-        isMobile ? "max-w-[calc(100vw-2rem)]" : ""
+        isMobile ? 'max-w-[calc(100vw-2rem)]' : ''
       }`}
     >
       {/* Header */}
@@ -171,7 +171,7 @@ export function FilterDropdown({
               <FiChevronDown
                 size={14}
                 className={`text-gray-400 transition-transform duration-200 ${
-                  isConditionExpanded ? "rotate-0" : "-rotate-90"
+                  isConditionExpanded ? 'rotate-0' : '-rotate-90'
                 }`}
               />
             </div>
@@ -211,7 +211,7 @@ export function FilterDropdown({
               <FiChevronDown
                 size={14}
                 className={`text-gray-400 transition-transform duration-200 ${
-                  isCategoryExpanded ? "rotate-0" : "-rotate-90"
+                  isCategoryExpanded ? 'rotate-0' : '-rotate-90'
                 }`}
               />
             </div>

@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaChevronRight } from "react-icons/fa";
-import BackButton from "@/shared/ui/BackButton";
-import { BottomNav } from "@/shared/ui/BottomNav";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FaChevronRight } from 'react-icons/fa';
+import BackButton from '@/shared/ui/BackButton';
+import { BottomNav } from '@/shared/ui/BottomNav';
 
 const SettingsPage = () => {
   const navigate = useNavigate();
 
   // Стани для налаштувань
-  const [language, setLanguage] = useState<"English" | "Ukrainian">("English");
+  const [language, setLanguage] = useState<'English' | 'Ukrainian'>('English');
   const [notifications, setNotifications] = useState(true);
 
   const handleLogout = () => {
     // Тут буде логіка виходу (очищення токенів тощо)
-    console.log("Logout clicked");
-    navigate("/sign-in");
+    console.log('Logout clicked');
+    navigate('/sign-in');
   };
 
   return (
@@ -39,18 +39,18 @@ const SettingsPage = () => {
                 <input
                   type="radio"
                   name="language"
-                  checked={language === "English"}
-                  onChange={() => setLanguage("English")}
+                  checked={language === 'English'}
+                  onChange={() => setLanguage('English')}
                   className="sr-only"
                 />
                 <div
                   className={`w-5 h-5 rounded-full border-2 transition-all ${
-                    language === "English"
-                      ? "border-[#004261]"
-                      : "border-gray-300"
+                    language === 'English'
+                      ? 'border-[#004261]'
+                      : 'border-gray-300'
                   }`}
                 />
-                {language === "English" && (
+                {language === 'English' && (
                   <div className="absolute w-2.5 h-2.5 bg-[#004261] rounded-full" />
                 )}
               </div>
@@ -63,18 +63,18 @@ const SettingsPage = () => {
                 <input
                   type="radio"
                   name="language"
-                  checked={language === "Ukrainian"}
-                  onChange={() => setLanguage("Ukrainian")}
+                  checked={language === 'Ukrainian'}
+                  onChange={() => setLanguage('Ukrainian')}
                   className="sr-only"
                 />
                 <div
                   className={`w-5 h-5 rounded-full border-2 transition-all ${
-                    language === "Ukrainian"
-                      ? "border-[#004261]"
-                      : "border-gray-300"
+                    language === 'Ukrainian'
+                      ? 'border-[#004261]'
+                      : 'border-gray-300'
                   }`}
                 />
-                {language === "Ukrainian" && (
+                {language === 'Ukrainian' && (
                   <div className="absolute w-2.5 h-2.5 bg-[#004261] rounded-full" />
                 )}
               </div>
@@ -91,12 +91,12 @@ const SettingsPage = () => {
           <button
             onClick={() => setNotifications(!notifications)}
             className={`w-12 h-6 rounded-full relative transition-colors duration-300 ${
-              notifications ? "bg-[#004261]" : "bg-slate-200"
+              notifications ? 'bg-[#004261]' : 'bg-slate-200'
             }`}
           >
             <div
               className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${
-                notifications ? "left-7" : "left-1"
+                notifications ? 'left-7' : 'left-1'
               }`}
             />
           </button>
@@ -104,7 +104,7 @@ const SettingsPage = () => {
 
         {/* Кнопка My Profile */}
         <button
-          onClick={() => navigate("/profile")}
+          onClick={() => navigate('/profile')}
           className="w-full border-2 border-[#A1D9D6] rounded-3xl p-5 flex items-center justify-between hover:bg-teal-50 transition-colors"
         >
           <span className="text-lg font-medium text-slate-700">My Profile</span>

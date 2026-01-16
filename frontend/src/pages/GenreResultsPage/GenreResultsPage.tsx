@@ -1,15 +1,15 @@
-import React from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router";
-import { IoLibraryOutline, IoClose } from "react-icons/io5";
-import { useGetAllOffersWithBooksQuery } from "@app/store/api/OffersApi";
-import { BookCard } from "@shared/ui/BookCard";
-import { BottomNav } from "@shared/ui/BottomNav";
+import React from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router';
+import { IoLibraryOutline, IoClose } from 'react-icons/io5';
+import { useGetAllOffersWithBooksQuery } from '@app/store/api/OffersApi';
+import { BookCard } from '@shared/ui/BookCard';
+import { BottomNav } from '@shared/ui/BottomNav';
 import {
   applyFiltersAndSort,
   createMockResponse,
-} from "../../shared/mocks/mockData";
-import type { OfferWithBook } from "@/types/entities/OfferWithBook";
-import BackButton from "@/shared/ui/BackButton";
+} from '../../shared/mocks/mockData';
+import type { OfferWithBook } from '@/types/entities/OfferWithBook';
+import BackButton from '@/shared/ui/BackButton';
 
 // Mock mode flag - set to true to use mocks instead of API
 const USE_MOCKS = true;
@@ -55,15 +55,15 @@ const GenreResultsPage: React.FC = () => {
   const filters = {
     genre: genre || undefined,
     condition:
-      (searchParams.get("condition") as "new" | "used" | null) || undefined,
+      (searchParams.get('condition') as 'new' | 'used' | null) || undefined,
     exchange:
-      searchParams.get("exchange") === "true"
+      searchParams.get('exchange') === 'true'
         ? true
-        : searchParams.get("exchange") === "false"
-        ? false
-        : undefined,
-    sort: searchParams.get("sort") || undefined,
-    categories: searchParams.get("categories")?.split(",") || undefined,
+        : searchParams.get('exchange') === 'false'
+          ? false
+          : undefined,
+    sort: searchParams.get('sort') || undefined,
+    categories: searchParams.get('categories')?.split(',') || undefined,
   };
 
   // Mock data logic using new filter function
@@ -101,18 +101,18 @@ const GenreResultsPage: React.FC = () => {
   const handleRemoveConditionFilter = () => {
     // Remove condition from URL parameters
     const newParams = new URLSearchParams(searchParams);
-    newParams.delete("condition");
+    newParams.delete('condition');
     navigate({ search: newParams.toString() }, { replace: true });
   };
 
   const handleContact = (offer: OfferWithBook) => {
     // TODO: Implement contact logic
-    console.log("Contact for offer:", offer.id);
+    console.log('Contact for offer:', offer.id);
   };
 
   const handleFavorite = (offer: OfferWithBook) => {
     // TODO: Implement favorite logic
-    console.log("Add to favorites:", offer.id);
+    console.log('Add to favorites:', offer.id);
   };
 
   // Loading state

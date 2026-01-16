@@ -65,65 +65,63 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // Встановлення креденшелів після успішного логіну
-    setCredentials: (state, action: PayloadAction<{ user: User; token: string }>) => {
+    setCredentials: (
+      state,
+      action: PayloadAction<{ user: User; token: string }>
+    ) => {
       const { user, token } = action.payload;
-      
+
       state.user = user;
       state.token = token;
       state.isAuthenticated = true;
       state.isLoading = false;
-      
+
       // Синхронізуємо з localStorage
       setStoredAuth(token, user);
     },
-    
+
     // Очищення при логауті
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.isLoading = false;
-      
+
       // Очищуємо localStorage
       clearStoredAuth();
     },
-    
+
     // Встановлення стану завантаження
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
-    
+
     // Оновлення інформації користувача
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
-        
+
         // Оновлюємо localStorage
         if (state.token) {
           setStoredAuth(state.token, state.user);
         }
       }
     },
-    
+
     // Очищення стану при помилці токену (401, тощо)
     clearAuth: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.isLoading = false;
-      
+
       clearStoredAuth();
     },
   },
 });
 
-export const { 
-  setCredentials, 
-  logout, 
-  setLoading, 
-  updateUser, 
-  clearAuth 
-} = authSlice.actions;
+export const { setCredentials, logout, setLoading, updateUser, clearAuth } =
+  authSlice.actions;
 
 export default authSlice.reducer;
 
@@ -131,5 +129,7 @@ export default authSlice.reducer;
 export const selectAuth = (state: { auth: AuthState }) => state.auth;
 export const selectUser = (state: { auth: AuthState }) => state.auth.user;
 export const selectToken = (state: { auth: AuthState }) => state.auth.token;
-export const selectIsAuthenticated = (state: { auth: AuthState }) => state.auth.isAuthenticated;
-export const selectIsLoading = (state: { auth: AuthState }) => state.auth.isLoading;
+export const selectIsAuthenticated = (state: { auth: AuthState }) =>
+  state.auth.isAuthenticated;
+export const selectIsLoading = (state: { auth: AuthState }) =>
+  state.auth.isLoading;

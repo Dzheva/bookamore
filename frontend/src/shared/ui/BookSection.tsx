@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router";
-import type { OfferWithBook } from "@/types/entities/OfferWithBook";
-import noImages from "@/assest/images/noImage.jpg";
+import { useNavigate } from 'react-router';
+import type { OfferWithBook } from '@/types/entities/OfferWithBook';
+import noImages from '@/assest/images/noImage.jpg';
 
 interface BookCardProps {
-  condition?: "new" | "used";
+  condition?: 'new' | 'used';
   offer?: OfferWithBook;
 }
 
@@ -40,7 +40,7 @@ function BookCard({ condition, offer }: BookCardProps) {
       {/* Book condition badge */}
       {condition && (
         <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-full flex items-center justify-center text-xs sm:text-xs lg:text-sm font-bold text-black border shadow-sm">
-          {condition === "new" ? "NEW" : "USED"}
+          {condition === 'new' ? 'NEW' : 'USED'}
         </div>
       )}
     </div>
@@ -67,8 +67,8 @@ export function BookSection({
     books.length > 0
       ? books
       : [
-          { condition: "new" }, // First book is new
-          { condition: "new" }, // Second book is new
+          { condition: 'new' }, // First book is new
+          { condition: 'new' }, // Second book is new
           {}, // Third book without badge
           {}, // Fourth book without badge
         ];

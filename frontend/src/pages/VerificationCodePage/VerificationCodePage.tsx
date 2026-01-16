@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { PinInput } from "@/shared/ui/PinInput";
-import BackButton from "@/shared/ui/BackButton";
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { PinInput } from '@/shared/ui/PinInput';
+import BackButton from '@/shared/ui/BackButton';
 
 const VerificationCodePage: React.FC = () => {
-  const [currentPin, setCurrentPin] = useState("");
+  const [currentPin, setCurrentPin] = useState('');
   const navigate = useNavigate();
 
   const handlePinComplete = (pin: string) => setCurrentPin(pin);
@@ -14,7 +14,7 @@ const VerificationCodePage: React.FC = () => {
     if (!currentPin) return;
 
     console.log(currentPin);
-    navigate("/update-password");
+    navigate('/update-password');
   };
 
   return (
@@ -58,7 +58,7 @@ const VerificationCodePage: React.FC = () => {
           </form>
 
           <p className="mt-8 text-center text-xs text-gray-500">
-            Did not receive the code?{" "}
+            Did not receive the code?{' '}
             <a href="#" className="font-semibold text-gray-800 underline">
               Send again
             </a>

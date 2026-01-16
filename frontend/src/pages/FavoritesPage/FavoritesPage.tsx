@@ -1,46 +1,46 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
-import { IoTrashOutline } from "react-icons/io5";
-import { BottomNav } from "@shared/ui/BottomNav";
-import BackButton from "@/shared/ui/BackButton";
-import noImages from "@/assest/images/noImage.jpg";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { IoTrashOutline } from 'react-icons/io5';
+import { BottomNav } from '@shared/ui/BottomNav';
+import BackButton from '@/shared/ui/BackButton';
+import noImages from '@/assest/images/noImage.jpg';
 
 // Mock data для demonstration
 const mockFavorites = [
   {
-    id: "1",
+    id: '1',
     book: {
-      title: "Babel",
-      authors: ["Rebecca Kuang"],
-      condition: "NEW" as const,
+      title: 'Babel',
+      authors: ['Rebecca Kuang'],
+      condition: 'NEW' as const,
       images: [],
     },
     price: 300,
-    type: "SELL_EXCHANGE",
+    type: 'SELL_EXCHANGE',
     sellerId: 1,
   },
   {
-    id: "2",
+    id: '2',
     book: {
-      title: "Babel",
-      authors: ["Rebecca Kuang"],
-      condition: "NEW" as const,
+      title: 'Babel',
+      authors: ['Rebecca Kuang'],
+      condition: 'NEW' as const,
       images: [],
     },
     price: 300,
-    type: "SELL_EXCHANGE",
+    type: 'SELL_EXCHANGE',
     sellerId: 1,
   },
   {
-    id: "3",
+    id: '3',
     book: {
-      title: "Babel",
-      authors: ["Rebecca Kuang"],
-      condition: "NEW" as const,
+      title: 'Babel',
+      authors: ['Rebecca Kuang'],
+      condition: 'NEW' as const,
       images: [],
     },
     price: 300,
-    type: "SELL",
+    type: 'SELL',
     sellerId: 1,
   },
 ];
@@ -55,7 +55,7 @@ const FavoritesPage: React.FC = () => {
 
   const handleContact = (offerId: string) => {
     // TODO: Implement contact functionality
-    console.log("Contact for offer:", offerId);
+    console.log('Contact for offer:', offerId);
   };
 
   const totalValue = favorites.reduce((sum, item) => sum + item.price, 0);
@@ -128,12 +128,12 @@ const FavoritesPage: React.FC = () => {
                     </div>
 
                     <p className="text-xs sm:text-sm text-gray-600 mb-1">
-                      by {item.book.authors.join(", ")}
+                      by {item.book.authors.join(', ')}
                     </p>
 
                     <p className="text-xs sm:text-sm text-gray-600 mb-1">
-                      Condition:{" "}
-                      {item.book.condition === "NEW" ? "New" : "Used"}
+                      Condition:{' '}
+                      {item.book.condition === 'NEW' ? 'New' : 'Used'}
                     </p>
 
                     <div className="flex items-center justify-between mb-3 lg:flex-col lg:items-start lg:gap-2 lg:mb-4">
@@ -146,8 +146,8 @@ const FavoritesPage: React.FC = () => {
                         </p>
                       </div>
 
-                      {(item.type === "SELL_EXCHANGE" ||
-                        item.type === "EXCHANGE") && (
+                      {(item.type === 'SELL_EXCHANGE' ||
+                        item.type === 'EXCHANGE') && (
                         <div className="flex items-center text-xs sm:text-sm text-gray-600 bg-gray-50 px-2 py-1 rounded">
                           <span className="mr-1">⇄</span>
                           Exchange
@@ -180,7 +180,7 @@ const FavoritesPage: React.FC = () => {
               Start browsing and add books to your favorites list
             </p>
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate('/')}
               className="px-6 py-3 bg-gray-900 text-white rounded-lg font-medium hover:bg-black transition-colors text-sm sm:text-base"
             >
               Browse Books

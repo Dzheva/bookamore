@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
-import { useNavigate, useLocation } from "react-router";
-import { useLoginMutation } from "@app/store/api/AuthApi";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc';
+import { useNavigate, useLocation } from 'react-router';
+import { useLoginMutation } from '@app/store/api/AuthApi';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setCredentials,
   setLoading,
   selectIsLoading,
-} from "@app/store/slices/authSlice";
-import BackButton from "@/shared/ui/BackButton";
+} from '@app/store/slices/authSlice';
+import BackButton from '@/shared/ui/BackButton';
 
 const SignInPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -50,11 +50,11 @@ const SignInPage: React.FC = () => {
         );
 
         // Перенаправляємо на сторінку, з якої прийшов користувач, або на головну
-        const from = location.state?.from?.pathname || "/";
+        const from = location.state?.from?.pathname || '/';
         navigate(from, { replace: true });
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error('Login failed:', error);
     } finally {
       dispatch(setLoading(false));
     }
@@ -100,7 +100,7 @@ const SignInPage: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={passwordVisible ? "text" : "password"}
+                  type={passwordVisible ? 'text' : 'password'}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -146,23 +146,23 @@ const SignInPage: React.FC = () => {
               disabled={isLoading}
               className="w-full rounded-lg bg-gray-800 p-3 font-medium text-white transition-colors hover:bg-gray-900 disabled:opacity-50"
             >
-              {isLoading ? "Logging in..." : "Log In"}
+              {isLoading ? 'Logging in...' : 'Log In'}
             </button>
           </form>
 
           <p className="mt-8 text-center text-xs text-gray-500">
-            By continuing, you agree to our{" "}
+            By continuing, you agree to our{' '}
             <a href="#" className="font-semibold text-gray-800 underline">
               Terms
-            </a>{" "}
-            and{" "}
+            </a>{' '}
+            and{' '}
             <a href="#" className="font-semibold text-gray-800 underline">
               Privacy Policy
             </a>
           </p>
 
           <div className="mt-6 mb-10 text-center text-sm">
-            <span className="text-gray-500">Do not have an account?</span>{" "}
+            <span className="text-gray-500">Do not have an account?</span>{' '}
             <a href="/sign-up" className="font-bold text-blue-500">
               Sign Up now
             </a>

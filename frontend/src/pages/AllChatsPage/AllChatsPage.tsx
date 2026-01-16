@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router";
-import { BottomNav } from "@shared/ui/BottomNav";
-import BackButton from "@/shared/ui/BackButton";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { BottomNav } from '@shared/ui/BottomNav';
+import BackButton from '@/shared/ui/BackButton';
 
 // Mock data types
 interface ChatMessage {
@@ -24,55 +24,55 @@ interface Chat {
 // Mock chats data
 const mockChats: Chat[] = [
   {
-    id: "1",
-    userName: "Jane Walker",
+    id: '1',
+    userName: 'Jane Walker',
     lastMessage: {
-      id: "msg1",
-      text: "Deal then! Thanks!)",
-      timestamp: new Date("2025-03-21T21:34:00"),
+      id: 'msg1',
+      text: 'Deal then! Thanks!)',
+      timestamp: new Date('2025-03-21T21:34:00'),
       isFromMe: false,
     },
     unreadCount: 0,
-    bookTitle: "Dune",
+    bookTitle: 'Dune',
     isSellingChat: true,
   },
   {
-    id: "2",
-    userName: "Jane Walker",
+    id: '2',
+    userName: 'Jane Walker',
     lastMessage: {
-      id: "msg2",
-      text: "Deal then! Thanks!)",
-      timestamp: new Date("2025-03-21T21:34:00"),
+      id: 'msg2',
+      text: 'Deal then! Thanks!)',
+      timestamp: new Date('2025-03-21T21:34:00'),
       isFromMe: false,
     },
     unreadCount: 0,
-    bookTitle: "Foundation",
+    bookTitle: 'Foundation',
     isSellingChat: false,
   },
   {
-    id: "3",
-    userName: "John Smith",
+    id: '3',
+    userName: 'John Smith',
     lastMessage: {
-      id: "msg3",
-      text: "Is this book still available?",
-      timestamp: new Date("2025-03-20T15:22:00"),
+      id: 'msg3',
+      text: 'Is this book still available?',
+      timestamp: new Date('2025-03-20T15:22:00'),
       isFromMe: false,
     },
     unreadCount: 2,
-    bookTitle: "The Martian",
+    bookTitle: 'The Martian',
     isSellingChat: true,
   },
   {
-    id: "4",
-    userName: "Sarah Johnson",
+    id: '4',
+    userName: 'Sarah Johnson',
     lastMessage: {
-      id: "msg4",
+      id: 'msg4',
       text: "Perfect! I'll take it",
-      timestamp: new Date("2025-03-19T12:15:00"),
+      timestamp: new Date('2025-03-19T12:15:00'),
       isFromMe: true,
     },
     unreadCount: 0,
-    bookTitle: "Babel",
+    bookTitle: 'Babel',
     isSellingChat: false,
   },
 ];
@@ -85,9 +85,9 @@ interface ChatListItemProps {
 
 function ChatListItem({ chat, onClick }: ChatListItemProps) {
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: false,
     });
   };
@@ -101,9 +101,9 @@ function ChatListItem({ chat, onClick }: ChatListItemProps) {
       <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
         <span className="text-gray-600 font-medium text-sm">
           {chat.userName
-            .split(" ")
+            .split(' ')
             .map((n) => n[0])
-            .join("")}
+            .join('')}
         </span>
       </div>
 
@@ -134,29 +134,29 @@ function ChatListItem({ chat, onClick }: ChatListItemProps) {
 
 // Tab Switcher Component
 interface TabSwitcherProps {
-  activeTab: "selling" | "buying";
-  onTabChange: (tab: "selling" | "buying") => void;
+  activeTab: 'selling' | 'buying';
+  onTabChange: (tab: 'selling' | 'buying') => void;
 }
 
 function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
   return (
     <div className="flex bg-gray-100 rounded-lg p-1 mx-4 mb-4">
       <button
-        onClick={() => onTabChange("selling")}
+        onClick={() => onTabChange('selling')}
         className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-          activeTab === "selling"
-            ? "bg-white text-gray-900 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
+          activeTab === 'selling'
+            ? 'bg-white text-gray-900 shadow-sm'
+            : 'text-gray-600 hover:text-gray-900'
         }`}
       >
         My sellings
       </button>
       <button
-        onClick={() => onTabChange("buying")}
+        onClick={() => onTabChange('buying')}
         className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-          activeTab === "buying"
-            ? "bg-white text-gray-900 shadow-sm"
-            : "text-gray-600 hover:text-gray-900"
+          activeTab === 'buying'
+            ? 'bg-white text-gray-900 shadow-sm'
+            : 'text-gray-600 hover:text-gray-900'
         }`}
       >
         My purchases
@@ -167,7 +167,7 @@ function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
 
 const AllChatsPage: React.FC = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"selling" | "buying">("selling");
+  const [activeTab, setActiveTab] = useState<'selling' | 'buying'>('selling');
 
   const handleChatClick = (chatId: string) => {
     navigate(`/chats/${chatId}`);
@@ -175,7 +175,7 @@ const AllChatsPage: React.FC = () => {
 
   // Filter chats based on active tab
   const filteredChats = mockChats.filter((chat) =>
-    activeTab === "selling" ? chat.isSellingChat : !chat.isSellingChat
+    activeTab === 'selling' ? chat.isSellingChat : !chat.isSellingChat
   );
 
   return (
@@ -216,9 +216,9 @@ const AllChatsPage: React.FC = () => {
                 No chats yet
               </h3>
               <p className="text-sm text-gray-600 text-center max-w-md">
-                {activeTab === "selling"
-                  ? "When buyers contact you about your books, conversations will appear here."
-                  : "When you contact sellers about books, conversations will appear here."}
+                {activeTab === 'selling'
+                  ? 'When buyers contact you about your books, conversations will appear here.'
+                  : 'When you contact sellers about books, conversations will appear here.'}
               </p>
             </div>
           )}
