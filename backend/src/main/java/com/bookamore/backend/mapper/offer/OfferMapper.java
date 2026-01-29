@@ -14,6 +14,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.MappingConstants;
 
+import java.util.UUID;
+
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         uses = BookMapper.class
@@ -41,7 +43,7 @@ public interface OfferMapper {
     Book toBookEntity(OfferWithBookRequest offerRequest);
 
     @Named("createBookFromId")
-    default Book createBookFromId(Long id) {
+    default Book createBookFromId(UUID id) {
         if (id == null) {
             return null;
         }
@@ -51,7 +53,7 @@ public interface OfferMapper {
     }
 
     @Named("createUserFromId")
-    default User createUserFromId(Long id) {
+    default User createUserFromId(UUID id) {
         if (id == null) {
             return null;
         }

@@ -6,12 +6,10 @@ import com.bookamore.backend.dto.singup.SignUpRequest;
 import com.bookamore.backend.dto.singup.SignUpResponse;
 import com.bookamore.backend.entity.User;
 import com.bookamore.backend.jwt.JwtTokenService;
-import com.bookamore.backend.jwt.JwtUserDetails;
 import com.bookamore.backend.mapper.user.UserMapper;
 import com.bookamore.backend.service.AuthService;
 import com.bookamore.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +20,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final JwtTokenService tokenService;
     private final PasswordEncoder encoder;
+
     @Override
     public SignUpResponse signUp(SignUpRequest request) {
         User user = userService.create(userMapper.signUpRequestToUser(request));
@@ -32,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
     public SignInResponse signIn(SignInRequest request) {
         return userService.findByEmailForAuth(request.getEmail())
                 .filter(user -> encoder.matches(request.getPassword(), user.getPassword()))
-                .map(user -> tokenService.generateToken(user.getEmail()))
+                .map(user -> tokenService.generateToken(user.getId()))
                 .map(SignInResponse::ok)
                 .orElseGet(SignInResponse::error);
 

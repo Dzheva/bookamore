@@ -13,5 +13,5 @@ public interface UserService {
 
     UserResponse getCurrentUser();
 
-    UserResponse findByUuid(UUID uuid);
+    UserResponse findById(UUID id);
 }

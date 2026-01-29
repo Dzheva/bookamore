@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/books")
@@ -38,7 +39,7 @@ public class BookController {
     })
     @GetMapping("/{bookId}")
     @No401Swgr
-    public ResponseEntity<BookResponse> getBookById(@PathVariable Long bookId) {
+    public ResponseEntity<BookResponse> getBookById(@PathVariable UUID bookId) {
         BookResponse book = bookService.getById(bookId);
 
         return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();
@@ -58,7 +59,7 @@ public class BookController {
             )
     })
     @PatchMapping("/{bookId}")
-    public ResponseEntity<BookResponse> updateBook(@PathVariable Long bookId,
+    public ResponseEntity<BookResponse> updateBook(@PathVariable UUID bookId,
                                                    @RequestBody BookUpdateRequest bookUpdateRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.update(bookId, bookUpdateRequest));
     }
@@ -72,7 +73,7 @@ public class BookController {
                     "If the entity has already reached or will exceed the maximum " +
                     "allowed number of images (4), the operation will be aborted.")
     @PatchMapping(value = "/{bookId}/saveImages", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<List<String>> saveManyImages(@PathVariable Long bookId,
+    public ResponseEntity<List<String>> saveManyImages(@PathVariable UUID bookId,
                                                        @RequestBody List<MultipartFile> images) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.saveImages(bookId, images));
     }
@@ -81,14 +82,14 @@ public class BookController {
             description = "Replaces existing images associated with the Book. " +
                     "All current images will be removed and replaced with the provided ones.")
     @PutMapping(value = "/{bookId}/replaceImages", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<List<String>> replaceManyImages(@PathVariable Long bookId,
+    public ResponseEntity<List<String>> replaceManyImages(@PathVariable UUID bookId,
                                                           @RequestBody List<MultipartFile> images) {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.replaceImages(bookId, images));
     }
 
     @Operation(summary = "Delete book image", description = "Delete one book image")
     @DeleteMapping("/{bookId}/deleteImage")
-    public ResponseEntity<Void> deleteImage(@PathVariable Long bookId, @RequestParam String imagePath) {
+    public ResponseEntity<Void> deleteImage(@PathVariable UUID bookId, @RequestParam String imagePath) {
         bookService.deleteImage(bookId, imagePath);
         return ResponseEntity.noContent().build();
     }
