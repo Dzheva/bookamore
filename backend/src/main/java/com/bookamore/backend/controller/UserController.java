@@ -2,9 +2,6 @@ package com.bookamore.backend.controller;
 
 import com.bookamore.backend.dto.user.UserResponse;
 import com.bookamore.backend.service.UserService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +24,6 @@ public class UserController {
 
     @GetMapping("{uuid}")
     public ResponseEntity<UserResponse> getUserByUuid(@PathVariable("uuid") UUID uuid) {
-        return ResponseEntity.ok(userService.findByUuid(uuid));
+        return ResponseEntity.ok(userService.findById(uuid));
     }
 }

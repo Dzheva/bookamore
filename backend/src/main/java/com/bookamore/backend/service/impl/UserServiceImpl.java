@@ -4,7 +4,6 @@ import com.bookamore.backend.dto.user.UserResponse;
 import com.bookamore.backend.entity.User;
 import com.bookamore.backend.exception.EmailAlreadyExistsException;
 import com.bookamore.backend.exception.ResourceNotFoundException;
-import com.bookamore.backend.jwt.JwtUserDetails;
 import com.bookamore.backend.mapper.user.UserMapper;
 import com.bookamore.backend.repository.UserRepository;
 import com.bookamore.backend.service.UserService;
@@ -59,9 +58,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse findByUuid (UUID uuid){
-        User user = userRepository.findByUuid(uuid)
-                .orElseThrow(() -> new ResourceNotFoundException("Not found User with uuid = " + uuid));
+    public UserResponse findById(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found User with uuid = " + id));
 
         return userMapper.userToUserResponse(user);
     }

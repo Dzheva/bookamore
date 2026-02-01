@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 public class OfferWithBookRequest {
@@ -39,5 +40,5 @@ public class OfferWithBookRequest {
 
     @NotNull(message = "Seller ID cannot be null.")
     @Schema(example = "42", description = "ID of the seller (User)")
-    private Long sellerId;
+    private UUID sellerId;
 }

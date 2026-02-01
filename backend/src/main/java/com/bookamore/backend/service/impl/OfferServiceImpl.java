@@ -1,11 +1,10 @@
 package com.bookamore.backend.service.impl;
 
-import com.bookamore.backend.mapper.offer.OfferMapper;
 import com.bookamore.backend.dto.book.BookRequest;
 import com.bookamore.backend.dto.offer.OfferRequest;
+import com.bookamore.backend.dto.offer.OfferResponse;
 import com.bookamore.backend.dto.offer.OfferUpdateRequest;
 import com.bookamore.backend.dto.offer.OfferWithBookRequest;
-import com.bookamore.backend.dto.offer.OfferResponse;
 import com.bookamore.backend.dto.offer.OfferWithBookResponse;
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.Offer;
@@ -13,6 +12,7 @@ import com.bookamore.backend.entity.User;
 import com.bookamore.backend.entity.enums.OfferStatus;
 import com.bookamore.backend.entity.enums.OfferType;
 import com.bookamore.backend.exception.ResourceNotFoundException;
+import com.bookamore.backend.mapper.offer.OfferMapper;
 import com.bookamore.backend.repository.BookRepository;
 import com.bookamore.backend.repository.OfferRepository;
 import com.bookamore.backend.repository.UserRepository;
@@ -31,10 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -59,10 +59,10 @@ public class OfferServiceImpl implements OfferService {
 
     @Transactional
     public OfferResponse create(OfferRequest request) {
-        Long bookId = Optional.ofNullable(request.getBookId())
+        UUID bookId = Optional.ofNullable(request.getBookId())
                 .orElseThrow(() -> new IllegalArgumentException("Provided OfferRequest with bookId = null"));
 
-        Long sellerId = Optional.ofNullable(request.getSellerId())
+        UUID sellerId = Optional.ofNullable(request.getSellerId())
                 .orElseThrow(() -> new IllegalArgumentException("Provided OfferRequest with sellerId = null"));
 
         Book book = bookRepository.findById(bookId).orElseThrow(
@@ -134,21 +134,21 @@ public class OfferServiceImpl implements OfferService {
         return getOffersEntityPage(page, size, sortBy, sortDir).map(offerMapper::toResponseWithBook);
     }
 
-    public Offer getEntityById(Long offerId) {
+    public Offer getEntityById(UUID offerId) {
         return offerRepository.findById(offerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Offer not found with id: " + offerId));
     }
 
-    public OfferResponse getById(Long offerId) {
+    public OfferResponse getById(UUID offerId) {
         return offerMapper.toResponse(getEntityById(offerId));
     }
 
-    public OfferWithBookResponse getWithBookById(Long offerId) {
+    public OfferWithBookResponse getWithBookById(UUID offerId) {
         return offerMapper.toResponseWithBook(getEntityById(offerId));
     }
 
     @Transactional
-    public OfferResponse update(Long offerId, OfferUpdateRequest request) {
+    public OfferResponse update(UUID offerId, OfferUpdateRequest request) {
 
         Offer existingOffer = offerRepository.findById(offerId).orElseThrow(
                 () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
@@ -211,7 +211,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Transactional
-    public void delete(Long offerId) {
+    public void delete(UUID offerId) {
         Offer offer = offerRepository.findById(offerId).orElseThrow(
                 () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
         );
@@ -219,7 +219,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Transactional
-    public String savePreviewImage(Long offerId, MultipartFile previewImage) {
+    public String savePreviewImage(UUID offerId, MultipartFile previewImage) {
 
         Offer existingOffer = offerRepository.findById(offerId).orElseThrow(
                 () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
@@ -237,7 +237,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Transactional
-    public void deletePreviewImage(Long offerId) {
+    public void deletePreviewImage(UUID offerId) {
         Offer existingOffer = offerRepository.findById(offerId).orElseThrow(
                 () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
         );

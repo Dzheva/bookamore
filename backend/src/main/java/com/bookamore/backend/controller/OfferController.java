@@ -22,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("api/v1/offers")
 @RequiredArgsConstructor
@@ -87,7 +89,7 @@ public class OfferController {
     @No401Swgr
     @GetMapping("/{offerId}")
     @Operation(summary = "Get offer by id", description = "Get offer by id")
-    public ResponseEntity<OfferResponse> getOfferById(@PathVariable Long offerId) {
+    public ResponseEntity<OfferResponse> getOfferById(@PathVariable UUID offerId) {
         OfferResponse offer = offerService.getById(offerId);
 
         return offer != null ? ResponseEntity.ok(offer) : ResponseEntity.notFound().build();
@@ -96,7 +98,7 @@ public class OfferController {
     @No401Swgr
     @Operation(summary = "Get offer by id with book fields", description = "Get offer by id with book fields")
     @GetMapping("/with-book/{offerId}")
-    public ResponseEntity<OfferWithBookResponse> getOffersWithBookById(@PathVariable Long offerId) {
+    public ResponseEntity<OfferWithBookResponse> getOffersWithBookById(@PathVariable UUID offerId) {
 
         OfferWithBookResponse offer = offerService.getWithBookById(offerId);
 
@@ -131,7 +133,7 @@ public class OfferController {
             )
     })
     @PatchMapping("/{offerId}")
-    public ResponseEntity<OfferResponse> updateOffer(@PathVariable Long offerId,
+    public ResponseEntity<OfferResponse> updateOffer(@PathVariable UUID offerId,
                                                      @RequestBody OfferUpdateRequest request) {
 
         return ResponseEntity.status(HttpStatus.OK).body(offerService.update(offerId, request));
@@ -142,7 +144,7 @@ public class OfferController {
             @ApiResponse(responseCode = "204", description = "Book was deleted successfully")
     })
     @DeleteMapping("/{offerId}")
-    public ResponseEntity<Void> deleteOffer(@PathVariable Long offerId) {
+    public ResponseEntity<Void> deleteOffer(@PathVariable UUID offerId) {
 
         offerService.delete(offerId);
         return ResponseEntity.noContent().build();
@@ -154,14 +156,14 @@ public class OfferController {
 
     // upload preview image
     @PostMapping(value = "/{offerId}/previewImage", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> uploadPreviewImage(@PathVariable Long offerId,
+    public ResponseEntity<String> uploadPreviewImage(@PathVariable UUID offerId,
                                                      @RequestParam("previewImage") MultipartFile previewImage) {
         return ResponseEntity.status(HttpStatus.CREATED).body(offerService.savePreviewImage(offerId, previewImage));
     }
 
     // delete preview image
     @DeleteMapping(value = "/{offerId}/previewImage")
-    public ResponseEntity<Void> deletePreviewImage(@PathVariable Long offerId) {
+    public ResponseEntity<Void> deletePreviewImage(@PathVariable UUID offerId) {
         offerService.deletePreviewImage(offerId);
         return ResponseEntity.noContent().build();
     }

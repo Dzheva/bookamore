@@ -1,20 +1,30 @@
 package com.bookamore.backend.entity;
 
+import com.bookamore.backend.entity.base.BaseEntity;
 import com.bookamore.backend.entity.enums.OfferStatus;
 import com.bookamore.backend.entity.enums.OfferType;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "offers")
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
-public class Offer extends BaseEntity{
+public class Offer extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
@@ -43,7 +53,7 @@ public class Offer extends BaseEntity{
     private OfferStatus status;
 
     @ToString.Include(name = "userId")
-    private Long getUserId() {
+    private UUID getUserId() {
         return user != null ? user.getId() : null;
     }
 }

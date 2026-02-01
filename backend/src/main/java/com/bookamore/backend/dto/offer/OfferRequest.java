@@ -7,6 +7,7 @@ import com.bookamore.backend.entity.enums.OfferType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 public class OfferRequest {
@@ -29,9 +30,9 @@ public class OfferRequest {
 
     @NotNull(message = "Book ID cannot be null.")
     @Schema(example = "1", description = "ID of the related book")
-    private Long bookId;
+    private UUID bookId;
 
     @NotNull(message = "Seller ID cannot be null.")
     @Schema(example = "4", description = "ID of the seller (User)")
-    private Long sellerId;
+    private UUID sellerId;
 }
