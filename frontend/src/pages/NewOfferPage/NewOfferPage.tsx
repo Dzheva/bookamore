@@ -10,7 +10,7 @@ import { formStyle } from '@app/styles/form';
 import { AddPhotoBook } from '@/shared/ui/icons/AddPhotoBookSvg';
 import { NoImgAddPhoto } from '@/shared/ui/icons/NoImgAddSvg';
 import clsx from 'clsx';
-import { SelectMenu } from '@/shared/ui/icons/ SelectMenuSvg';
+// import { SelectMenu } from '@/shared/ui/icons/ SelectMenuSvg';
 
 const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
@@ -94,7 +94,6 @@ const NewOfferPage: React.FC = () => {
           Sell book
         </h1>
       </div>
-
       <div className="w-full  max-w-md mx-auto lg:max-w-2xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
         <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
           <div className={formStyle.container}>
@@ -248,9 +247,20 @@ const NewOfferPage: React.FC = () => {
           </div>
 
           <div className="flex flex-row justify-between">
-            <div className="w-[164px]  ">
-              <h3 className="text-h6m font-kyiv ">Condition*</h3>
+            <div
+              className="w-[164px] 
+               flex flex-col gap-1
+            "
+            >
+              <label
+                htmlFor="condition"
+                className="text-h6m text-aquamarine-950 py-[4px] px-[12px] "
+              >
+                Condition*
+              </label>
               <select
+                name="condition"
+                id="condition"
                 value={formData.condition}
                 onChange={(e) =>
                   handleInputChange(
@@ -258,27 +268,41 @@ const NewOfferPage: React.FC = () => {
                     e.target.value as BookCondition
                   )
                 }
-                className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none text-sm sm:text-base"
+                className="min-w-[163px] h-[44px] text-h6m               
+                border-[0.4px] border-gray-400 border-solid rounded-xl
+                px-[10px] py-[12px]
+                bg-no-repeat  bg-[url('/down.png')]
+                bg-[right_10px_center]
+                focus:outline-none focus:ring-0 appearance-none 
+                 "
               >
                 <option value="NEW">New</option>
                 <option value="AS_NEW">As New</option>
                 <option value="USED">Used</option>
               </select>
-              <SelectMenu />
             </div>
 
-            <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2"></label>
-
-            <div className="w-[164px]">
-              <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-                Price
+            <div className="w-[164px]  flex flex-col gap-1">
+              <label
+                htmlFor="price"
+                className="text-h6m text-aquamarine-950 py-[4px] px-[12px]"
+              >
+                Price, UAH
               </label>
+
               <input
                 type="number"
+                id="price"
+                name="price"
                 value={formData.price}
                 onChange={(e) => handleInputChange('price', e.target.value)}
-                placeholder="250"
-                className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                placeholder="300"
+                className="min-w-[163px] h-[44px] text-h6m text-black               
+                border-[0.4px] border-gray-400 border-solid rounded-xl
+                px-[10px] py-[12px]
+                focus:outline-none focus:ring-0
+                focus:text-
+                "
                 required
                 min="0"
                 step="0.01"
@@ -286,34 +310,37 @@ const NewOfferPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Description */}
           <div>
-            <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-              Add a description
+            <label htmlFor="desc" className="text-h4m mb-1    ">
+              Add description
             </label>
             <textarea
+              id="desc"
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              placeholder="Used, in good condition..."
+              placeholder="Used, in good condition."
               rows={4}
-              className="w-full px-3 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base"
+              className="w-full px-[10px] py-[14px] 
+              rounded-lg  lg:py-4
+              border-[0.4px] border-gray-400 border-solid 
+              focus:outline-none focus:ring-0
+              resize-none text-sm sm:text-base"
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 sm:py-4 lg:py-5 bg-gray-900 text-white font-semibold rounded-lg hover:bg-black transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg lg:text-xl"
+            className="w-full py-3 sm:py-4 lg:py-5 mb-[78px]
+            bg-[#033F63] text-white
+             font-semibold rounded-lg
+             transition-colors disabled:bg-gray-400 
+             disabled:cursor-not-allowed text-base sm:text-lg lg:text-xl"
           >
             {isSubmitting ? 'Publishing...' : 'Publish'}
           </button>
         </form>
       </div>
-      <div>text</div>
-
-      {/* Bottom spacing before BottomNav */}
-      <div className="pb-20"></div>
 
       <BottomNav />
     </div>
