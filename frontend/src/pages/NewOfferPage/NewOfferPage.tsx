@@ -6,6 +6,11 @@ import type { OfferType, OfferStatus } from '@/types/entities/Offer.d.ts';
 import type { OfferWithBookRequest } from '@/types/entities/OfferWithBook.d.ts';
 import type { BookCondition } from '@/types/entities/Book.d.ts';
 import BackButton from '@/shared/ui/BackButton';
+import { formStyle } from '@app/styles/form';
+import { AddPhotoBook } from '@/shared/ui/icons/AddPhotoBookSvg';
+import { NoImgAddPhoto } from '@/shared/ui/icons/NoImgAddSvg';
+import clsx from 'clsx';
+// import { SelectMenu } from '@/shared/ui/icons/ SelectMenuSvg';
 
 const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
@@ -72,75 +77,114 @@ const NewOfferPage: React.FC = () => {
     }
   };
 
+  const labelStyle = clsx('flex items-center px-[8px] text-[#676767]    ');
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex items-center border-b border-gray-200">
+      <div
+        className=" px-[16px] py-[20px] sm:px-6 lg:px-8 
+       flex items-center "
+      >
         <BackButton />
-        <h1 className="text-base sm:text-lg lg:text-xl font-semibold flex-1 text-center">
-          Sell a book
+        <h1
+          className="absolute left-1/2 transform -translate-x-1/2
+             text-[#153037] text-[20px] font-kyiv   font-medium
+             sm:text-lg lg:text-xl "
+        >
+          Sell book
         </h1>
-        <div className="w-6 sm:w-8"></div>
       </div>
-
-      {/* Form Container - responsive */}
-      <div className="w-full max-w-md mx-auto lg:max-w-2xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
+      <div className="w-full  max-w-md mx-auto lg:max-w-2xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
         <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
-          {/* Book Title */}
-          <div>
-            <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-              Book Title
+          <div className={formStyle.container}>
+            <label htmlFor="title" className={formStyle.title}>
+              Book Title*
             </label>
+
             <input
+              id="title"
+              name="title"
               type="text"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
               placeholder="Babel"
-              className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+              className={formStyle.input}
               required
             />
           </div>
 
-          {/* Author */}
-          <div>
-            <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-              Author
+          <div className={formStyle.container}>
+            <label htmlFor="author" className={formStyle.title}>
+              Author*
             </label>
             <input
+              id="author"
+              name="author"
               type="text"
               value={formData.author}
               onChange={(e) => handleInputChange('author', e.target.value)}
               placeholder="Rebecca Kuang"
-              className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+              className={formStyle.input}
               required
             />
           </div>
 
-          {/* Condition */}
-          <div>
-            <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-              Condition
-            </label>
-            <select
-              value={formData.condition}
-              onChange={(e) =>
-                handleInputChange('condition', e.target.value as BookCondition)
-              }
-              className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none text-sm sm:text-base"
-            >
-              <option value="NEW">New</option>
-              <option value="AS_NEW">As New</option>
-              <option value="USED">Used</option>
-            </select>
-          </div>
+          <div
+            className="flex flex-col 
+          border-[0.4px] border-solid border-[#B6B6B6] rounded-xl 
+          min-h-[201px] 
+          "
+          >
+            <h3 className="font-kyiv text-h3m   p-[8px]">Upload photo</h3>
 
-          {/* Type of deal */}
+            <div className="flex">
+              <div
+                className="min-w-[104px] h-[144px]  bg-[#F7F8F2] 
+              mt-[6px] mr-[16px] mb-[6px] ml-[8px]
+              flex items-center justify-center
+              "
+              >
+                <label className="">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => handlePhotosChange(e.target.files)}
+                    className="hidden"
+                  />
+
+                  <AddPhotoBook />
+                </label>
+              </div>
+
+              <div
+                className="min-w-[191px] h-[156px] 
+              flex justify-center gap-[12px]  flex-wrap 
+              px-[33.5px]
+              "
+              >
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-[#F7F8F2] w-[56px] h-[72px] rounded-[10px]
+                    flex items-center justify-center
+                    "
+                  >
+                    <NoImgAddPhoto />
+                  </div>
+                ))}
+
+                {formData.photos.length > 0 && (
+                  <p>{formData.photos.length} photo(s) selected</p>
+                )}
+              </div>
+            </div>
+          </div>
           <div>
-            <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-3">
-              Type of deal
-            </label>
+            <h3 className="font-kyiv text-h6m mb-[10px] ">Type of deal*</h3>
+
             <div className="space-y-3 lg:space-y-4">
-              <label className="flex items-center">
+              <label className={`${labelStyle} group`}>
                 <input
                   type="radio"
                   name="dealType"
@@ -149,128 +193,154 @@ const NewOfferPage: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange('dealType', e.target.value as OfferType)
                   }
-                  className="mr-3 text-blue-600 focus:ring-blue-500 w-4 h-4 sm:w-5 sm:h-5"
+                  className={`${formStyle.radio} peer`}
+                  required
                 />
-                <span className="text-gray-700 text-sm sm:text-base">
-                  purchase only
-                </span>
+                <p
+                  className="font-kyiv text-h6m 
+              peer-checked:text-aquamarine-950"
+                >
+                  Purchase only
+                </p>
               </label>
-              <label className="flex items-center">
+
+              <label className={`${labelStyle} group`}>
                 <input
                   type="radio"
                   name="dealType"
-                  value="EXCHANGE"
-                  checked={formData.dealType === 'EXCHANGE'}
+                  value="SELL"
+                  checked={formData.dealType === 'SELL'}
                   onChange={(e) =>
                     handleInputChange('dealType', e.target.value as OfferType)
                   }
-                  className="mr-3 text-blue-600 focus:ring-blue-500 w-4 h-4 sm:w-5 sm:h-5"
+                  className={`${formStyle.radio} peer`}
+                  required
                 />
-                <span className="text-gray-700 text-sm sm:text-base">
-                  exchange only
-                </span>
+                <p
+                  className="font-kyiv text-h6m 
+              peer-checked:text-aquamarine-950"
+                >
+                  Exchange only
+                </p>
               </label>
-              <label className="flex items-center">
+
+              <label className={`${labelStyle} group`}>
                 <input
                   type="radio"
                   name="dealType"
-                  value="SELL_EXCHANGE"
-                  checked={formData.dealType === 'SELL_EXCHANGE'}
+                  value="SELL"
+                  checked={formData.dealType === 'SELL'}
                   onChange={(e) =>
                     handleInputChange('dealType', e.target.value as OfferType)
                   }
-                  className="mr-3 text-blue-600 focus:ring-blue-500 w-4 h-4 sm:w-5 sm:h-5"
+                  className={`${formStyle.radio} peer`}
+                  required
                 />
-                <span className="text-gray-700 text-sm sm:text-base">both</span>
+                <p
+                  className="font-kyiv text-h6m 
+              peer-checked:text-aquamarine-950"
+                >
+                  Both
+                </p>
               </label>
             </div>
           </div>
 
-          {/* Price */}
-          <div>
-            <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-              Price
-            </label>
-            <input
-              type="number"
-              value={formData.price}
-              onChange={(e) => handleInputChange('price', e.target.value)}
-              placeholder="250"
-              className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-              required
-              min="0"
-              step="0.01"
-            />
+          <div className="flex flex-row justify-between">
+            <div
+              className="w-[164px] 
+               flex flex-col gap-1
+            "
+            >
+              <label
+                htmlFor="condition"
+                className="text-h6m text-aquamarine-950 py-[4px] px-[12px] "
+              >
+                Condition*
+              </label>
+              <select
+                name="condition"
+                id="condition"
+                value={formData.condition}
+                onChange={(e) =>
+                  handleInputChange(
+                    'condition',
+                    e.target.value as BookCondition
+                  )
+                }
+                className="min-w-[163px] h-[44px] text-h6m               
+                border-[0.4px] border-gray-400 border-solid rounded-xl
+                px-[10px] py-[12px]
+                bg-no-repeat  bg-[url('/down.png')]
+                bg-[right_10px_center]
+                focus:outline-none focus:ring-0 appearance-none 
+                 "
+              >
+                <option value="NEW">New</option>
+                <option value="AS_NEW">As New</option>
+                <option value="USED">Used</option>
+              </select>
+            </div>
+
+            <div className="w-[164px]  flex flex-col gap-1">
+              <label
+                htmlFor="price"
+                className="text-h6m text-aquamarine-950 py-[4px] px-[12px]"
+              >
+                Price, UAH
+              </label>
+
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={(e) => handleInputChange('price', e.target.value)}
+                placeholder="300"
+                className="min-w-[163px] h-[44px] text-h6m text-black               
+                border-[0.4px] border-gray-400 border-solid rounded-xl
+                px-[10px] py-[12px]
+                focus:outline-none focus:ring-0
+                focus:text-
+                "
+                required
+                min="0"
+                step="0.01"
+              />
+            </div>
           </div>
 
-          {/* Description */}
           <div>
-            <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-              Add a description
+            <label htmlFor="desc" className="text-h4m mb-1    ">
+              Add description
             </label>
             <textarea
+              id="desc"
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              placeholder="Used, in good condition..."
+              placeholder="Used, in good condition."
               rows={4}
-              className="w-full px-3 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base"
+              className="w-full px-[10px] py-[14px] 
+              rounded-lg  lg:py-4
+              border-[0.4px] border-gray-400 border-solid 
+              focus:outline-none focus:ring-0
+              resize-none text-sm sm:text-base"
             />
           </div>
 
-          {/* Upload photo */}
-          <div>
-            <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-3">
-              Upload photo
-            </label>
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 lg:gap-4">
-              {/* Main photo upload */}
-              <label className="relative">
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => handlePhotosChange(e.target.files)}
-                  className="hidden"
-                />
-                <div className="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors">
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-gray-400 rounded-full flex items-center justify-center">
-                    <span className="text-gray-400 text-lg sm:text-xl">+</span>
-                  </div>
-                </div>
-              </label>
-
-              {/* Additional photo slots */}
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center"
-                >
-                  <div className="w-4 h-4 sm:w-6 sm:h-6 border border-gray-400 rounded-full flex items-center justify-center">
-                    <span className="text-gray-400 text-sm">+</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {formData.photos.length > 0 && (
-              <p className="text-sm sm:text-base text-gray-600 mt-2">
-                {formData.photos.length} photo(s) selected
-              </p>
-            )}
-          </div>
-
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-3 sm:py-4 lg:py-5 bg-gray-900 text-white font-semibold rounded-lg hover:bg-black transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg lg:text-xl"
+            className="w-full py-3 sm:py-4 lg:py-5 mb-[78px]
+            bg-[#033F63] text-white
+             font-semibold rounded-lg
+             transition-colors disabled:bg-gray-400 
+             disabled:cursor-not-allowed text-base sm:text-lg lg:text-xl"
           >
             {isSubmitting ? 'Publishing...' : 'Publish'}
           </button>
         </form>
       </div>
-
-      {/* Bottom spacing before BottomNav */}
-      <div className="pb-20"></div>
 
       <BottomNav />
     </div>

@@ -28,7 +28,7 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
   };
 
   const containerStyle = () => clsx('pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]');
-  const textStyle = () => clsx('text-[#E9EADB] font-[KyivType Sans]');
+  const textStyle = () => clsx('text-[#E9EADB] font-kyiv');
   const isActiveStyle = ({ isActive }: { isActive: boolean }) =>
     clsx(
       'flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]',

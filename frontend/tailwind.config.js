@@ -30,6 +30,28 @@ export default {
         88: '22rem',
         128: '32rem',
       },
+
+      fontFamily: {
+        sans: ['"Kyiv Type Sans"', 'system-ui', 'sans-serif'],
+        kyiv: ['"Kyiv Type Sans"', 'sans-serif'],
+      },
+
+      fontSize: {
+        h1m: ['18px', { lineHeight: 1.2, fontWeight: 300 }],
+        h2m: ['20px', { lineHeight: 1.25, fontWeight: 500 }],
+        h3m: ['18px', { lineHeight: 1.3, fontWeight: 500 }],
+        h4m: ['16px', { lineHeight: 1.4, fontWeight: 500 }],
+        h5m: ['14px', { lineHeight: 1.5, fontWeight: 700 }],
+        h6m: ['14px', { lineHeight: 1.45, fontWeight: 400 }],
+        buttonm: ['16px', { lineHeight: 1.4, fontWeight: 500 }],
+        paragraphm: ['14px', { lineHeight: 1.45, fontWeight: 400 }],
+        tagm: ['14px', { lineHeight: 1.4, fontWeight: 200 }],
+        captionm: ['12px', { lineHeight: 1.5, fontWeight: 300 }],
+      },
+      accentColor: {
+        'gray-600': '#4B5563',
+        'gray-800': '#1F2937',
+      },
     },
   },
   plugins: [],
