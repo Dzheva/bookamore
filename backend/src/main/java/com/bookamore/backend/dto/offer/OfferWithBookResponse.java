@@ -8,13 +8,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class OfferWithBookResponse {
 
-    private Long id;
+    private UUID id;
     private OfferType type;
     private OfferStatus status;
     private String description;
@@ -23,6 +24,6 @@ public class OfferWithBookResponse {
 
     private BookResponse book;
 
-    private Long sellerId;
+    private UUID sellerId;
 
 }

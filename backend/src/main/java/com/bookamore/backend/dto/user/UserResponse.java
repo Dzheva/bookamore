@@ -8,7 +8,7 @@ import java.util.UUID;
 @Data
 public class UserResponse {
     @Schema(example = "d367ec63-a73b-485d-a1c8-6b793b009e53")
-    private UUID uuid;
+    private UUID id;
     @Schema(example = "John")
     private String name;
     @Schema(example = "john@example.com")

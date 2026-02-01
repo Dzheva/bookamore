@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -121,19 +122,19 @@ public class BookServiceImpl implements BookService {
         book.setImages(resolveImages(book));
     }
 
-    public Book getBookEntityById(Long bookId) {
+    public Book getBookEntityById(UUID bookId) {
         return bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
     }
 
-    public BookResponse getById(Long bookId) {
+    public BookResponse getById(UUID bookId) {
         return bookMapper.toResponse(
                 getBookEntityById(bookId)
         );
     }
 
     @Transactional
-    public BookResponse update(Long bookId, BookUpdateRequest bookUpdateRequest) {
+    public BookResponse update(UUID bookId, BookUpdateRequest bookUpdateRequest) {
         Book existingBook = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
 
@@ -275,7 +276,7 @@ public class BookServiceImpl implements BookService {
      */
 
     @Transactional
-    public List<String> saveImages(Long bookId, List<MultipartFile> images) {
+    public List<String> saveImages(UUID bookId, List<MultipartFile> images) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
 
@@ -304,7 +305,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Transactional
-    public List<String> replaceImages(Long bookId, List<MultipartFile> images) {
+    public List<String> replaceImages(UUID bookId, List<MultipartFile> images) {
 
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
@@ -349,7 +350,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Transactional
-    public void deleteImage(Long bookId, String imagePath) {
+    public void deleteImage(UUID bookId, String imagePath) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + bookId));
 

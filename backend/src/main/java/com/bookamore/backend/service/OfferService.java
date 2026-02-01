@@ -9,6 +9,8 @@ import com.bookamore.backend.entity.Offer;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 
 public interface OfferService {
 
@@ -22,17 +24,17 @@ public interface OfferService {
 
     Page<OfferWithBookResponse> getOffersWithBooksPage(Integer page, Integer size, String sortBy, String sortDir);
 
-    Offer getEntityById(Long offerId);
+    Offer getEntityById(UUID offerId);
 
-    OfferResponse getById(Long offerId);
+    OfferResponse getById(UUID offerId);
 
-    OfferWithBookResponse getWithBookById(Long offerId);
+    OfferWithBookResponse getWithBookById(UUID offerId);
 
-    OfferResponse update(Long offerId, OfferUpdateRequest request);
+    OfferResponse update(UUID offerId, OfferUpdateRequest request);
 
-    void delete(Long offerId);
+    void delete(UUID offerId);
 
-    String savePreviewImage(Long offerId, MultipartFile previewImage);
+    String savePreviewImage(UUID offerId, MultipartFile previewImage);
 
-    void deletePreviewImage(Long offerId);
+    void deletePreviewImage(UUID offerId);
 }

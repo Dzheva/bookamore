@@ -1,11 +1,19 @@
 package com.bookamore.backend.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import com.bookamore.backend.entity.base.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Entity
@@ -13,7 +21,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookGenre extends BaseEntity{
+public class BookGenre extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
