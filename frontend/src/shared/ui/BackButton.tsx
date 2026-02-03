@@ -10,7 +10,7 @@ const BackButton = () => {
 
   return (
     <>
-      <button type="button" onClick={handleBack}>
+      <button type="button" onClick={handleBack} className="cursor-pointer">
         <BackButtonSvg />
       </button>
     </>
