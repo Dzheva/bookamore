@@ -5,11 +5,11 @@ import { BottomNav } from '@shared/ui/BottomNav';
 import type { OfferType, OfferStatus } from '@/types/entities/Offer.d.ts';
 import type { OfferWithBookRequest } from '@/types/entities/OfferWithBook.d.ts';
 import type { BookCondition } from '@/types/entities/Book.d.ts';
-import BackButton from '@/shared/ui/BackButton';
 import { formStyle } from '@app/styles/form';
 import { AddPhotoBook } from '@/shared/ui/icons/AddPhotoBookSvg';
 import { NoImgAddPhoto } from '@/shared/ui/icons/NoImgAddSvg';
 import clsx from 'clsx';
+import HeaderTitle from '@/shared/ui/HeaderTitle';
 // import { SelectMenu } from '@/shared/ui/icons/ SelectMenuSvg';
 
 const NewOfferPage: React.FC = () => {
@@ -80,20 +80,8 @@ const NewOfferPage: React.FC = () => {
   const labelStyle = clsx('flex items-center px-[8px] text-[#676767]    ');
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div
-        className=" px-[16px] py-[20px] sm:px-6 lg:px-8 
-       flex items-center "
-      >
-        <BackButton />
-        <h1
-          className="absolute left-1/2 transform -translate-x-1/2
-             text-[#153037] text-[20px] font-kyiv   font-medium
-             sm:text-lg lg:text-xl "
-        >
-          Sell book
-        </h1>
-      </div>
+    <div className="min-h-screen">
+      <HeaderTitle title="Sell book" />
       <div className="w-full  max-w-md mx-auto lg:max-w-2xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
         <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
           <div className={formStyle.container}>

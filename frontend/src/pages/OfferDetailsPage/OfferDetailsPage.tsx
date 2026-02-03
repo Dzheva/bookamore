@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import {
-  IoChevronBack,
-  IoHeart,
-  IoHeartOutline,
-  IoCheckmarkCircleOutline,
-  IoChevronDown,
-  IoChevronUp,
-  IoSwapHorizontalOutline,
-  IoChevronForward,
-} from 'react-icons/io5';
 
 import { useGetOfferWithBookByIdQuery } from '../../app/store/api/OffersApi';
 import { BottomNav } from '../../shared/ui/BottomNav';
@@ -19,8 +9,16 @@ import {
   getOffersByGenre,
   getSellerById,
 } from '../../shared/mocks/mockData';
-import BackButton from '@/shared/ui/BackButton';
 import noImages from '@/assest/images/noImage.jpg';
+import HeaderTitle from '@/shared/ui/HeaderTitle';
+import { FavoritesSvg } from '@/shared/ui/bottomNavImg/FavoritesSvg';
+import {
+  ArrowLeft,
+  ArrowRight,
+  SynchronizeArrows,
+  ArrowUp,
+  ArrowDown,
+} from '../../../public/svg/Arrow';
 
 function Dots({
   count,
@@ -52,7 +50,8 @@ function Dots({
 const OfferDetailsPage: React.FC = () => {
   const { offerId } = useParams<{ offerId: string }>();
   const navigate = useNavigate();
-  const [isFavorite, setIsFavorite] = useState(false);
+  // const [isFavorite, setIsFavorite] = useState(false);
+  const [, setIsFavorite] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(true);
   const [imgIndex, setImgIndex] = useState(0);
 
@@ -126,23 +125,31 @@ const OfferDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="px-4 sm:px-6 lg:px-8 py-3 flex items-center border-b border-gray-100">
-        <BackButton />
+    <div className="min-h-screen">
+      <HeaderTitle
+        title="Detail Book"
+        icon={<FavoritesSvg />}
+        onIconClick={handleFavoriteToggle}
+      />
 
-        <h1 className="text-base sm:text-lg lg:text-xl font-semibold flex-1 text-center">
-          Book Details
-        </h1>
-        <div className="w-6 sm:w-8"></div>
-      </div>
+      <div className="w-full max-w-md mx-auto lg:max-w-4xl xl:max-w-6xl xl:">
+        <div className="px-4 sm:px-6 md:px-0  ">
+          <div
+            className="flex flex-col  lg:gap-8 items-center
+            py-5 px-4
+          bg-[#FFF8EB]
+            border-[1px]  border-none rounded-[24px]
+            w-full"
+          >
+            <div className="flex items-center flex-col mb-1 sm:mb-2">
+              <h2 className=" font-h3m flex items-center text-black">
+                {book.title}
+              </h2>
+              <p className="font-h6m text-[#676767] ">
+                {book.authors?.join(', ')}
+              </p>
+            </div>
 
-      <div className="w-full max-w-md mx-auto lg:max-w-4xl xl:max-w-6xl">
-        {/* top block */}
-        <div className="px-4 sm:px-6 lg:px-8 pt-4">
-          {/* image + info */}
-          <div className="flex flex-col lg:flex-row lg:gap-8">
-            {/* image */}
             <div className="w-full lg:w-1/3">
               <div className="w-32 sm:w-40 lg:w-full flex-shrink-0 h-44 sm:h-56 lg:h-80 rounded-xl   flex items-center justify-center mx-auto lg:mx-0">
                 {images.length > 0 && images[imgIndex] ? (
@@ -152,19 +159,63 @@ const OfferDetailsPage: React.FC = () => {
                     className="w-full h-full object-cover rounded-xl"
                   />
                 ) : (
-                  <img src={noImages} alt="no Image" />
+                  <img
+                    src={noImages}
+                    alt="no Image"
+                    className="rounded-[10px] "
+                  />
                 )}
+
+                {/* then remove */}
+                <div
+                  className="absolute
+                flex justify-between
+                min-w-[243px]
+                "
+                >
+                  <button onClick={onPrev} className="cursor-pointer">
+                    <ArrowLeft />
+                  </button>
+                  <Dots
+                    count={images.length}
+                    active={imgIndex}
+                    onPick={setImgIndex}
+                  />
+                  <button onClick={onNext} className="cursor-pointer">
+                    <ArrowRight />
+                  </button>
+                </div>
               </div>
 
-              {/* slider controls - moved below image on mobile, inline on desktop */}
               {hasMultipleImages && (
+                <div
+                  className="absolute
+                flex justify-between
+                min-w-[243px]
+                "
+                >
+                  <button onClick={onPrev} className="cursor-pointer">
+                    <ArrowLeft />
+                  </button>
+                  <Dots
+                    count={images.length}
+                    active={imgIndex}
+                    onPick={setImgIndex}
+                  />
+                  <button onClick={onNext} className="cursor-pointer">
+                    <ArrowRight />
+                  </button>
+                </div>
+              )}
+
+              {/* {hasMultipleImages && (
                 <div className="mt-3 lg:mt-4 flex items-center justify-center lg:justify-start gap-2">
                   <button
                     onClick={onPrev}
                     className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black"
                     aria-label="previous image"
                   >
-                    <IoChevronBack className="w-5 h-5" />
+                    <ArrowLeft />
                   </button>
                   <Dots
                     count={images.length}
@@ -176,61 +227,34 @@ const OfferDetailsPage: React.FC = () => {
                     className="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-black"
                     aria-label="next image"
                   >
-                    <IoChevronForward className="w-5 h-5" />
+                    <ArrowRight />
                   </button>
                 </div>
-              )}
+              )} */}
             </div>
 
-            {/* textual info */}
             <div className="flex-1 flex flex-col mt-4 lg:mt-0">
-              {/* Title and Heart */}
-              <div className="flex items-start justify-between mb-1 sm:mb-2">
-                <h2 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold flex-1 pr-2">
-                  {book.title}
-                </h2>
-                <button onClick={handleFavoriteToggle} className="p-1">
-                  {isFavorite ? (
-                    <IoHeart className="w-6 h-6 lg:w-8 lg:h-8 text-red-500" />
-                  ) : (
-                    <IoHeartOutline className="w-6 h-6 lg:w-8 lg:h-8 text-gray-800" />
-                  )}
-                </button>
-              </div>
-
-              <p className="text-sm sm:text-base lg:text-lg text-gray-500 mb-4 font-semibold">
-                {book.authors?.join(', ')}
-              </p>
-
-              {/* price + exchange button */}
-              <div className="flex items-center justify-between mb-3 lg:mb-4">
-                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+              <div className="flex items-center justify-evenly  mb-4 lg:mb-4">
+                <p className="text-xl sm:text-2xl lg:text-3xl font-h5m ">
                   {offer.price} UAH
                 </p>
                 {(offer.type === 'SELL_EXCHANGE' ||
                   offer.type === 'EXCHANGE') && (
-                  <div className="flex items-center text-sm lg:text-base text-gray-600 bg-gray-50 px-2 py-1 lg:px-3 lg:py-2 rounded">
-                    <IoSwapHorizontalOutline className="w-4 h-4 lg:w-5 lg:h-5 mr-1 text-gray-500" />
+                  <div
+                    className="flex items-center gap-[6px]
+                  text-sm lg:text-base text-gray-600 bg-gray-50 
+                  px-2 py-1 lg:px-3 lg:py-2 rounded
+                  font-captionm"
+                  >
+                    <SynchronizeArrows />
                     Exchange
                   </div>
                 )}
               </div>
 
-              {/* available + new chip */}
-              <div className="flex items-center justify-between mb-4 lg:mb-6">
-                <span className="inline-flex items-center text-sm lg:text-base text-gray-600 font-medium">
-                  <IoCheckmarkCircleOutline className="w-4 h-4 lg:w-5 lg:h-5 mr-1 text-green-600" />
-                  Available
-                </span>
-                <span className="px-3 py-1 lg:px-4 lg:py-2 rounded-full bg-gray-100 text-xs lg:text-sm font-semibold uppercase text-gray-700">
-                  New
-                </span>
-              </div>
-
-              {/* contact button */}
               <button
                 onClick={handleContact}
-                className="w-full lg:w-auto lg:px-8 py-3 lg:py-4 rounded-lg bg-gray-900 text-white font-semibold hover:bg-black transition-colors text-sm sm:text-base lg:text-lg"
+                className="w-full lg:w-auto lg:px-8 py-3 lg:py-4 rounded-[12px] bg-[#033F63] text-white font-semibold hover:bg-black transition-colors text-sm sm:text-base lg:text-lg"
               >
                 Contact
               </button>
@@ -238,40 +262,33 @@ const OfferDetailsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* divider */}
-        <div className="mt-6 lg:mt-8 border-b border-gray-200" />
-
-        {/* Specs */}
         <div className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
           <div className="space-y-3 lg:space-y-4">
-            <div className="flex items-center">
-              <span className="text-base lg:text-lg font-semibold text-gray-800 w-24 lg:w-32">
-                Language
-              </span>
-              <span className="px-3 py-1 lg:px-4 lg:py-2 bg-gray-100 rounded-full text-sm lg:text-base font-medium text-gray-700">
-                Ukrainian
-              </span>
+            <div className="flex items-center ">
+              <h3 className="mr-4 font-h4m font-medium text-black ">
+                Condition
+              </h3>
+              <p
+                className="font-h6m text-gray-700
+              border-[1px] border-solid border-[#F0FBFB] rounded-[12px] px-2 py-1
+              "
+              >
+                Used
+              </p>
             </div>
-            <div className="flex items-center">
-              <span className="text-base lg:text-lg font-semibold text-gray-800 w-24 lg:w-32">
-                Pages
-              </span>
-              <span className="px-3 py-1 lg:px-4 lg:py-2 bg-gray-100 rounded-full text-sm lg:text-base font-medium text-gray-700">
-                430
-              </span>
-            </div>
+
             <div className="flex items-start">
               <span className="text-base lg:text-lg font-semibold text-gray-800 w-24 lg:w-32 mt-1">
                 Category
               </span>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-4">
                 {(book.genres?.length
                   ? book.genres
                   : ['Fantasy', 'Fantasy']
                 ).map((g: string, i: number) => (
                   <span
                     key={`${g}-${i}`}
-                    className="px-3 py-1 lg:px-4 lg:py-2 bg-gray-100 rounded-full text-sm lg:text-base font-medium text-gray-700"
+                    className="px-3 py-1 lg:px-4 lg:py-2 bg-[#F0FBFB] rounded-full text-sm lg:text-base font-h6m text-gray-700"
                   >
                     {g}
                   </span>
@@ -281,43 +298,44 @@ const OfferDetailsPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="border-b border-gray-200" />
-
-        {/* About the book (accordion) */}
-        <div className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
+        <div
+          className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6
+        bg-[#F7F8F2]  "
+        >
           <button
             onClick={() => setIsAboutOpen((v) => !v)}
             className="w-full flex items-center justify-between"
           >
-            <span className="text-base lg:text-lg font-semibold text-gray-800">
+            <h2
+              className="text-base lg:text-lg
+            mb-4
+            font-h3m font-medium text-gray-800"
+            >
               About the book
-            </span>
-            {isAboutOpen ? (
-              <IoChevronUp className="w-5 h-5 text-gray-500" />
-            ) : (
-              <IoChevronDown className="w-5 h-5 text-gray-500" />
-            )}
+            </h2>
+            {isAboutOpen ? <ArrowUp /> : <ArrowDown />}
           </button>
 
           {isAboutOpen && (
-            <div className="mt-2 lg:mt-4 text-sm lg:text-base text-gray-600">
+            <div className=" text-sm lg:text-base text-[#153037]  ">
               <p>
                 {book.description || 'No description available for this book.'}
               </p>
-              <p className="text-xs lg:text-sm font-semibold text-gray-800 mt-4">
+              <p className="text-xs lg:text-sm font-h6m text-[#153037] mt-4 ">
                 Date added: {new Date().toLocaleDateString('en-GB')}
               </p>
             </div>
           )}
         </div>
 
-        <div className="border-b border-gray-200" />
-
-        {/* Owner */}
         <div className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
-          <p className="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">
+          <h2
+            className="font-h4m font-medium mb-1
+          "
+          >
             The Owner
-          </p>
+          </h2>
+
           <div className="flex items-center gap-3 lg:gap-4">
             <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-gray-100 flex items-center justify-center">
               {seller.avatar ? (
@@ -336,19 +354,16 @@ const OfferDetailsPage: React.FC = () => {
                 </span>
               )}
             </div>
-            <span className="font-medium text-gray-800 text-sm lg:text-base">
-              {seller.name}
-            </span>
+            <p className="font-h6m ">{seller.name}</p>
           </div>
         </div>
 
-        <div className="border-b border-gray-200" />
-
-        {/* Similar books */}
-        <div className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
-          <p className="text-base lg:text-lg font-semibold text-gray-800 mb-3 lg:mb-4">
-            Similar books
-          </p>
+        <div
+          className="px-4 sm:px-6 lg:px-8 py-4 lg:py-6
+        bg-[#F0FBFB]
+        "
+        >
+          <h2 className="font-h3m mb-[28px] "> Similar books</h2>
           <div className="flex gap-3 lg:gap-4 -mx-4 px-4 overflow-x-auto pb-2 lg:grid lg:grid-cols-4 xl:grid-cols-6 lg:overflow-visible lg:mx-0 lg:px-0">
             {similarBooks.length > 0
               ? similarBooks.map((similarOffer) => (
@@ -366,19 +381,16 @@ const OfferDetailsPage: React.FC = () => {
                           className="w-full h-full object-cover rounded-lg"
                         />
                       ) : (
-                        <img src={noImages} alt="no Image" />
+                        <img
+                          src={noImages}
+                          alt="no Image"
+                          className="rounded-[10px] "
+                        />
                       )}
                     </div>
-                    <p className="text-xs lg:text-sm text-gray-600 truncate">
-                      {similarOffer.book.title}
-                    </p>
-                    <p className="text-xs lg:text-sm font-semibold text-gray-800">
-                      {similarOffer.price} UAH
-                    </p>
                   </div>
                 ))
-              : // Fallback to placeholder books if no similar books found
-                [1, 2, 3, 4].map((i) => (
+              : [1, 2, 3, 4].map((i) => (
                   <div key={i} className="w-24 lg:w-full flex-shrink-0">
                     <div className="w-full h-32 lg:h-40 xl:h-48 rounded-lg bg-gray-100" />
                   </div>
