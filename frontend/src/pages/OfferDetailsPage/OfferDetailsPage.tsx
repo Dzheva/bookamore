@@ -254,7 +254,7 @@ const OfferDetailsPage: React.FC = () => {
 
               <button
                 onClick={handleContact}
-                className="w-full lg:w-auto lg:px-8 py-3 lg:py-4 rounded-[12px] bg-[#033F63] text-white font-semibold hover:bg-black transition-colors text-sm sm:text-base lg:text-lg"
+                className="w-full min-w-[311px] lg:w-auto lg:px-8 py-3 lg:py-4 rounded-[12px] bg-[#033F63] text-white font-semibold hover:bg-black transition-colors text-sm sm:text-base lg:text-lg"
               >
                 Contact
               </button>
