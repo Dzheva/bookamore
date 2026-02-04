@@ -2,11 +2,7 @@ package com.bookamore.backend.controller;
 
 import com.bookamore.backend.annotation.No401Swgr;
 import com.bookamore.backend.annotation.No404Swgr;
-import com.bookamore.backend.dto.offer.OfferRequest;
-import com.bookamore.backend.dto.offer.OfferUpdateRequest;
-import com.bookamore.backend.dto.offer.OfferWithBookRequest;
-import com.bookamore.backend.dto.offer.OfferResponse;
-import com.bookamore.backend.dto.offer.OfferWithBookResponse;
+import com.bookamore.backend.dto.offer.*;
 import com.bookamore.backend.service.OfferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
