@@ -378,13 +378,13 @@ const OfferDetailsPage: React.FC = () => {
                         <img
                           src={similarOffer.book.images[0]}
                           alt={similarOffer.book.title}
-                          className="w-full h-full object-cover rounded-lg"
+                          className=" object-cover rounded-lg"
                         />
                       ) : (
                         <img
                           src={noImages}
                           alt="no Image"
-                          className="rounded-[10px] "
+                          className="rounded-[10px] w-[108px] h-[136px] lg:w-[138px]  lg:h-[166px] "
                         />
                       )}
                     </div>
