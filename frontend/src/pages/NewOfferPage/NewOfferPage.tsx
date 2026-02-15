@@ -6,11 +6,13 @@ import type { OfferType, OfferStatus } from '@/types/entities/Offer.d.ts';
 import type { OfferWithBookRequest } from '@/types/entities/OfferWithBook.d.ts';
 import type { BookCondition } from '@/types/entities/Book.d.ts';
 import { formStyle } from '@app/styles/form';
-import { AddPhotoBook } from '@/shared/ui/icons/AddPhotoBookSvg';
-import { NoImgAddPhoto } from '@/shared/ui/icons/NoImgAddSvg';
+// import { AddPhotoBook } from '@/shared/ui/icons/AddPhotoBookSvg';
+// import { NoImgAddPhoto } from '@/shared/ui/icons/NoImgAddSvg';
 import clsx from 'clsx';
 import HeaderTitle from '@/shared/ui/HeaderTitle';
 // import { SelectMenu } from '@/shared/ui/icons/ SelectMenuSvg';
+import { toast, Toaster } from 'react-hot-toast';
+import UploadPhoto from '@/shared/components/UploadPhoto/UploadPhoto';
 
 const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
@@ -35,17 +37,17 @@ const NewOfferPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handlePhotosChange = (files: FileList | null) => {
-    if (files) {
-      setFormData((prev) => ({ ...prev, photos: Array.from(files) }));
-    }
-  };
+  // const handlePhotosChange = (files: FileList | null) => {
+  //   if (files) {
+  //     setFormData((prev) => ({ ...prev, photos: Array.from(files) }));
+  //   }
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.title || !formData.author || !formData.price) {
-      alert('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -73,7 +75,7 @@ const NewOfferPage: React.FC = () => {
       navigate(`/offers/${result.id}`);
     } catch (error) {
       console.error('Error creating offer:', error);
-      alert('Failed to create offer. Please try again.');
+      toast.error('Failed to create offer. Please try again.');
     }
   };
 
@@ -81,7 +83,20 @@ const NewOfferPage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
+      <Toaster />
+
       <HeaderTitle title="Sell book" />
+
+      {/* <div>
+        <button
+          onClick={() => {
+            toast.success('success');
+          }}
+        >
+          test
+        </button>
+      </div> */}
+
       <div className="w-full  max-w-md mx-auto lg:max-w-2xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
         <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
           <div className={formStyle.container}>
@@ -116,8 +131,8 @@ const NewOfferPage: React.FC = () => {
               required
             />
           </div>
-
-          <div
+          <UploadPhoto />
+          {/* <div
             className="flex flex-col 
           border-[0.4px] border-solid border-[#B6B6B6] rounded-xl 
           min-h-[201px] 
@@ -167,7 +182,7 @@ const NewOfferPage: React.FC = () => {
                 )}
               </div>
             </div>
-          </div>
+          </div> */}
           <div>
             <h3 className="font-kyiv text-h6m mb-[10px] ">Type of deal*</h3>
 
