@@ -22,7 +22,4 @@ public class AuthProvider extends BaseEntity {
 
     @Column(name = "provider_user_id", nullable = false)
     private String providerUserId;
-
-    @Column(name = "user_email", nullable = false)
-    private String userEmail;
 }

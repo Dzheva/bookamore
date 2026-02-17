@@ -40,7 +40,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String redirectUrl = UriComponentsBuilder.fromUriString(clientUrl + "/login")
                 .queryParam("token", token)
-                .queryParam("userEmail", oAuth2User.getEmail())
                 .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);

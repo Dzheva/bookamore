@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserService userService;
+    private final OAuth2Service oAuth2Service;
 
-    public CustomOAuth2UserService(UserService userService) {
-        this.userService = userService;
+    public CustomOAuth2UserService(OAuth2Service oAuth2Service) {
+        this.oAuth2Service = oAuth2Service;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         log.info("providerType: {}, providerUserId: {}", providerType, providerUserId);
         // find existing user in DB or create one
-        User user = userService.findOrCreateOAuth2User(providerType, providerUserId, oAuth2User);
+        User user = oAuth2Service.findOrCreateOAuth2User(providerType, providerUserId, oAuth2User);
 
         log.info("User from findOrCreateOAuth2User method : id - {}, email - {}", user.getId(), user.getEmail());
 

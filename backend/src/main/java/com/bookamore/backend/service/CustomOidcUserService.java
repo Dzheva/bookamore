@@ -13,11 +13,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class CustomOidcUserService extends OidcUserService {
+    private final OAuth2Service oAuth2Service;
 
-    private final UserService userService;
-
-    public CustomOidcUserService(UserService userService) {
-        this.userService = userService;
+    public CustomOidcUserService(OAuth2Service oAuth2Service) {
+        this.oAuth2Service = oAuth2Service;
     }
 
     @Override
@@ -34,7 +33,7 @@ public class CustomOidcUserService extends OidcUserService {
 
         log.info("OIDC Provider: {}, ProviderUserId: {}", providerType, providerUserId);
 
-        User user = userService.findOrCreateOAuth2User(providerType, providerUserId, oidcUser);
+        User user = oAuth2Service.findOrCreateOAuth2User(providerType, providerUserId, oidcUser);
         log.info("OIDC User found/created: id={}, email={}", user.getId(), user.getEmail());
 
         return new JwtUserDetails(user.getId(), user.getEmail(), oidcUser.getAttributes());
