@@ -26,7 +26,7 @@ const UploadPhoto = () => {
   return (
     <>
       <div>
-        <h3 className=" text-h3m   p-[8px]">Upload photo</h3>
+        <h3 className=" text-h3m   p-[10px]">Upload photo</h3>
 
         {photo.length < 4 ? (
           <div className="flex  ">
@@ -53,8 +53,8 @@ const UploadPhoto = () => {
             <div>
               <ul
                 className="min-w-[191px] h-[156px] 
-                  flex justify-center gap-[12px]  flex-wrap 
-                  px-[33.5px]"
+                grid grid-cols-2 gap-[12px]          
+                px-[33.5px]"
               >
                 {Array.from({ length: 4 }).map((_, i) => (
                   <li
@@ -88,17 +88,25 @@ const UploadPhoto = () => {
         ) : (
           <div className="flex  ">
             <div
-              className="w-[104px] h-[144px] 
-                  mt-[6px] mr-[16px] mb-[6px] ml-[8px]
+              className="w-[104px] h-[144px]  bg-[#F7F8F2] 
                   flex items-center justify-center
+                   mt-[6px] mr-[16px] mb-[6px] ml-[8px]
                  "
             >
-              {previewUrls[0] && <img src={previewUrls[0]} alt={'photo'} />}
+              {previewUrls[0] && (
+                <img
+                  src={previewUrls[0]}
+                  alt={'photo'}
+                  className="
+                  flex"
+                />
+              )}
             </div>
             <ul
               className="min-w-[191px] h-[156px] 
-                  flex justify-center gap-[12px] items-center  flex-wrap 
+                  grid grid-cols-2 gap-[12px]
                   px-[33.5px]
+                  
                  
                  "
             >
@@ -107,6 +115,7 @@ const UploadPhoto = () => {
                   key={i}
                   className="bg-[#F7F8F2] w-[56px] h-[72px] rounded-[10px]
                        flex items-center justify-center
+                       
                         "
                 >
                   {previewUrls[i] ? (
