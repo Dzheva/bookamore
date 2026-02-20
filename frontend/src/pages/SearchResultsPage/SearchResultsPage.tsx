@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
-import { IoChevronBack, IoSearchOutline, IoClose } from 'react-icons/io5';
+import { IoSearchOutline, IoClose } from 'react-icons/io5';
 import { useGetAllOffersWithBooksQuery } from '../../app/store/api/OffersApi';
 import { BookCard } from '../../shared/ui/BookCard';
 import { BottomNav } from '../../shared/ui/BottomNav';
-import { 
+import {
   applyFiltersAndSort,
-  createMockResponse
+  createMockResponse,
 } from '../../shared/mocks/mockData';
 import type { QueryParams } from '../../types/entities/QueryParams';
+import BackButton from '@/shared/ui/BackButton';
 
 // Mock mode flag - set to true to use mocks instead of API
 const USE_MOCKS = true;
@@ -19,7 +20,7 @@ interface PageHeaderProps {
   onBack: () => void;
 }
 
-function PageHeader({ searchQuery, onBack }: PageHeaderProps) {
+function PageHeader({ searchQuery }: PageHeaderProps) {
   const navigate = useNavigate();
   const isSpecialFilter = searchQuery === 'recommended';
   const displayQuery = isSpecialFilter ? '' : searchQuery;
@@ -36,22 +37,20 @@ function PageHeader({ searchQuery, onBack }: PageHeaderProps) {
     <div className="bg-white border-b border-gray-200">
       {/* Top header */}
       <div className="flex items-center px-4 sm:px-6 lg:px-8 py-3">
-        <button
-          onClick={onBack}
-          className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors"
-          aria-label="Go back"
-        >
-          <IoChevronBack className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-        </button>
+        <BackButton />
+
         <h1 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 flex-1 text-center">
           BookAmore
         </h1>
         <div className="w-6 sm:w-8"></div>
       </div>
-      
+
       {/* Search bar */}
       <div className="px-4 sm:px-6 lg:px-8 pb-3">
-        <form onSubmit={handleSearchSubmit} className="relative w-full max-w-2xl mx-auto lg:max-w-4xl">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="relative w-full max-w-2xl mx-auto lg:max-w-4xl"
+        >
           <input
             type="text"
             value={localSearchQuery}
@@ -79,16 +78,15 @@ function FilterChip({ label, isActive = false, onClick }: FilterChipProps) {
       onClick={onClick}
       className={`
         flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium whitespace-nowrap transition-colors
-        ${isActive 
-          ? 'bg-gray-800 text-white shadow-sm hover:bg-gray-700' 
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+        ${
+          isActive
+            ? 'bg-gray-800 text-white shadow-sm hover:bg-gray-700'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
         }
       `}
     >
       <span>{label}</span>
-      {isActive && (
-        <IoClose className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-      )}
+      {isActive && <IoClose className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
     </button>
   );
 }
@@ -96,23 +94,27 @@ function FilterChip({ label, isActive = false, onClick }: FilterChipProps) {
 export function SearchResultsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   // Get all filter parameters from URL
   const searchQuery = searchParams.get('q') || '';
-  const currentCondition = searchParams.get('condition') as 'new' | 'used' | null;
+  const currentCondition = searchParams.get('condition') as
+    | 'new'
+    | 'used'
+    | null;
   const exchange = searchParams.get('exchange');
   const sort = searchParams.get('sort');
   const categories = searchParams.get('categories');
-  
+
   // Build filter object for our new function
   const filters = {
     query: searchQuery || undefined,
     condition: currentCondition || undefined,
-    exchange: exchange === 'true' ? true : exchange === 'false' ? false : undefined,
+    exchange:
+      exchange === 'true' ? true : exchange === 'false' ? false : undefined,
     sort: sort || undefined,
     categories: categories ? categories.split(',') : undefined,
   };
-  
+
   // Build API query parameters
   const queryParams: QueryParams = {
     search: searchQuery || undefined,
@@ -120,7 +122,7 @@ export function SearchResultsPage() {
     page: 0,
     size: 20,
   };
-  
+
   // Mock data logic using new filter function
   const getMockData = () => {
     const filteredOffers = applyFiltersAndSort(filters);
@@ -128,11 +130,13 @@ export function SearchResultsPage() {
   };
 
   // Use mocks or real API
-  const mockResult = USE_MOCKS ? {
-    data: getMockData(),
-    isLoading: false,
-    error: undefined
-  } : null;
+  const mockResult = USE_MOCKS
+    ? {
+        data: getMockData(),
+        isLoading: false,
+        error: undefined,
+      }
+    : null;
 
   const apiResult = useGetAllOffersWithBooksQuery(
     queryParams,
@@ -140,7 +144,11 @@ export function SearchResultsPage() {
   );
 
   // Choose data source
-  const { data: offersResponse, isLoading, error } = USE_MOCKS ? mockResult! : apiResult;
+  const {
+    data: offersResponse,
+    isLoading,
+    error,
+  } = USE_MOCKS ? mockResult! : apiResult;
 
   const handleBack = () => {
     navigate(-1);
@@ -148,13 +156,13 @@ export function SearchResultsPage() {
 
   const handleConditionFilter = (condition: 'new' | 'used' | null) => {
     const newParams = new URLSearchParams(searchParams);
-    
+
     if (condition) {
       newParams.set('condition', condition);
     } else {
       newParams.delete('condition');
     }
-    
+
     setSearchParams(newParams);
   };
 
@@ -162,10 +170,7 @@ export function SearchResultsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PageHeader 
-          searchQuery={searchQuery} 
-          onBack={handleBack} 
-        />
+        <PageHeader searchQuery={searchQuery} onBack={handleBack} />
         <div className="max-w-md mx-auto">
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
@@ -182,10 +187,7 @@ export function SearchResultsPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <PageHeader 
-          searchQuery={searchQuery} 
-          onBack={handleBack} 
-        />
+        <PageHeader searchQuery={searchQuery} onBack={handleBack} />
         <div className="max-w-md mx-auto">
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
@@ -213,10 +215,7 @@ export function SearchResultsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header with search bar */}
-      <PageHeader 
-        searchQuery={searchQuery} 
-        onBack={handleBack} 
-      />
+      <PageHeader searchQuery={searchQuery} onBack={handleBack} />
 
       <div className="w-full max-w-md mx-auto lg:max-w-4xl xl:max-w-6xl">
         {/* Results info and active filters */}
@@ -226,12 +225,15 @@ export function SearchResultsPage() {
               {getDisplayTitle(searchQuery)}
             </h2>
           )}
-          
+
           {/* Show only active filters as chips */}
           {currentCondition && (
             <div className="flex gap-2">
               <FilterChip
-                label={currentCondition.charAt(0).toUpperCase() + currentCondition.slice(1)}
+                label={
+                  currentCondition.charAt(0).toUpperCase() +
+                  currentCondition.slice(1)
+                }
                 isActive={true}
                 onClick={() => handleConditionFilter(null)}
               />
@@ -241,51 +243,49 @@ export function SearchResultsPage() {
 
         {/* Books list - responsive grid layout */}
         <div className="px-4 sm:px-6 lg:px-8 py-4 pb-20">
-        {offers.length > 0 ? (
-          <div className="space-y-3 sm:space-y-4 lg:grid lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 lg:space-y-0">
-            {offers.map((offer) => (
-              <BookCard
-                key={offer.id}
-                offer={offer}
-                onContact={() => {
-                  console.log('Contact for offer:', offer.id);
-                  // TODO: Implement contact functionality
-                }}
-                onFavorite={() => {
-                  console.log('Toggle favorite for offer:', offer.id);
-                  // TODO: Implement favorite functionality
-                }}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <div className="mb-4">
-              <IoSearchOutline className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto" />
+          {offers.length > 0 ? (
+            <div className="space-y-3 sm:space-y-4 lg:grid lg:grid-cols-3 xl:grid-cols-4 lg:gap-6 lg:space-y-0">
+              {offers.map((offer) => (
+                <BookCard
+                  key={offer.id}
+                  offer={offer}
+                  onContact={() => {
+                    console.log('Contact for offer:', offer.id);
+                    // TODO: Implement contact functionality
+                  }}
+                  onFavorite={() => {
+                    console.log('Toggle favorite for offer:', offer.id);
+                    // TODO: Implement favorite functionality
+                  }}
+                />
+              ))}
             </div>
-            <h3 className="text-base sm:text-lg lg:text-xl font-medium text-gray-900 mb-2">
-              No books found
-            </h3>
-            <p className="text-sm sm:text-base text-gray-600 mb-6 max-w-md mx-auto">
-              {searchQuery 
-                ? `No results found for "${searchQuery}". Try a different search term.`
-                : 'Try searching for books, authors, or genres.'
-              }
-            </p>
-            <button 
-              onClick={handleBack}
-              className="px-4 sm:px-6 py-2 sm:py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
-            >
-              Go Back
-            </button>
-          </div>
-        )}
+          ) : (
+            <div className="text-center py-12">
+              <div className="mb-4">
+                <IoSearchOutline className="w-12 h-12 sm:w-16 sm:h-16 text-gray-300 mx-auto" />
+              </div>
+              <h3 className="text-base sm:text-lg lg:text-xl font-medium text-gray-900 mb-2">
+                No books found
+              </h3>
+              <p className="text-sm sm:text-base text-gray-600 mb-6 max-w-md mx-auto">
+                {searchQuery
+                  ? `No results found for "${searchQuery}". Try a different search term.`
+                  : 'Try searching for books, authors, or genres.'}
+              </p>
+              <button
+                onClick={handleBack}
+                className="px-4 sm:px-6 py-2 sm:py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
+              >
+                Go Back
+              </button>
+            </div>
+          )}
         </div>
       </div>
-      
+
       {/* Bottom Navigation */}
       <BottomNav />
     </div>
   );
 }
-

@@ -1,7 +1,40 @@
-@import "tailwindcss";
+@config "../../../tailwind.config.js";
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Kyiv Type Sans';
+  src: url('/fonts/KyivTypeSans-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kyiv Type Sans';
+  src: url('/fonts/KyivTypeSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kyiv Type Sans';
+  src: url('/fonts/KyivTypeSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kyiv Type Sans';
+  src: url('/fonts/KyivTypeSans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Kyiv Type Sans', sans-serif;
   font-weight: 400;
 
   font-synthesis: none;
