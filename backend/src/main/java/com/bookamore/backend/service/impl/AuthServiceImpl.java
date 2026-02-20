@@ -34,8 +34,5 @@ public class AuthServiceImpl implements AuthService {
                 .map(user -> tokenService.generateToken(user.getId()))
                 .map(SignInResponse::ok)
                 .orElseGet(SignInResponse::error);
-
     }
-
-
 }
