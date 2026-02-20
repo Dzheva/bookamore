@@ -1,9 +1,11 @@
 package com.bookamore.backend.dto.offer;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
 import com.bookamore.backend.entity.enums.OfferStatus;
 import com.bookamore.backend.entity.enums.OfferType;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
