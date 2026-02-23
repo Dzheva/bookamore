@@ -41,9 +41,6 @@ public class Offer extends BaseEntity {
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column
-    private String previewImage;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OfferType type;

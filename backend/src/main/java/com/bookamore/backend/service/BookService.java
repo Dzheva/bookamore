@@ -21,14 +21,4 @@ public interface BookService {
 
     BookResponse update(UUID bookId, BookUpdateRequest bookRequest);
 
-    /*
-     * Book Images Service Part
-     */
-
-    List<String> saveImages(UUID bookId, List<MultipartFile> images);
-
-    List<String> replaceImages(UUID bookId, List<MultipartFile> images);
-
-    void deleteImage(UUID bookId, String imagePath);
-
 }

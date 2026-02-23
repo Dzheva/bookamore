@@ -54,8 +54,7 @@ public class OfferServiceImpl implements OfferService {
             "title", "yearOfRelease", "description", "condition", "authorName"
     );
 
-    @Value("${file.sub-dirs.offer-previews}")
-    private String offerPreviewsSubDir;
+    private final String offerPreviewsSubDir = "offer";
 
     @Transactional
     public OfferResponse create(OfferRequest request) {
@@ -169,14 +168,12 @@ public class OfferServiceImpl implements OfferService {
         // Patch Fields
         String patchDescription = patch.getDescription();
         BigDecimal patchPrice = patch.getPrice();
-        String patchPreviewImage = patch.getPreviewImage();
         OfferType patchType = patch.getType();
         OfferStatus patchStatus = patch.getStatus();
 
         // Fields to update
         String description = existingOffer.getDescription();
         BigDecimal price = existingOffer.getPrice();
-        String previewImage = existingOffer.getPreviewImage();
         OfferType type = existingOffer.getType();
         OfferStatus status = existingOffer.getStatus();
 
@@ -189,11 +186,6 @@ public class OfferServiceImpl implements OfferService {
 
         if (patchPrice != null && !patchPrice.equals(price)) {
             existingOffer.setPrice(patchPrice);
-            isModified = true;
-        }
-
-        if (patchPreviewImage != null && !patchPreviewImage.equals(previewImage)) {
-            existingOffer.setPreviewImage(patchPreviewImage);
             isModified = true;
         }
 
@@ -218,41 +210,4 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.delete(offer);
     }
 
-    @Transactional
-    public String savePreviewImage(UUID offerId, MultipartFile previewImage) {
-
-        Offer existingOffer = offerRepository.findById(offerId).orElseThrow(
-                () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
-        );
-
-        // TODO remove existing image
-
-        String savedPreviewImagePath = imageService.saveImage(previewImage, offerPreviewsSubDir);
-
-        existingOffer.setPreviewImage(savedPreviewImagePath);
-
-        offerRepository.save(existingOffer);
-
-        return savedPreviewImagePath;
-    }
-
-    @Transactional
-    public void deletePreviewImage(UUID offerId) {
-        Offer existingOffer = offerRepository.findById(offerId).orElseThrow(
-                () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
-        );
-
-        String previewImagePath = existingOffer.getPreviewImage();
-
-        try {
-            String fileName = previewImagePath.substring(previewImagePath.lastIndexOf('/') + 1);
-            imageService.deleteImage(fileName, offerPreviewsSubDir);
-        } catch (Exception ex) {
-            log.warn(String.format("An error occurred while deleting image '%s' at subdirectory '%s' : %s",
-                    previewImagePath, this.offerPreviewsSubDir, ex));
-        }
-
-        existingOffer.setPreviewImage(null);
-        offerRepository.save(existingOffer);
-    }
 }

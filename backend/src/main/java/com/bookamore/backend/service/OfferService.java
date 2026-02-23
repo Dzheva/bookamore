@@ -34,7 +34,4 @@ public interface OfferService {
 
     void delete(UUID offerId);
 
-    String savePreviewImage(UUID offerId, MultipartFile previewImage);
-
-    void deletePreviewImage(UUID offerId);
 }

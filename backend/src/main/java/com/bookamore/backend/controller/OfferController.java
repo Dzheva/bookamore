@@ -150,21 +150,4 @@ public class OfferController {
         return ResponseEntity.noContent().build();
     }
 
-    /*
-     * Offer preview image controller
-     */
-
-    // upload preview image
-    @PostMapping(value = "/{offerId}/previewImage", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> uploadPreviewImage(@PathVariable UUID offerId,
-                                                     @RequestParam("previewImage") MultipartFile previewImage) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(offerService.savePreviewImage(offerId, previewImage));
-    }
-
-    // delete preview image
-    @DeleteMapping(value = "/{offerId}/previewImage")
-    public ResponseEntity<Void> deletePreviewImage(@PathVariable UUID offerId) {
-        offerService.deletePreviewImage(offerId);
-        return ResponseEntity.noContent().build();
-    }
 }
