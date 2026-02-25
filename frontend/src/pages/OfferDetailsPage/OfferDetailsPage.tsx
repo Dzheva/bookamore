@@ -13,12 +13,12 @@ import noImages from '@/assest/images/noImage.jpg';
 import HeaderTitle from '@/shared/ui/HeaderTitle';
 import { FavoritesSvg } from '@/shared/ui/bottomNavImg/FavoritesSvg';
 import {
+  ArrowDown,
   ArrowLeft,
   ArrowRight,
-  SynchronizeArrows,
   ArrowUp,
-  ArrowDown,
-} from '../../../public/svg/Arrow';
+  SynchronizeArrows,
+} from '@/shared/ui/icons/Arrows';
 
 function Dots({
   count,
