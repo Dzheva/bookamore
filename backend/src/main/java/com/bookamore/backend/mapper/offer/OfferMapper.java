@@ -1,18 +1,14 @@
 package com.bookamore.backend.mapper.offer;
 
-import com.bookamore.backend.mapper.book.BookMapper;
-import com.bookamore.backend.dto.offer.OfferRequest;
-import com.bookamore.backend.dto.offer.OfferUpdateRequest;
-import com.bookamore.backend.dto.offer.OfferWithBookRequest;
-import com.bookamore.backend.dto.offer.OfferResponse;
-import com.bookamore.backend.dto.offer.OfferWithBookResponse;
+import com.bookamore.backend.dto.offer.*;
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.Offer;
 import com.bookamore.backend.entity.User;
+import com.bookamore.backend.mapper.book.BookMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
 
 import java.util.UUID;
 

@@ -6,11 +6,10 @@ import type { OfferType, OfferStatus } from '@/types/entities/Offer.d.ts';
 import type { OfferWithBookRequest } from '@/types/entities/OfferWithBook.d.ts';
 import type { BookCondition } from '@/types/entities/Book.d.ts';
 import { formStyle } from '@app/styles/form';
-import { AddPhotoBook } from '@/shared/ui/icons/AddPhotoBookSvg';
-import { NoImgAddPhoto } from '@/shared/ui/icons/NoImgAddSvg';
 import clsx from 'clsx';
 import HeaderTitle from '@/shared/ui/HeaderTitle';
-// import { SelectMenu } from '@/shared/ui/icons/ SelectMenuSvg';
+import { toast, Toaster } from 'react-hot-toast';
+import UploadPhoto from '@/shared/components/UploadPhoto/UploadPhoto';
 
 const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
@@ -35,17 +34,11 @@ const NewOfferPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handlePhotosChange = (files: FileList | null) => {
-    if (files) {
-      setFormData((prev) => ({ ...prev, photos: Array.from(files) }));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.title || !formData.author || !formData.price) {
-      alert('Please fill in all required fields');
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -73,7 +66,7 @@ const NewOfferPage: React.FC = () => {
       navigate(`/offers/${result.id}`);
     } catch (error) {
       console.error('Error creating offer:', error);
-      alert('Failed to create offer. Please try again.');
+      toast.error('Failed to create offer. Please try again.');
     }
   };
 
@@ -81,7 +74,10 @@ const NewOfferPage: React.FC = () => {
 
   return (
     <div className="min-h-screen">
+      <Toaster />
+
       <HeaderTitle title="Sell book" />
+
       <div className="w-full  max-w-md mx-auto lg:max-w-2xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
         <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
           <div className={formStyle.container}>
@@ -116,58 +112,8 @@ const NewOfferPage: React.FC = () => {
               required
             />
           </div>
+          <UploadPhoto />
 
-          <div
-            className="flex flex-col 
-          border-[0.4px] border-solid border-[#B6B6B6] rounded-xl 
-          min-h-[201px] 
-          "
-          >
-            <h3 className="font-kyiv text-h3m   p-[8px]">Upload photo</h3>
-
-            <div className="flex">
-              <div
-                className="min-w-[104px] h-[144px]  bg-[#F7F8F2] 
-              mt-[6px] mr-[16px] mb-[6px] ml-[8px]
-              flex items-center justify-center
-              "
-              >
-                <label className="">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handlePhotosChange(e.target.files)}
-                    className="hidden"
-                  />
-
-                  <AddPhotoBook />
-                </label>
-              </div>
-
-              <div
-                className="min-w-[191px] h-[156px] 
-              flex justify-center gap-[12px]  flex-wrap 
-              px-[33.5px]
-              "
-              >
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="bg-[#F7F8F2] w-[56px] h-[72px] rounded-[10px]
-                    flex items-center justify-center
-                    "
-                  >
-                    <NoImgAddPhoto />
-                  </div>
-                ))}
-
-                {formData.photos.length > 0 && (
-                  <p>{formData.photos.length} photo(s) selected</p>
-                )}
-              </div>
-            </div>
-          </div>
           <div>
             <h3 className="font-kyiv text-h6m mb-[10px] ">Type of deal*</h3>
 

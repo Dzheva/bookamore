@@ -1,11 +1,7 @@
 package com.bookamore.backend.service.impl;
 
 import com.bookamore.backend.dto.book.BookRequest;
-import com.bookamore.backend.dto.offer.OfferRequest;
-import com.bookamore.backend.dto.offer.OfferResponse;
-import com.bookamore.backend.dto.offer.OfferUpdateRequest;
-import com.bookamore.backend.dto.offer.OfferWithBookRequest;
-import com.bookamore.backend.dto.offer.OfferWithBookResponse;
+import com.bookamore.backend.dto.offer.*;
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.Offer;
 import com.bookamore.backend.entity.User;

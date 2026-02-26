@@ -5,6 +5,7 @@ import com.bookamore.backend.entity.User;
 import com.bookamore.backend.exception.EmailAlreadyExistsException;
 import com.bookamore.backend.exception.ResourceNotFoundException;
 import com.bookamore.backend.mapper.user.UserMapper;
+import com.bookamore.backend.repository.AuthProviderRepository;
 import com.bookamore.backend.repository.UserRepository;
 import com.bookamore.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final AuthProviderRepository authProviderRepository;
     private final PasswordEncoder encoder;
 
     private final UserMapper userMapper;

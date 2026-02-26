@@ -25,7 +25,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
-        log.warn("Unauthorized error: {}", authException.getMessage());
+        // TODO: ADD Spring Boot Actuator with public endpoints, so http://localhost:8080/actuator/health
+        // TODO: will work from Docker healthcheck
+        log.warn("Unauthorized access attempt: {} {} from {} - User-Agent: {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getRemoteAddr(),
+                request.getHeader("User-Agent"));
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
