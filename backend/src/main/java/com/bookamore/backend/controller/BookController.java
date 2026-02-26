@@ -64,33 +64,4 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.update(bookId, bookUpdateRequest));
     }
 
-    /*
-     * Book image controller
-     */
-
-    @Operation(summary = "Save book images",
-            description = "The method will attempt to add all provided images." +
-                    "If the entity has already reached or will exceed the maximum " +
-                    "allowed number of images (4), the operation will be aborted.")
-    @PatchMapping(value = "/{bookId}/saveImages", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<List<String>> saveManyImages(@PathVariable UUID bookId,
-                                                       @RequestBody List<MultipartFile> images) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.saveImages(bookId, images));
-    }
-
-    @Operation(summary = "Replace book images",
-            description = "Replaces existing images associated with the Book. " +
-                    "All current images will be removed and replaced with the provided ones.")
-    @PutMapping(value = "/{bookId}/replaceImages", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<List<String>> replaceManyImages(@PathVariable UUID bookId,
-                                                          @RequestBody List<MultipartFile> images) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(bookService.replaceImages(bookId, images));
-    }
-
-    @Operation(summary = "Delete book image", description = "Delete one book image")
-    @DeleteMapping("/{bookId}/deleteImage")
-    public ResponseEntity<Void> deleteImage(@PathVariable UUID bookId, @RequestParam String imagePath) {
-        bookService.deleteImage(bookId, imagePath);
-        return ResponseEntity.noContent().build();
-    }
 }

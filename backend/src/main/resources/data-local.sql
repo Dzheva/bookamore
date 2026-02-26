@@ -35,5 +35,5 @@ INSERT INTO books_authors (author_id, book_id) VALUES
 --################
 -- Insert offers
 --################
-INSERT INTO offers (price, book_id, created_date, id, last_modified_date, seller_id, description, preview_image, status, type) VALUES
-    (45.99, '018d4f1a-5b03-71d4-c001-000000000001', NOW(), '018d4f1a-5b03-71d4-e001-000000000001', NOW(), '018d4f1a-5b03-71d4-a716-446655440001', 'Like new condition', '/images/offers/effective_java.jpg', 'OPEN', 'SELL');
+INSERT INTO offers (price, book_id, created_date, id, last_modified_date, seller_id, description, status, type) VALUES
+    (45.99, '018d4f1a-5b03-71d4-c001-000000000001', NOW(), '018d4f1a-5b03-71d4-e001-000000000001', NOW(), '018d4f1a-5b03-71d4-a716-446655440001', 'Like new condition', 'OPEN', 'SELL');
