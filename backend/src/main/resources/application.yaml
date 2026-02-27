@@ -19,6 +19,7 @@ file:
   hash-algorithm: SHA-256
   # Required for local deployment
   # TODO: Move the upload directory configuration to profile-specific files
-  upload-dir: ./src/main/resources/uploads
+  # upload-dir: ./src/main/resources/uploads
+  upload-dir: /app/uploads
   # Octal POSIX permissions for upload subdirectories
   sub-dirs-perms: 775
