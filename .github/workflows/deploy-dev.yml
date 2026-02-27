@@ -17,4 +17,4 @@ jobs:
           username: deploy
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            /home/devuser/www/deploy.sh
+            /home/deploy/www/deploy.sh
