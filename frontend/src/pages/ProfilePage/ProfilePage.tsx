@@ -1,15 +1,15 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import {
-  FaChevronRight,
-  FaPencilAlt,
   FaBoxOpen,
   FaRegHeart,
   FaRegComments,
   FaCog,
   FaBook,
 } from 'react-icons/fa';
-import BackButton from '@/shared/ui/BackButton';
 import { BottomNav } from '@/shared/ui/BottomNav';
+import HeaderTitle from '@/shared/ui/HeaderTitle';
+import { SettingLinkSvg } from '@/shared/ui/icons/SettingLinkSvg';
+import { ArrowRight } from '@/shared/ui/icons/Arrows';
 
 // Масив пунктів меню з іконками Font Awesome
 const menuItems = [
@@ -49,61 +49,56 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white pb-24">
-      {/* Header */}
-      <div className="px-4 py-4 flex items-center border-b border-gray-100 sticky top-0 bg-white z-10">
-        <BackButton />
-        <h1 className="text-xl font-semibold flex-1 text-center text-slate-800">
-          Profile
-        </h1>
-        <div className="w-8"></div>
-      </div>
+    <div className="flex flex-col min-h-screen pb-24">
+      <HeaderTitle title="Profile" />
 
-      <div className="px-6 py-8">
-        {/* Секція профілю користувача */}
+      <div className="px-6 ">
         <div className="flex items-center justify-between mb-10">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <img
-                src={user.avatar}
-                alt={user.name}
-                className="w-20 h-20 rounded-full object-cover border-2 border-teal-500/20 shadow-sm"
-              />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800">{user.name}</h2>
-              <p className="text-slate-500 text-sm">{user.email}</p>
-            </div>
-          </div>
-          <Link
-            to="/settings"
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors text-slate-400 hover:text-teal-600"
+          <div
+            className="flex items-center  flex-row gap-[10px] 
+            
+           "
           >
-            <FaPencilAlt className="w-5 h-5" />
-          </Link>
+            <img
+              src={user.avatar}
+              alt={user.name}
+              className="w-[86px] h-[86px] 
+              rounded-[50px]
+              "
+            />
+            <div className="min-w-[215px]">
+              <h2 className="text-h3m ">{user.name}</h2>
+              <p className="text-em">{user.email}</p>
+            </div>
+            <NavLink to="/settings">
+              <SettingLinkSvg />
+            </NavLink>
+          </div>
         </div>
 
-        {/* Навігаційне меню */}
-        <nav className="flex flex-col gap-3">
+        <nav className="flex flex-col gap-5">
           {menuItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className="flex items-center justify-between p-4 rounded-2xl border border-teal-600/10 bg-white text-slate-700 shadow-sm hover:shadow-md hover:bg-teal-50 hover:border-teal-600/30 transition-all active:scale-[0.98]"
+              className="
+              flex justify-between items-center
+              px-[16px] py-[13px]
+              bg-[#F5F8F5]
+              border-[1px] border-solid border-[#577561] rounded-[20px] 
+             "
             >
-              <div className="flex items-center gap-4">
-                <span className="text-teal-600 opacity-80">{item.icon}</span>
-                <span className="font-medium text-lg text-slate-700">
-                  {item.title}
-                </span>
+              <div className="flex justify-start gap-4">
+                <span className="text-[#577561] ">{item.icon}</span>
+                <h2 className="text-h4m"> {item.title}</h2>
               </div>
-              <FaChevronRight className="w-4 h-4 text-teal-600/50" />
+
+              <ArrowRight />
             </Link>
           ))}
         </nav>
       </div>
 
-      {/* Нижня навігація */}
       <BottomNav isProfilePage={true} />
     </div>
   );

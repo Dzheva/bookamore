@@ -47,6 +47,7 @@ export default {
         paragraphm: ['14px', { lineHeight: 1.45, fontWeight: 400 }],
         tagm: ['14px', { lineHeight: 1.4, fontWeight: 200 }],
         captionm: ['12px', { lineHeight: 1.5, fontWeight: 300 }],
+        em: ['16px', { lineHeight: 1.4, fontWeight: 350 }],
       },
       accentColor: {
         'gray-600': '#4B5563',
