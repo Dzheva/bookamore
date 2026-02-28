@@ -4,6 +4,10 @@ server:
 spring:
   profiles:
     active: local
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 management:
   endpoints:
@@ -13,10 +17,9 @@ management:
 
 file:
   hash-algorithm: SHA-256
-  upload-dir: ./src/main/resources/uploads
+  # Required for local deployment
+  # TODO: Move the upload directory configuration to profile-specific files
+  # upload-dir: ./src/main/resources/uploads
+  upload-dir: /app/uploads
   # Octal POSIX permissions for upload subdirectories
   sub-dirs-perms: 775
-  sub-dirs:
-    offer-previews: offers
-    books-images: books
-    #user-avatars: user-avatars
