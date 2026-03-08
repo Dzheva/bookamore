@@ -8,6 +8,10 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/master.yaml
+    contexts: ${spring.profiles.active}
 
 management:
   endpoints:
