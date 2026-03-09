@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaChevronRight } from 'react-icons/fa';
-import BackButton from '@/shared/ui/BackButton';
 import { BottomNav } from '@/shared/ui/BottomNav';
+import HeaderTitle from '@/shared/ui/HeaderTitle';
+import LogOut from '@/shared/components/LogOut/LogOut';
 
 const SettingsPage = () => {
   const navigate = useNavigate();
@@ -11,22 +12,9 @@ const SettingsPage = () => {
   const [language, setLanguage] = useState<'English' | 'Ukrainian'>('English');
   const [notifications, setNotifications] = useState(true);
 
-  const handleLogout = () => {
-    // Тут буде логіка виходу (очищення токенів тощо)
-    console.log('Logout clicked');
-    navigate('/sign-in');
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-white pb-24">
-      {/* Header */}
-      <div className="px-4 py-4 flex items-center border-b border-gray-100 sticky top-0 bg-white z-10">
-        <BackButton />
-        <h1 className="text-xl font-semibold flex-1 text-center text-[#004261]">
-          Settings
-        </h1>
-        <div className="w-8"></div>
-      </div>
+      <HeaderTitle title="Settings" />
 
       <div className="px-6 py-8 space-y-6">
         {/* Секція Language */}
@@ -119,14 +107,8 @@ const SettingsPage = () => {
           <FaChevronRight className="text-[#004261] opacity-50" />
         </button>
 
-        {/* Посилання Log out */}
-        <div className="pt-4">
-          <button
-            onClick={handleLogout}
-            className="text-[#004261] font-bold text-lg underline decoration-2 underline-offset-4 hover:opacity-80 transition-opacity"
-          >
-            Log out
-          </button>
+        <div>
+          <LogOut />
         </div>
       </div>
 

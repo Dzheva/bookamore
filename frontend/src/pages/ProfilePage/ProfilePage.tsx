@@ -10,6 +10,7 @@ import { BottomNav } from '@/shared/ui/BottomNav';
 import HeaderTitle from '@/shared/ui/HeaderTitle';
 import { SettingLinkSvg } from '@/shared/ui/icons/SettingLinkSvg';
 import { ArrowRight } from '@/shared/ui/icons/Arrows';
+import LogOut from '@/shared/components/LogOut/LogOut';
 
 // Масив пунктів меню з іконками Font Awesome
 const menuItems = [
@@ -97,6 +98,9 @@ const ProfilePage = () => {
             </Link>
           ))}
         </nav>
+        <div className="mt-4 ml-4">
+          <LogOut />
+        </div>
       </div>
 
       <BottomNav isProfilePage={true} />
