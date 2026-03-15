@@ -20,7 +20,6 @@ public class OfferWithBookResponse {
     private OfferStatus status;
     private String description;
     private BigDecimal price;
-    private String previewImage;
 
     private BookResponse book;
 

@@ -19,12 +19,20 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create # update
+      ddl-auto: none
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
-
+    defer-datasource-initialization: false
+    properties:
+      hibernate:
+        format_sql: true
   sql:
     init:
-      mode: always # never
+      mode: never
       data-locations: classpath:data-local.sql
+
+file:
+  hash-algorithm: SHA-256
+  #upload-dir: ./src/main/resources/uploads # local
+  upload-dir: /app/uploads # dev
+  sub-dirs-perms: 775 # Octal POSIX permissions for upload subdirectories

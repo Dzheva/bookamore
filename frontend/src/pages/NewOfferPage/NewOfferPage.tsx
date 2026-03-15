@@ -1,263 +1,284 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router'
-import { IoChevronBack } from 'react-icons/io5'
-import { useAddOfferWithBookMutation } from '@app/store/api/OffersApi'
-import { BottomNav } from '@shared/ui/BottomNav'
-import type { OfferType, OfferStatus } from '@/types/entities/Offer.d.ts'
-import type { OfferWithBookRequest } from '@/types/entities/OfferWithBook.d.ts'
-import type { BookCondition } from '@/types/entities/Book.d.ts'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useAddOfferWithBookMutation } from '@app/store/api/OffersApi';
+import { BottomNav } from '@shared/ui/BottomNav';
+import type { OfferType, OfferStatus } from '@/types/entities/Offer.d.ts';
+import type { OfferWithBookRequest } from '@/types/entities/OfferWithBook.d.ts';
+import type { BookCondition } from '@/types/entities/Book.d.ts';
+import { formStyle } from '@app/styles/form';
+import clsx from 'clsx';
+import HeaderTitle from '@/shared/ui/HeaderTitle';
+import { toast, Toaster } from 'react-hot-toast';
+import UploadPhoto from '@/shared/components/UploadPhoto/UploadPhoto';
 
 const NewOfferPage: React.FC = () => {
-    const navigate = useNavigate()
-    const [addOfferWithBook, { isLoading: isSubmitting }] = useAddOfferWithBookMutation()
+  const navigate = useNavigate();
+  const [addOfferWithBook, { isLoading: isSubmitting }] =
+    useAddOfferWithBookMutation();
 
-    // Form state
-    const [formData, setFormData] = useState({
-        title: '',
-        author: '',
-        condition: 'NEW' as BookCondition,
-        dealType: 'SELL' as OfferType,
-        price: '',
-        description: '',
-        photos: [] as File[]
-    })
+  // Form state
+  const [formData, setFormData] = useState({
+    title: '',
+    author: '',
+    condition: 'NEW' as BookCondition,
+    dealType: 'SELL' as OfferType,
+    price: '',
+    description: '',
+    photos: [] as File[],
+  });
 
-    const handleInputChange = (field: string, value: string | BookCondition | OfferType) => {
-        setFormData(prev => ({ ...prev, [field]: value }))
+  const handleInputChange = (
+    field: string,
+    value: string | BookCondition | OfferType
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.title || !formData.author || !formData.price) {
+      toast.error('Please fill in all required fields');
+      return;
     }
 
-    const handlePhotosChange = (files: FileList | null) => {
-        if (files) {
-            setFormData(prev => ({ ...prev, photos: Array.from(files) }))
-        }
+    try {
+      const offerWithBookRequest: OfferWithBookRequest = {
+        type: formData.dealType,
+        status: 'OPEN' as OfferStatus,
+        description: formData.description,
+        price: parseFloat(formData.price),
+        previewImage: formData.photos[0] || null,
+        book: {
+          title: formData.title,
+          yearOfRelease: new Date().getFullYear(), // Default to current year
+          description: formData.description,
+          isbn: '', // Optional
+          condition: formData.condition,
+          authors: [formData.author],
+          genres: [], // Empty for now
+          images: formData.photos,
+        },
+        sellerId: 1, // TODO: Get from auth context
+      };
+
+      const result = await addOfferWithBook(offerWithBookRequest).unwrap();
+      navigate(`/offers/${result.id}`);
+    } catch (error) {
+      console.error('Error creating offer:', error);
+      toast.error('Failed to create offer. Please try again.');
     }
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        
-        if (!formData.title || !formData.author || !formData.price) {
-            alert('Please fill in all required fields')
-            return
-        }
+  const labelStyle = clsx('flex items-center px-[8px] text-[#676767]    ');
 
-        try {
-            const offerWithBookRequest: OfferWithBookRequest = {
-                type: formData.dealType,
-                status: 'OPEN' as OfferStatus,
-                description: formData.description,
-                price: parseFloat(formData.price),
-                previewImage: formData.photos[0] || null,
-                book: {
-                    title: formData.title,
-                    yearOfRelease: new Date().getFullYear(), // Default to current year
-                    description: formData.description,
-                    isbn: '', // Optional
-                    condition: formData.condition,
-                    authors: [formData.author],
-                    genres: [], // Empty for now
-                    images: formData.photos
-                },
-                sellerId: 1 // TODO: Get from auth context
-            }
+  return (
+    <div className="min-h-screen">
+      <Toaster />
 
-            const result = await addOfferWithBook(offerWithBookRequest).unwrap()
-            navigate(`/offers/${result.id}`)
-        } catch (error) {
-            console.error('Error creating offer:', error)
-            alert('Failed to create offer. Please try again.')
-        }
-    }
+      <HeaderTitle title="Sell book" />
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            {/* Header */}
-            <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex items-center border-b border-gray-200">
-                <button onClick={() => navigate(-1)} className="p-1">
-                    <IoChevronBack className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
-                </button>
-                <h1 className="text-base sm:text-lg lg:text-xl font-semibold flex-1 text-center">Sell a book</h1>
-                <div className="w-6 sm:w-8"></div>
-            </div>
+      <div className="w-full  max-w-md mx-auto lg:max-w-2xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
+        <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
+          <div className={formStyle.container}>
+            <label htmlFor="title" className={formStyle.title}>
+              Book Title*
+            </label>
 
-            {/* Form Container - responsive */}
-            <div className="w-full max-w-md mx-auto lg:max-w-2xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
-                <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
-                {/* Book Title */}
-                <div>
-                    <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-                        Book Title
-                    </label>
-                    <input
-                        type="text"
-                        value={formData.title}
-                        onChange={(e) => handleInputChange('title', e.target.value)}
-                        placeholder="Babel"
-                        className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                        required
-                    />
-                </div>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              value={formData.title}
+              onChange={(e) => handleInputChange('title', e.target.value)}
+              placeholder="Babel"
+              className={formStyle.input}
+              required
+            />
+          </div>
 
-                {/* Author */}
-                <div>
-                    <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-                        Author
-                    </label>
-                    <input
-                        type="text"
-                        value={formData.author}
-                        onChange={(e) => handleInputChange('author', e.target.value)}
-                        placeholder="Rebecca Kuang"
-                        className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                        required
-                    />
-                </div>
+          <div className={formStyle.container}>
+            <label htmlFor="author" className={formStyle.title}>
+              Author*
+            </label>
+            <input
+              id="author"
+              name="author"
+              type="text"
+              value={formData.author}
+              onChange={(e) => handleInputChange('author', e.target.value)}
+              placeholder="Rebecca Kuang"
+              className={formStyle.input}
+              required
+            />
+          </div>
+          <UploadPhoto />
 
-                {/* Condition */}
-                <div>
-                    <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-                        Condition
-                    </label>
-                    <select
-                        value={formData.condition}
-                        onChange={(e) => handleInputChange('condition', e.target.value as BookCondition)}
-                        className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none text-sm sm:text-base"
-                    >
-                        <option value="NEW">New</option>
-                        <option value="AS_NEW">As New</option>
-                        <option value="USED">Used</option>
-                    </select>
-                </div>
+          <div>
+            <h3 className="font-kyiv text-h6m mb-[10px] ">Type of deal*</h3>
 
-                {/* Type of deal */}
-                <div>
-                    <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-3">
-                        Type of deal
-                    </label>
-                    <div className="space-y-3 lg:space-y-4">
-                        <label className="flex items-center">
-                            <input
-                                type="radio"
-                                name="dealType"
-                                value="SELL"
-                                checked={formData.dealType === 'SELL'}
-                                onChange={(e) => handleInputChange('dealType', e.target.value as OfferType)}
-                                className="mr-3 text-blue-600 focus:ring-blue-500 w-4 h-4 sm:w-5 sm:h-5"
-                            />
-                            <span className="text-gray-700 text-sm sm:text-base">purchase only</span>
-                        </label>
-                        <label className="flex items-center">
-                            <input
-                                type="radio"
-                                name="dealType"
-                                value="EXCHANGE"
-                                checked={formData.dealType === 'EXCHANGE'}
-                                onChange={(e) => handleInputChange('dealType', e.target.value as OfferType)}
-                                className="mr-3 text-blue-600 focus:ring-blue-500 w-4 h-4 sm:w-5 sm:h-5"
-                            />
-                            <span className="text-gray-700 text-sm sm:text-base">exchange only</span>
-                        </label>
-                        <label className="flex items-center">
-                            <input
-                                type="radio"
-                                name="dealType"
-                                value="SELL_EXCHANGE"
-                                checked={formData.dealType === 'SELL_EXCHANGE'}
-                                onChange={(e) => handleInputChange('dealType', e.target.value as OfferType)}
-                                className="mr-3 text-blue-600 focus:ring-blue-500 w-4 h-4 sm:w-5 sm:h-5"
-                            />
-                            <span className="text-gray-700 text-sm sm:text-base">both</span>
-                        </label>
-                    </div>
-                </div>
-
-                {/* Price */}
-                <div>
-                    <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-                        Price
-                    </label>
-                    <input
-                        type="number"
-                        value={formData.price}
-                        onChange={(e) => handleInputChange('price', e.target.value)}
-                        placeholder="250"
-                        className="w-full px-4 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                        required
-                        min="0"
-                        step="0.01"
-                    />
-                </div>
-
-                {/* Description */}
-                <div>
-                    <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-2">
-                        Add a description
-                    </label>
-                    <textarea
-                        value={formData.description}
-                        onChange={(e) => handleInputChange('description', e.target.value)}
-                        placeholder="Used, in good condition..."
-                        rows={4}
-                        className="w-full px-3 py-3 lg:py-4 bg-gray-100 rounded-lg border-none focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm sm:text-base"
-                    />
-                </div>
-
-                {/* Upload photo */}
-                <div>
-                    <label className="block text-sm sm:text-base lg:text-lg font-medium text-gray-700 mb-3">
-                        Upload photo
-                    </label>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 lg:gap-4">
-                        {/* Main photo upload */}
-                        <label className="relative">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                onChange={(e) => handlePhotosChange(e.target.files)}
-                                className="hidden"
-                            />
-                            <div className="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors">
-                                <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-gray-400 rounded-full flex items-center justify-center">
-                                    <span className="text-gray-400 text-lg sm:text-xl">+</span>
-                                </div>
-                            </div>
-                        </label>
-                        
-                        {/* Additional photo slots */}
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="w-full aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
-                                <div className="w-4 h-4 sm:w-6 sm:h-6 border border-gray-400 rounded-full flex items-center justify-center">
-                                    <span className="text-gray-400 text-sm">+</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    {formData.photos.length > 0 && (
-                        <p className="text-sm sm:text-base text-gray-600 mt-2">
-                            {formData.photos.length} photo(s) selected
-                        </p>
-                    )}
-                </div>
-
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full py-3 sm:py-4 lg:py-5 bg-gray-900 text-white font-semibold rounded-lg hover:bg-black transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-base sm:text-lg lg:text-xl"
+            <div className="space-y-3 lg:space-y-4">
+              <label className={`${labelStyle} group`}>
+                <input
+                  type="radio"
+                  name="dealType"
+                  value="SELL"
+                  checked={formData.dealType === 'SELL'}
+                  onChange={(e) =>
+                    handleInputChange('dealType', e.target.value as OfferType)
+                  }
+                  className={`${formStyle.radio} peer`}
+                  required
+                />
+                <p
+                  className="font-kyiv text-h6m 
+              peer-checked:text-aquamarine-950"
                 >
-                    {isSubmitting ? 'Publishing...' : 'Publish'}
-                </button>
-            </form>
+                  Purchase only
+                </p>
+              </label>
+
+              <label className={`${labelStyle} group`}>
+                <input
+                  type="radio"
+                  name="dealType"
+                  value="SELL"
+                  checked={formData.dealType === 'SELL'}
+                  onChange={(e) =>
+                    handleInputChange('dealType', e.target.value as OfferType)
+                  }
+                  className={`${formStyle.radio} peer`}
+                  required
+                />
+                <p
+                  className="font-kyiv text-h6m 
+              peer-checked:text-aquamarine-950"
+                >
+                  Exchange only
+                </p>
+              </label>
+
+              <label className={`${labelStyle} group`}>
+                <input
+                  type="radio"
+                  name="dealType"
+                  value="SELL"
+                  checked={formData.dealType === 'SELL'}
+                  onChange={(e) =>
+                    handleInputChange('dealType', e.target.value as OfferType)
+                  }
+                  className={`${formStyle.radio} peer`}
+                  required
+                />
+                <p
+                  className="font-kyiv text-h6m 
+              peer-checked:text-aquamarine-950"
+                >
+                  Both
+                </p>
+              </label>
+            </div>
+          </div>
+
+          <div className="flex flex-row justify-between">
+            <div
+              className="w-[164px] 
+               flex flex-col gap-1
+            "
+            >
+              <label
+                htmlFor="condition"
+                className="text-h6m text-aquamarine-950 py-[4px] px-[12px] "
+              >
+                Condition*
+              </label>
+              <select
+                name="condition"
+                id="condition"
+                value={formData.condition}
+                onChange={(e) =>
+                  handleInputChange(
+                    'condition',
+                    e.target.value as BookCondition
+                  )
+                }
+                className="min-w-[163px] h-[44px] text-h6m               
+                border-[0.4px] border-gray-400 border-solid rounded-xl
+                px-[10px] py-[12px]
+                bg-no-repeat  bg-[url('/down.png')]
+                bg-[right_10px_center]
+                focus:outline-none focus:ring-0 appearance-none 
+                 "
+              >
+                <option value="NEW">New</option>
+                <option value="AS_NEW">As New</option>
+                <option value="USED">Used</option>
+              </select>
             </div>
 
-            {/* Bottom spacing before BottomNav */}
-            <div className="pb-20">
+            <div className="w-[164px]  flex flex-col gap-1">
+              <label
+                htmlFor="price"
+                className="text-h6m text-aquamarine-950 py-[4px] px-[12px]"
+              >
+                Price, UAH
+              </label>
+
+              <input
+                type="number"
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={(e) => handleInputChange('price', e.target.value)}
+                placeholder="300"
+                className="min-w-[163px] h-[44px] text-h6m text-black               
+                border-[0.4px] border-gray-400 border-solid rounded-xl
+                px-[10px] py-[12px]
+                focus:outline-none focus:ring-0
+                focus:text-
+                "
+                required
+                min="0"
+                step="0.01"
+              />
             </div>
+          </div>
 
-            <BottomNav />
-        </div>
-    )
-}
+          <div>
+            <label htmlFor="desc" className="text-h4m mb-1    ">
+              Add description
+            </label>
+            <textarea
+              id="desc"
+              value={formData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              placeholder="Used, in good condition."
+              rows={4}
+              className="w-full px-[10px] py-[14px] 
+              rounded-lg  lg:py-4
+              border-[0.4px] border-gray-400 border-solid 
+              focus:outline-none focus:ring-0
+              resize-none text-sm sm:text-base"
+            />
+          </div>
 
-export {NewOfferPage}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-3 sm:py-4 lg:py-5 mb-[78px]
+            bg-[#033F63] text-white
+             font-semibold rounded-lg
+             transition-colors disabled:bg-gray-400 
+             disabled:cursor-not-allowed text-base sm:text-lg lg:text-xl"
+          >
+            {isSubmitting ? 'Publishing...' : 'Publish'}
+          </button>
+        </form>
+      </div>
 
+      <BottomNav />
+    </div>
+  );
+};
+
+export { NewOfferPage };

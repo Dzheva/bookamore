@@ -18,7 +18,6 @@ public class OfferResponse {
     private OfferStatus status;
     private String description;
     private BigDecimal price;
-    private String previewImage;
     private UUID bookId;
     private UUID sellerId;
 }

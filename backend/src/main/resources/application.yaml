@@ -4,19 +4,17 @@ server:
 spring:
   profiles:
     active: local
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/master.yaml
+    contexts: ${spring.profiles.active}
 
 management:
   endpoints:
     web:
       exposure:
         include: env,health,info
-
-file:
-  hash-algorithm: SHA-256
-  upload-dir: ./src/main/resources/uploads
-  # Octal POSIX permissions for upload subdirectories
-  sub-dirs-perms: 775
-  sub-dirs:
-    offer-previews: offers
-    books-images: books
-    #user-avatars: user-avatars
