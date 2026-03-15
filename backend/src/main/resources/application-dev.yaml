@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: dev
   security:
     oauth2:
       client:
@@ -13,9 +13,9 @@ spring:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
   datasource:
-    url: jdbc:postgresql://localhost:5432/bookamore
-    username: postgres
-    password: postgres
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -33,5 +33,5 @@ spring:
 
 file:
   hash-algorithm: SHA-256
-  upload-dir: ./src/main/resources/uploads # local
+  upload-dir: /app/uploads # dev
   sub-dirs-perms: 775 # Octal POSIX permissions for upload subdirectories

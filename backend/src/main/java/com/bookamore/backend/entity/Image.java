@@ -15,10 +15,11 @@ public class Image extends BaseEntity {
     private String path;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "entity_type", nullable = false)
     private EntityType entityType;
 
-    @Column
+
+    @Column(name = "entity_id")
     private UUID entityId;
 
     @Column(length = 500)

@@ -8,18 +8,13 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/master.yaml
+    contexts: ${spring.profiles.active}
 
 management:
   endpoints:
     web:
       exposure:
         include: env,health,info
-
-file:
-  hash-algorithm: SHA-256
-  # Required for local deployment
-  # TODO: Move the upload directory configuration to profile-specific files
-  # upload-dir: ./src/main/resources/uploads
-  upload-dir: /app/uploads
-  # Octal POSIX permissions for upload subdirectories
-  sub-dirs-perms: 775

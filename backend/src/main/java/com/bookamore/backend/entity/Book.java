@@ -22,7 +22,7 @@ public class Book extends BaseEntity {
 
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
+    @Column(name = "year_of_release", nullable = false)
     private Integer yearOfRelease;
     @Column(length = 500)
     private String description;
