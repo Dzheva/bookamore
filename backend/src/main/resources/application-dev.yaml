@@ -30,3 +30,8 @@ spring:
     init:
       mode: never
       data-locations: classpath:data-local.sql
+
+file:
+  hash-algorithm: SHA-256
+  upload-dir: /app/uploads # dev
+  sub-dirs-perms: 775 # Octal POSIX permissions for upload subdirectories
