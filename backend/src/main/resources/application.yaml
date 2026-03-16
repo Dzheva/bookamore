@@ -18,3 +18,7 @@ management:
     web:
       exposure:
         include: env,health,info
+file:
+  hash-algorithm: SHA-256
+  upload-dir: /app/uploads # dev
+  sub-dirs-perms: 775 # Octal POSIX permissions for upload subdirectories
