@@ -4,6 +4,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 interface User {
   email: string;
   name?: string;
+  id: string;
 }
 
 interface AuthState {
@@ -31,9 +32,15 @@ const getStoredUser = (): User | null => {
   }
 };
 
-const setStoredAuth = (token: string, user: User): void => {
+const setStoredAuth = (token: string): void => {
   try {
     localStorage.setItem('auth_token', token);
+  } catch (error) {
+    console.error('Failed to save auth to localStorage:', error);
+  }
+};
+const setStoredUser = (user: User): void => {
+  try {
     localStorage.setItem('auth_user', JSON.stringify(user));
   } catch (error) {
     console.error('Failed to save auth to localStorage:', error);
@@ -77,7 +84,8 @@ const authSlice = createSlice({
       state.isLoading = false;
 
       // Синхронізуємо з localStorage
-      setStoredAuth(token, user);
+      setStoredAuth(token);
+      setStoredUser(user);
     },
 
     // Очищення при логауті
@@ -103,7 +111,8 @@ const authSlice = createSlice({
 
         // Оновлюємо localStorage
         if (state.token) {
-          setStoredAuth(state.token, state.user);
+          setStoredAuth(state.token);
+          setStoredUser(state.user);
         }
       }
     },

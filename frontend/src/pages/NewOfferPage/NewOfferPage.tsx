@@ -10,12 +10,14 @@ import clsx from 'clsx';
 import HeaderTitle from '@/shared/ui/HeaderTitle';
 import { toast, Toaster } from 'react-hot-toast';
 import UploadPhoto from '@/shared/components/UploadPhoto/UploadPhoto';
+import { useSelector } from 'react-redux';
+import { selectUser } from '@/app/store/slices/authSlice';
 
 const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
   const [addOfferWithBook, { isLoading: isSubmitting }] =
     useAddOfferWithBookMutation();
-
+  const user = useSelector(selectUser);
   // Form state
   const [formData, setFormData] = useState({
     title: '',
@@ -41,7 +43,7 @@ const NewOfferPage: React.FC = () => {
       toast.error('Please fill in all required fields');
       return;
     }
-
+    if (!user) return;
     try {
       const offerWithBookRequest: OfferWithBookRequest = {
         type: formData.dealType,
@@ -59,9 +61,9 @@ const NewOfferPage: React.FC = () => {
           genres: [], // Empty for now
           images: formData.photos,
         },
-        sellerId: 1, // TODO: Get from auth context
+        sellerId: user.id,
       };
-
+      console.log('REQUEST:', offerWithBookRequest);
       const result = await addOfferWithBook(offerWithBookRequest).unwrap();
       navigate(`/offers/${result.id}`);
     } catch (error) {
