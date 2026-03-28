@@ -35,9 +35,12 @@ services:
       context: ./frontend
       dockerfile: Dockerfile-prod
     ports:
-      - "80:80"  # Moved from the nginx service to here
+      - "80:80"
+      - "443:443"
     volumes:
-      - uploads:/usr/share/nginx/html/uploads:ro # Matches your nginx 'alias'
+      - uploads:/usr/share/nginx/html/uploads:ro
+      - ./certs/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - ./certs/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
     depends_on:
       - backend
     networks:
