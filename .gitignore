@@ -27,3 +27,5 @@ logs/
 
 # Docker
 .dockerignore
+
+certs
