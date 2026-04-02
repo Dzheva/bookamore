@@ -22,3 +22,9 @@ file:
   hash-algorithm: SHA-256
   upload-dir: /app/uploads
   sub-dirs-perms: 775 # Octal POSIX permissions for upload subdirectories
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
