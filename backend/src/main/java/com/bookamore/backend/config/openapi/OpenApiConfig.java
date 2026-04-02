@@ -6,7 +6,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.servers.Server;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,20 +20,19 @@ import java.util.List;
 )
 public class OpenApiConfig {
 
-    @Bean
-    public OpenAPI customOpenAPI(HttpServletRequest request) {
-        // 1. Resolve the server URL based on the incoming request origin
-        // This ensures if you hit https://api.bookamore.com, Swagger uses that as the base.
-        String contextPath = request.getContextPath();
-        String serverUrl = request.getRequestURL().toString().replace(request.getRequestURI(), "") + contextPath;
+    @Value("${swagger.server-url:http://localhost:8080}")
+    private String serverUrl;
 
+    @Bean
+    public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
                         .title("Bookamore API")
                         .version("1.0.0")
                         .description("API for the Bookamore application."))
-                // 2. Explicitly set the server list so Swagger doesn't "guess" incorrectly
-                .servers(List.of(new Server().url(serverUrl).description("Current Environment")))
+                .servers(List.of(
+                        new Server().url(serverUrl).description("Active Environment")
+                ))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
     }
 }
