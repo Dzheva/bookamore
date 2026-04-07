@@ -139,7 +139,7 @@ export function FilterDropdown({
         <h2 className="text-h2m text-text-black">Filter</h2>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-grass-100 rounded-full transition-colors"
+          className="p-1 hover:bg-grass-100 rounded-full outline-grass-500 focus:bg-grass-100"
         >
           <CrossSvg className="text-icons-black" />
         </button>

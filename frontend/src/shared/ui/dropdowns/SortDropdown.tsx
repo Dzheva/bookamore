@@ -107,7 +107,7 @@ export function SortDropdown({
         <span className="text-h3m lg:text-h2m text-text-black">Sort by</span>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-grass-100 rounded-full transition-colors"
+          className="p-1 hover:bg-grass-100 rounded-full outline-grass-500 focus:bg-grass-100"
         >
           <CrossSvg className="text-icons-black" />
         </button>

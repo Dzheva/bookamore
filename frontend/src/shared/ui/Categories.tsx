@@ -15,11 +15,11 @@ function CategoryButton({
     <button
       onClick={onClick}
       className={`
-        px-3 sm:px-4 py-1.5 sm:py-2 rounded-[8px] text-sm sm:text-base lg:text-lg font-medium whitespace-nowrap transition-colors
+        px-3 sm:px-4 py-1.5 sm:py-2 rounded-[8px] text-sm sm:text-base lg:text-lg font-medium whitespace-nowrap border outline-grass-500 border-grass-500 focus:bg-grass-100 transition-colors
         ${
           isActive
-            ? 'bg-grass-500 text-white'
-            : 'text-text-black hover:bg-grass-100 border border-grass-500'
+            ? 'bg-grass-500 text-white focus:text-text-black'
+            : 'text-text-black hover:bg-grass-100'
         }
       `}
     >

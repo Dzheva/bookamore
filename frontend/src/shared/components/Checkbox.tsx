@@ -25,7 +25,7 @@ export const Checkbox = ({
         className="w-4 h-4 cursor-pointer peer opacity-0 absolute"
       />
       <div
-        className="relative peer-checked:[&>svg]:opacity-100 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-blue-500"
+        className="relative peer-checked:[&>svg]:opacity-100 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-grass-500"
         style={{ width: size, height: size }}
       >
         <CheckboxFrameSvg className="text-icons-black" size={size} />

@@ -43,7 +43,7 @@ export const RadioBtn = ({
           peer-checked:[&>div]:bg-icons-black
           peer-focus-visible:outline-2
           peer-focus-visible:outline-offset-2
-          peer-focus-visible:outline-blue-500
+          peer-focus-visible:outline-grass-500
         "
       >
         <div className="absolute top-0.5 left-0.5 w-2 h-2 rounded-full"></div>
