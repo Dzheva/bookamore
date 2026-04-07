@@ -156,7 +156,7 @@ export function Header() {
         </div>
 
         {/* Search Bar */}
-        <div className="py-[10px]">
+        <div className="mb-[10px]">
           <form onSubmit={handleSearchSubmit} className="relative w-full">
             <input
               type="text"
