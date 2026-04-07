@@ -44,6 +44,7 @@ export function BottomNav({ isProfilePage = false }: BottomNavProps) {
           min-w-[375px] h-[65px]
           pt-[6px]
           flex justify-around
+          z-51
         "
       >
         <NavLink className={isActiveStyle} to="/">

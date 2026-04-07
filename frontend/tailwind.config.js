@@ -49,6 +49,20 @@ export default {
         captionm: ['12px', { lineHeight: 1.5, fontWeight: 300 }],
         em: ['16px', { lineHeight: 1.4, fontWeight: 350 }],
       },
+      colors: {
+        iconsBlack: '#153037',
+        textBlack: '#153037',
+        deepBlue: '#033F63',
+        gray: {
+          400: '#B6B6B6',
+          500: '#999999',
+        },
+        grass: {
+          100: '#DFE8E1',
+          200: '#BFD0C4',
+          500: '#577561',
+        },
+      },
       accentColor: {
         'gray-600': '#4B5563',
         'gray-800': '#1F2937',

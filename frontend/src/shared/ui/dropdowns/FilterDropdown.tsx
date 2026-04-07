@@ -1,11 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
-import { FiX, FiChevronDown } from 'react-icons/fi';
+import { RadioBtn } from '@/shared/components/RadioBtn';
+import { Checkbox } from '@/shared/components/Checkbox';
+import { CrossSvg } from '../icons/CrossSvg';
+import { ChevronUpSvg } from '../icons/ChevronUpSvg';
 
 export type ConditionFilter = 'new' | 'used' | 'any';
+export type TypeOfDealFilter = 'purchase only' | 'Exchange only' | 'Both';
 
 export interface FilterState {
   condition: ConditionFilter;
   categories: string[];
+  typeOfDeal: TypeOfDealFilter;
 }
 
 interface FilterDropdownProps {
@@ -19,6 +24,12 @@ const conditionOptions = [
   { value: 'new' as const, label: 'New' },
   { value: 'used' as const, label: 'Used' },
   { value: 'any' as const, label: 'Any' },
+];
+
+const typeOfDealOptions = [
+  { value: 'purchase only' as const, label: 'Purchase Only' },
+  { value: 'Exchange only' as const, label: 'Exchange Only' },
+  { value: 'Both' as const, label: 'Both' },
 ];
 
 const categoryOptions = [
@@ -44,42 +55,14 @@ export function FilterDropdown({
 }: FilterDropdownProps) {
   const [localFilters, setLocalFilters] = useState<FilterState>(filters);
   const [isConditionExpanded, setIsConditionExpanded] = useState(true);
+  const [isTypeOfDealExpanded, setIsTypeOfDealExpanded] = useState(true);
   const [isCategoryExpanded, setIsCategoryExpanded] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState('right-0');
-
-  // Check if mobile on mount and resize
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // Update local filters when props change
   useEffect(() => {
     setLocalFilters(filters);
   }, [filters]);
-
-  // Adjust dropdown position based on screen space
-  useEffect(() => {
-    if (isOpen && dropdownRef.current) {
-      const dropdown = dropdownRef.current;
-      const rect = dropdown.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-
-      // If dropdown goes off screen to the right, position it to the left
-      if (rect.right > viewportWidth - 16) {
-        setDropdownPosition('right-0');
-      } else {
-        setDropdownPosition('left-1/2 transform -translate-x-1/2');
-      }
-    }
-  }, [isOpen]);
 
   // Close on click outside
   useEffect(() => {
@@ -116,6 +99,10 @@ export function FilterDropdown({
     setLocalFilters((prev) => ({ ...prev, condition }));
   };
 
+  const handleTypeOfDealChange = (typeOfDeal: TypeOfDealFilter) => {
+    setLocalFilters((prev) => ({ ...prev, typeOfDeal }));
+  };
+
   const handleCategoryToggle = (category: string) => {
     setLocalFilters((prev) => ({
       ...prev,
@@ -129,8 +116,10 @@ export function FilterDropdown({
     const resetFilters: FilterState = {
       condition: 'any',
       categories: [],
+      typeOfDeal: 'Both',
     };
     setLocalFilters(resetFilters);
+    onFiltersChange(resetFilters);
   };
 
   const handleApply = () => {
@@ -143,57 +132,77 @@ export function FilterDropdown({
   return (
     <div
       ref={dropdownRef}
-      className={`absolute top-full ${dropdownPosition} mt-1 bg-white rounded-xl w-72 sm:w-80 lg:w-96 max-h-[90vh] flex flex-col shadow-lg border border-gray-200 z-50 overflow-hidden ${
-        isMobile ? 'max-w-[calc(100vw-2rem)]' : ''
-      }`}
+      className={`absolute top-full right-0 mt-2 bg-white rounded-xl w-72 sm:w-80 lg:w-96 max-h-[84vh] flex flex-col shadow-lg border border-gray-500 z-50 overflow-hidden `}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b border-gray-200">
-        <h2 className="text-base font-semibold text-gray-900">Filter</h2>
+      <div className="flex items-center justify-between p-3 border-b border-gray-300">
+        <h2 className="text-h2m text-text-black">Filter</h2>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1 hover:bg-grass-100 rounded-full transition-colors"
         >
-          <FiX size={16} className="text-gray-500" />
+          <CrossSvg className="text-icons-black" />
         </button>
       </div>
 
       {/* Content */}
-      <div className="p-3">
+      <div className="flex-1 overflow-y-auto p-3 scrollbar-custom">
         {/* Condition Filter */}
         <div className="mb-3">
-          <div className="border border-gray-200 rounded-lg p-2.5">
+          <div className="border border-gray-500 rounded-lg p-2.5">
             <div
-              className="flex items-center justify-between mb-2 cursor-pointer"
+              className="flex items-center justify-between cursor-pointer"
               onClick={() => setIsConditionExpanded(!isConditionExpanded)}
             >
-              <h3 className="text-sm font-medium text-gray-900">Condition</h3>
-              <FiChevronDown
-                size={14}
-                className={`text-gray-400 transition-transform duration-200 ${
-                  isConditionExpanded ? 'rotate-0' : '-rotate-90'
-                }`}
+              <h3 className="text-h3m lg:text-h2m font-medium text-text-black">
+                Condition
+              </h3>
+              <ChevronUpSvg
+                className={`text-icons-black transition-transform duration-200 ${isConditionExpanded ? 'rotate-180' : 'rotate-90'}`}
               />
             </div>
             {isConditionExpanded && (
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 lg:space-y-0 mt-2">
                 {conditionOptions.map((option) => (
-                  <label
+                  <RadioBtn
+                    name="condition"
                     key={option.value}
-                    className="flex items-center space-x-2 cursor-pointer group"
-                  >
-                    <input
-                      type="radio"
-                      name="condition"
-                      value={option.value}
-                      checked={localFilters.condition === option.value}
-                      onChange={() => handleConditionChange(option.value)}
-                      className="w-3.5 h-3.5 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2"
-                    />
-                    <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
-                      {option.label}
-                    </span>
-                  </label>
+                    value={option.value}
+                    isChecked={localFilters.condition === option.value}
+                    label={option.label}
+                    onChange={() => handleConditionChange(option.value)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Type of Deal Filter */}
+        <div className="mb-3">
+          <div className="border border-gray-500 rounded-lg p-2.5">
+            <div
+              className="flex items-center justify-between cursor-pointer"
+              onClick={() => setIsTypeOfDealExpanded(!isTypeOfDealExpanded)}
+            >
+              <h3 className="text-h3m lg:text-h2m font-medium text-text-black">
+                Type of deal
+              </h3>
+              <ChevronUpSvg
+                className={`text-icons-black transition-transform duration-200 ${isTypeOfDealExpanded ? 'rotate-180' : 'rotate-90'}`}
+              />
+            </div>
+            {isTypeOfDealExpanded && (
+              <div className="space-y-1.5 lg:space-y-0 mt-2">
+                {typeOfDealOptions.map((option) => (
+                  <RadioBtn
+                    key={option.value}
+                    name="typeOfDeal"
+                    value={option.value}
+                    isChecked={localFilters.typeOfDeal === option.value}
+                    label={option.label}
+                    onChange={() => handleTypeOfDealChange(option.value)}
+                  />
                 ))}
               </div>
             )}
@@ -202,36 +211,28 @@ export function FilterDropdown({
 
         {/* Category Filter */}
         <div className="mb-1">
-          <div className="border border-gray-200 rounded-lg p-2.5">
+          <div className="border border-gray-500 rounded-lg p-2.5">
             <div
-              className="flex items-center justify-between mb-2 cursor-pointer"
+              className="flex items-center justify-between cursor-pointer"
               onClick={() => setIsCategoryExpanded(!isCategoryExpanded)}
             >
-              <h3 className="text-sm font-medium text-gray-900">Category</h3>
-              <FiChevronDown
-                size={14}
-                className={`text-gray-400 transition-transform duration-200 ${
-                  isCategoryExpanded ? 'rotate-0' : '-rotate-90'
-                }`}
+              <h3 className="text-h3m lg:text-h2m font-medium text-text-black">
+                Category
+              </h3>
+              <ChevronUpSvg
+                className={`text-icons-black transition-transform duration-200 ${isCategoryExpanded ? 'rotate-180' : 'rotate-90'}`}
               />
             </div>
             {isCategoryExpanded && (
-              <div className="space-y-1.5 max-h-64 overflow-y-auto">
+              <div className="space-y-1.5 lg:space-y-0 mt-2">
                 {categoryOptions.map((category) => (
-                  <label
+                  <Checkbox
                     key={category}
-                    className="flex items-center space-x-2 cursor-pointer group"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={localFilters.categories.includes(category)}
-                      onChange={() => handleCategoryToggle(category)}
-                      className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                    />
-                    <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
-                      {category}
-                    </span>
-                  </label>
+                    isChecked={localFilters.categories.includes(category)}
+                    onChange={() => handleCategoryToggle(category)}
+                    label={category}
+                    size={16}
+                  />
                 ))}
               </div>
             )}
@@ -240,18 +241,18 @@ export function FilterDropdown({
       </div>
 
       {/* Footer */}
-      <div className="border-t border-gray-200 p-2.5 space-y-2 mt-auto">
-        <button
-          onClick={handleReset}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
-        >
-          Reset
-        </button>
+      <div className="border-t border-gray-300 p-2.5 space-y-2 mt-auto">
         <button
           onClick={handleApply}
-          className="w-full px-3 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+          className="w-full px-3 py-2 bg-deep-blue text-white rounded-lg text-sm font-medium hover:bg-[#022F4F] active:bg-[#022F4F] transition-colors cursor-pointer"
         >
           Apply
+        </button>
+        <button
+          onClick={handleReset}
+          className="w-full px-3 py-2 border border-deep-blue rounded-lg text-sm font-medium text-text-black bg-white hover:bg-[#DDF3FF] active:bg-[#DDF3FF] hover:text-deep-blue transition-colors cursor-pointer"
+        >
+          Reset
         </button>
       </div>
     </div>
