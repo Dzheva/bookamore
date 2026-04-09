@@ -8,7 +8,7 @@ export type Offer = {
   price: number;
   previewImage: string;
   bookId: number;
-  sellerId: string;
+  sellerId: string | number;
 };
 
 export type OfferRequest = Omit<Offer, 'id' | 'previewImage'> & {
