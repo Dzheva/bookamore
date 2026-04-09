@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-interface User {
+export interface User {
+  id: string;
+  name: string;
   email: string;
-  name?: string;
 }
 
 interface AuthState {
@@ -13,7 +14,6 @@ interface AuthState {
   isLoading: boolean;
 }
 
-// Функції для роботи з localStorage
 const getStoredToken = (): string | null => {
   try {
     return localStorage.getItem('auth_token');
@@ -31,9 +31,15 @@ const getStoredUser = (): User | null => {
   }
 };
 
-const setStoredAuth = (token: string, user: User): void => {
+const setStoredAuth = (token: string): void => {
   try {
     localStorage.setItem('auth_token', token);
+  } catch (error) {
+    console.error('Failed to save auth to localStorage:', error);
+  }
+};
+const setStoredUser = (user: User): void => {
+  try {
     localStorage.setItem('auth_user', JSON.stringify(user));
   } catch (error) {
     console.error('Failed to save auth to localStorage:', error);
@@ -65,19 +71,19 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // Встановлення креденшелів після успішного логіну
-    setCredentials: (
-      state,
-      action: PayloadAction<{ user: User; token: string }>
-    ) => {
-      const { user, token } = action.payload;
+    setCredentials: (state, action: PayloadAction<{ token: string }>) => {
+      const { token } = action.payload;
 
-      state.user = user;
       state.token = token;
       state.isAuthenticated = true;
       state.isLoading = false;
 
       // Синхронізуємо з localStorage
-      setStoredAuth(token, user);
+      setStoredAuth(token);
+    },
+
+    setCurrentUser: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
     },
 
     // Очищення при логауті
@@ -103,7 +109,11 @@ const authSlice = createSlice({
 
         // Оновлюємо localStorage
         if (state.token) {
-          setStoredAuth(state.token, state.user);
+          setStoredAuth(state.token);
+        }
+
+        if (state.user) {
+          setStoredUser(state.user);
         }
       }
     },
@@ -120,8 +130,14 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout, setLoading, updateUser, clearAuth } =
-  authSlice.actions;
+export const {
+  setCredentials,
+  logout,
+  setLoading,
+  updateUser,
+  clearAuth,
+  setCurrentUser,
+} = authSlice.actions;
 
 export default authSlice.reducer;
 

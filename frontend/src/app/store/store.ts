@@ -4,6 +4,7 @@ import { BooksApi } from '@app/store/api/BooksApi.ts';
 import { AuthApi } from '@app/store/api/AuthApi.ts';
 import authReducer from '@app/store/slices/authSlice.ts';
 import { authErrorMiddleware } from './middleware/authErrorMiddleware.ts';
+import { UsersApi } from './api/UsersApi.ts';
 
 export const store = configureStore({
   reducer: {
@@ -11,12 +12,14 @@ export const store = configureStore({
     [OffersApi.reducerPath]: OffersApi.reducer,
     [BooksApi.reducerPath]: BooksApi.reducer,
     [AuthApi.reducerPath]: AuthApi.reducer,
+    [UsersApi.reducerPath]: UsersApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       OffersApi.middleware,
       BooksApi.middleware,
       AuthApi.middleware,
+      UsersApi.middleware,
       authErrorMiddleware // Додаємо наш middleware
     ),
 });
