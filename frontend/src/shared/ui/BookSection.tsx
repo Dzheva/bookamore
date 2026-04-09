@@ -88,7 +88,7 @@ export function BookSection({
         <div className="py-4 sm:py-5 lg:py-6">
           {/* Section header */}
           <div className="flex items-center justify-between mb-3 sm:mb-4 lg:mb-5">
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-black">
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-text-black mb-3 lg:mb-4">
               {title}
             </h3>
             {showViewAll && (

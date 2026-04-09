@@ -42,3 +42,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: #bfd0c4 transparent;
+}

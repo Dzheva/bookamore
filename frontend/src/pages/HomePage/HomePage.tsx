@@ -72,7 +72,7 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen pb-20">
       <div className="w-full max-w-md mx-auto lg:max-w-6xl xl:max-w-7xl">
         <Header />
         <Categories />
