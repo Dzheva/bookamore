@@ -469,7 +469,7 @@ export function applyFiltersAndSort(filters: {
 
 // Get seller by ID
 export function getSellerById(
-  sellerId: number
+  sellerId: number | string
 ): (typeof mockSellers)[0] | null {
   return mockSellers.find((seller) => seller.id === sellerId) || null;
 }
