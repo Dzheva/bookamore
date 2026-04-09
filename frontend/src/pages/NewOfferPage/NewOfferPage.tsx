@@ -10,11 +10,14 @@ import clsx from 'clsx';
 import HeaderTitle from '@/shared/ui/HeaderTitle';
 import { toast, Toaster } from 'react-hot-toast';
 import UploadPhoto from '@/shared/components/UploadPhoto/UploadPhoto';
+import { useSelector } from 'react-redux';
+import type { RootState } from '@/app/store/store';
 
 const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
   const [addOfferWithBook, { isLoading: isSubmitting }] =
     useAddOfferWithBookMutation();
+  const user = useSelector((state: RootState) => state.auth.user);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -36,7 +39,7 @@ const NewOfferPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    if (!user) return;
     if (!formData.title || !formData.author || !formData.price) {
       toast.error('Please fill in all required fields');
       return;
@@ -59,7 +62,7 @@ const NewOfferPage: React.FC = () => {
           genres: [], // Empty for now
           images: formData.photos,
         },
-        sellerId: 1, // TODO: Get from auth context
+        sellerId: user.id, // TODO: Get from auth context
       };
 
       const result = await addOfferWithBook(offerWithBookRequest).unwrap();

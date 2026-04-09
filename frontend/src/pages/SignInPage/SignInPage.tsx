@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { useNavigate, useLocation } from 'react-router';
@@ -8,8 +8,11 @@ import {
   setCredentials,
   setLoading,
   selectIsLoading,
+  setCurrentUser,
 } from '@app/store/slices/authSlice';
 import BackButton from '@/shared/ui/BackButton';
+import { useLazyGetCurrentUserQuery } from '@/app/store/api/UsersApi';
+import type { RootState } from '@/app/store/store';
 
 const SignInPage: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -21,6 +24,8 @@ const SignInPage: React.FC = () => {
 
   // Використовуємо RTK Query для API викликів
   const [login, { isLoading: isApiLoading, error }] = useLoginMutation();
+  const [getCurrentUser] = useLazyGetCurrentUserQuery();
+  const token = useSelector((state: RootState) => state.auth.token);
 
   // Отримуємо стан завантаження з Redux
   const isGlobalLoading = useSelector(selectIsLoading);
@@ -44,10 +49,11 @@ const SignInPage: React.FC = () => {
         // Зберігаємо креденшели в Redux (і автоматично в localStorage)
         dispatch(
           setCredentials({
-            user: { email },
             token: result.token,
           })
         );
+
+        // todo get current-user data
 
         // Перенаправляємо на сторінку, з якої прийшов користувач, або на головну
         const from = location.state?.from?.pathname || '/';
@@ -59,15 +65,19 @@ const SignInPage: React.FC = () => {
       dispatch(setLoading(false));
     }
   };
+  useEffect(() => {
+    if (!token) return;
+    const fetchCurrentUser = async () => {
+      const user = await getCurrentUser().unwrap();
+      dispatch(setCurrentUser(user));
+    };
+
+    fetchCurrentUser();
+  }, [token, dispatch, getCurrentUser]);
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-white">
       <div className="w-full max-w-sm">
-        {/* <div className="w-full pt-4 pb-2 px-4">
-                    <button onClick={handleBackClick} className="p-1">
-                        <IoChevronBack className="text-2xl" />
-                    </button>
-                </div> */}
         <BackButton />
 
         <div className="px-6">
