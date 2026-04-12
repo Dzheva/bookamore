@@ -46,7 +46,7 @@ export const RadioBtn = ({
           peer-focus-visible:outline-grass-500
         "
       >
-        <div className="absolute top-0.5 left-0.5 w-2 h-2 rounded-full"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full"></div>
       </div>
       <span className="text-sm sm:text-base text-text-black">{label}</span>
     </label>

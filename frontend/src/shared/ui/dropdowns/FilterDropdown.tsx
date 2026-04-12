@@ -120,6 +120,7 @@ export function FilterDropdown({
     };
     setLocalFilters(resetFilters);
     onFiltersChange(resetFilters);
+    onClose();
   };
 
   const handleApply = () => {
@@ -132,7 +133,7 @@ export function FilterDropdown({
   return (
     <div
       ref={dropdownRef}
-      className={`absolute top-full right-0 mt-2 bg-white rounded-xl w-72 sm:w-80 lg:w-96 max-h-[84vh] flex flex-col shadow-lg border border-gray-500 z-50 overflow-hidden `}
+      className={`absolute top-full right-0 mt-2 bg-white rounded-xl w-72 sm:w-80 lg:w-96 max-h-[78svh] flex flex-col shadow-lg border border-gray-500 z-50 overflow-hidden `}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-gray-300">

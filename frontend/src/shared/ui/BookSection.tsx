@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 import type { OfferWithBook } from '@/types/entities/OfferWithBook';
 import noImages from '@/assest/images/noImage.jpg';
+import { Badge } from './icons/Badge';
 
 interface BookCardProps {
   condition?: 'new' | 'used';
@@ -8,42 +10,25 @@ interface BookCardProps {
 }
 
 function BookCard({ condition, offer }: BookCardProps) {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    if (offer) {
-      navigate(`/offers/${offer.id}`);
-    }
-  };
+  if (!offer) return null;
 
   return (
-    <div
-      className=" rounded-lg aspect-[3/4] w-[100px] sm:w-[120px] lg:w-[140px] 
-       relative cursor-pointer hover:opacity-80 transition-opacity"
-      onClick={handleClick}
+    <Link
+      to={`/offers/${offer.id}`}
+      className="relative block aspect-[3/4] w-[108px] sm:w-[140px] lg:w-[160px] flex-shrink-0 focus:border-grass-500 focus:border-2 outline-0 rounded-lg overflow-hidden"
     >
-      {/* Book image */}
-      {offer?.previewImage ? (
-        <img
-          src={offer.previewImage}
-          alt={offer.book.title}
-          className="w-full h-full rounded-lg object-cover"
-        />
-      ) : (
-        <img
-          src={noImages}
-          alt="no Image"
-          className="w-full h-full rounded-lg object-cover"
-        />
-      )}
+      <img
+        src={offer.previewImage || noImages}
+        alt={offer.book?.title || 'Book cover'}
+        className="w-full h-full rounded-lg object-cover"
+      />
 
-      {/* Book condition badge */}
-      {condition && (
-        <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-full flex items-center justify-center text-xs sm:text-xs lg:text-sm font-bold text-black border shadow-sm">
-          {condition === 'new' ? 'NEW' : 'USED'}
+      {condition === 'new' && (
+        <div className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 lg:bottom-4 lg:right-4">
+          <Badge className="w-6 sm:w-7 lg:w-8 h-auto" />
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 
@@ -83,18 +68,18 @@ export function BookSection({
   };
 
   return (
-    <div className="bg-white w-full border-b border-gray-100">
+    <section className="bg-white w-full border-b border-gray-100">
       <div className="px-4 sm:px-6 lg:px-8 xl:px-12">
-        <div className="py-4 sm:py-5 lg:py-6">
+        <div className="px-4 py-2.5 mt-2.5 border border-aquamarine-500 bg-aquamarine-50 rounded-[12px]">
           {/* Section header */}
           <div className="flex items-center justify-between mb-3 sm:mb-4 lg:mb-5">
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-text-black mb-3 lg:mb-4">
+            <h3 className="text-lg sm:text-xl lg:text-2xl font-normal text-text-black">
               {title}
             </h3>
             {showViewAll && (
               <button
                 onClick={handleViewAllClick}
-                className="text-sm sm:text-base text-gray-500 hover:text-gray-700 transition-colors font-medium"
+                className="text-sm sm:text-base font-extralight text-gray-800 hover:bg-grass-100 hover:text-text-black focus-visible:bg-grass-100 outline-grass-500 focus-visible:text-text-black transition-colors px-1.5 py-0.5 rounded-[8px] cursor-pointer"
               >
                 View all
               </button>
@@ -102,18 +87,13 @@ export function BookSection({
           </div>
 
           {/* Horizontal scrollable books list */}
-          <div className="flex gap-3 sm:gap-4 lg:gap-5 overflow-x-auto scrollbar-hide pb-2">
+          <div className="flex gap-3 sm:gap-4 lg:gap-5 overflow-x-auto scrollbar-custom pb-3">
             {mockBooks.map((book, index) => (
               <BookCard key={index} {...book} />
             ))}
           </div>
-
-          {/* Scroll indicator for mobile */}
-          <div className="flex justify-center mt-3 lg:hidden">
-            <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
-          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

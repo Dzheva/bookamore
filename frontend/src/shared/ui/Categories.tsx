@@ -15,7 +15,7 @@ function CategoryButton({
     <button
       onClick={onClick}
       className={`
-        px-3 sm:px-4 py-1.5 sm:py-2 rounded-[8px] text-sm sm:text-base lg:text-lg font-medium whitespace-nowrap border outline-grass-500 border-grass-500 focus:bg-grass-100 transition-colors
+        px-3 sm:px-4 py-1.5 sm:py-2 rounded-[8px] text-sm sm:text-base lg:text-lg font-medium whitespace-nowrap border outline-grass-500 border-grass-500 focus:bg-grass-100 transition-colors cursor-pointer
         ${
           isActive
             ? 'bg-grass-500 text-white focus:text-text-black'
@@ -58,26 +58,24 @@ export function Categories() {
   };
 
   return (
-    <div className="bg-white w-full border-b border-gray-100">
+    <section className="bg-white w-full border-b border-gray-100">
       <div className="px-4 sm:px-6 lg:px-8 xl:px-12">
-        <div className="py-3 sm:py-4 lg:py-5">
-          <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-text-black mb-3 lg:mb-4">
-            Categories
-          </h3>
+        <h3 className="py-2 sm:py-2.5 lg:py-3 text-lg sm:text-xl lg:text-2xl font-bold text-text-black">
+          Categories
+        </h3>
 
-          {/* Scrollable categories */}
-          <div className="flex gap-2 sm:gap-3 lg:gap-4 overflow-x-auto scrollbar-hide pb-2 lg:pb-3 scrollbar-custom">
-            {categories.map((category) => (
-              <CategoryButton
-                key={category.id}
-                label={category.label}
-                isActive={category.active}
-                onClick={() => handleCategoryClick(category.id)}
-              />
-            ))}
-          </div>
+        {/* Scrollable categories */}
+        <div className="flex gap-2 py-2 sm:py-2.5 lg:py-3 sm:gap-3 lg:gap-4 overflow-x-auto scrollbar-custom">
+          {categories.map((category) => (
+            <CategoryButton
+              key={category.id}
+              label={category.label}
+              isActive={category.active}
+              onClick={() => handleCategoryClick(category.id)}
+            />
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
