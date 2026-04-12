@@ -15,7 +15,7 @@ function BookCard({ condition, offer }: BookCardProps) {
   return (
     <Link
       to={`/offers/${offer.id}`}
-      className="relative block aspect-[3/4] w-[108px] sm:w-[140px] lg:w-[160px] flex-shrink-0 focus:border-grass-500 focus:border-2 outline-0 rounded-lg overflow-hidden"
+      className="relative block aspect-[3/4] w-[108px] sm:w-[140px] lg:w-[160px] flex-shrink-0 focus-visible:border-grass-500 focus-visible:border-2 outline-0 rounded-lg overflow-hidden"
     >
       <img
         src={offer.previewImage || noImages}
