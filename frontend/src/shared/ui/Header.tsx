@@ -168,7 +168,7 @@ export function Header() {
             />
             <button
               type="submit"
-              className="absolute right-[10px] top-1/2 transform -translate-y-1/2 p-1 rounded-[8px] text-icons-black hover:bg-grass-100 outline-grass-500 focus:bg-grass-100"
+              className="absolute right-[10px] top-1/2 transform -translate-y-1/2 p-1 rounded-[8px] text-icons-black hover:bg-grass-100 outline-grass-500 focus:bg-grass-100 cursor-pointer"
             >
               <SearchSvg />
             </button>
@@ -187,7 +187,7 @@ export function Header() {
             <div>
               <button
                 onClick={handleFilterClick}
-                className={`flex items-center gap-2 px-4 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500
+                className={`flex items-center gap-2 px-4 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500 cursor-pointer
                   ${isFilterDropdownOpen ? 'bg-grass-200' : 'bg-white hover:bg-grass-100 focus:bg-grass-100'}`}
               >
                 <FilterSvg className="text-icons-black" />
@@ -207,7 +207,7 @@ export function Header() {
             <div className="relative">
               <button
                 onClick={handleSortClick}
-                className={`flex items-center gap-2 px-4 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500
+                className={`flex items-center gap-2 px-4 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500 cursor-pointer
                   ${isSortModalOpen ? 'bg-grass-200' : 'bg-white hover:bg-grass-100 focus:bg-grass-100'}`}
               >
                 <SortSvg className="text-icons-black" />

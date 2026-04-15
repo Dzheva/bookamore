@@ -56,11 +56,18 @@ export default {
         gray: {
           400: '#B6B6B6',
           500: '#999999',
+          800: '#676767',
         },
         grass: {
           100: '#DFE8E1',
           200: '#BFD0C4',
           500: '#577561',
+        },
+        aquamarine: {
+          50: '#F0FBFB',
+          100: '#DDF3FF',
+          200: '#B4E7FF',
+          500: '#33A2A7',
         },
       },
       accentColor: {

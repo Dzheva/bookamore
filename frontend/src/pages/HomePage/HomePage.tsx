@@ -33,20 +33,23 @@ const HomePage: React.FC = () => {
     // If filters are applied, show filtered results in sections
     if (Object.values(filters).some((value) => value !== undefined)) {
       return {
-        new: applyFiltersAndSort({ ...filters, condition: 'new' }).slice(0, 4),
+        new: applyFiltersAndSort({ ...filters, condition: 'new' }).slice(0, 10),
         recommended: applyFiltersAndSort({
           ...filters,
           query: 'recommended',
-        }).slice(0, 4),
-        scifi: applyFiltersAndSort({ ...filters, genre: 'sci-fi' }).slice(0, 4),
+        }).slice(0, 10),
+        scifi: applyFiltersAndSort({ ...filters, genre: 'sci-fi' }).slice(
+          0,
+          10
+        ),
       };
     }
 
     // Default data when no filters
     return {
-      new: applyFiltersAndSort({ condition: 'new' }).slice(0, 4),
-      recommended: getOffersBySearch('recommended').slice(0, 4),
-      scifi: applyFiltersAndSort({ genre: 'sci-fi' }).slice(0, 4),
+      new: applyFiltersAndSort({ condition: 'new' }).slice(0, 10),
+      recommended: getOffersBySearch('recommended').slice(0, 10),
+      scifi: applyFiltersAndSort({ genre: 'sci-fi' }).slice(0, 10),
     };
   }, [filters]);
 
@@ -73,7 +76,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20">
-      <div className="w-full max-w-md mx-auto lg:max-w-6xl xl:max-w-7xl">
+      <div className="w-full mx-auto lg:max-w-6xl xl:max-w-7xl">
         <Header />
         <Categories />
 
