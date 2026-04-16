@@ -89,7 +89,7 @@ const MyAnnouncementsPage = () => {
         </section>
       </div>
 
-      <BottomNav isProfilePage={false} />
+      <BottomNav />
     </div>
   );
 };

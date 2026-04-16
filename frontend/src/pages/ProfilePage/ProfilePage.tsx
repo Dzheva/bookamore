@@ -103,7 +103,7 @@ const ProfilePage = () => {
         </div>
       </div>
 
-      <BottomNav isProfilePage={true} />
+      <BottomNav />
     </div>
   );
 };

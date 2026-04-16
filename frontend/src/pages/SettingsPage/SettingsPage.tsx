@@ -112,7 +112,7 @@ const SettingsPage = () => {
         </div>
       </div>
 
-      <BottomNav isProfilePage={false} />
+      <BottomNav />
     </div>
   );
 };
