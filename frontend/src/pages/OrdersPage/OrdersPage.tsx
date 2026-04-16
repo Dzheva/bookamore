@@ -68,7 +68,7 @@ const OrdersPage = () => {
         ))}
       </div>
 
-      <BottomNav isProfilePage={false} />
+      <BottomNav />
     </div>
   );
 };
