@@ -54,7 +54,7 @@ function BookCard({ condition, offer }: BookCardProps) {
           {`by ${authorName}`}
         </p>
         <p className="text-sm sm:text-base font-semibold text-text-black mt-1">
-          ${bookPrice}
+          {`${bookPrice} UAH`}
         </p>
       </div>
     </Link>
