@@ -14,6 +14,8 @@ export function Spinner({ size = 'md', className = '' }: SpinnerProps) {
     <div className={`flex items-center justify-center ${className}`}>
       <div
         className={`${sizeClasses[size]} border-3 border-gray-300 border-t-aquamarine-500 rounded-full animate-spin`}
+        role="status"
+        aria-label="Loading"
       />
     </div>
   );

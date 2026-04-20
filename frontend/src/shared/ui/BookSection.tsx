@@ -9,7 +9,26 @@ interface BookCardProps {
   offer: OfferWithBook;
 }
 
+function getAuthorName(authors: unknown): string {
+  if (Array.isArray(authors) && authors.length > 0) {
+    const author = authors[0];
+    return typeof author === 'string' ? author : 'Unknown';
+  }
+  return 'Unknown';
+}
+
 function BookCard({ condition, offer }: BookCardProps) {
+  // Validate book data structure exists
+  if (!offer?.book) {
+    return null;
+  }
+
+  // Extract and validate data with defensive checks
+  const bookImage = offer.book.images?.[0] || noImages;
+  const bookTitle = offer.book?.title || 'Unknown Title';
+  const authorName = getAuthorName(offer.book?.authors);
+  const bookPrice = offer.price?.toFixed(2) || '0.00';
+
   return (
     <Link
       to={`/offers/${offer.id}`}
@@ -17,8 +36,8 @@ function BookCard({ condition, offer }: BookCardProps) {
     >
       <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
         <img
-          src={offer.book.images?.[0] || noImages}
-          alt={offer.book?.title || 'Book cover'}
+          src={bookImage}
+          alt={bookTitle}
           className="w-full h-full object-cover"
         />
         {condition === 'new' && (
@@ -29,13 +48,13 @@ function BookCard({ condition, offer }: BookCardProps) {
       </div>
       <div className="bg-white pt-2 sm:pt-2.5 flex-1 flex flex-col">
         <p className="text-h5m font-medium text-text-black truncate">
-          {offer.book?.title}
+          {bookTitle}
         </p>
         <p className="text-captionm font-normal text-gray-600 truncate mt-1">
-          {`by ${offer.book?.authors[0] || 'Unknown'}`}
+          {`by ${authorName}`}
         </p>
         <p className="text-sm sm:text-base font-semibold text-text-black mt-1">
-          ${offer.price?.toFixed(2) || '0.00'}
+          ${bookPrice}
         </p>
       </div>
     </Link>
@@ -102,15 +121,20 @@ export function BookSection({
 
           {!isLoading && !error && offers.length > 0 && (
             <div className="flex gap-5 overflow-x-auto scrollbar-custom pb-3">
-              {offers.map((offer) => (
-                <BookCard
-                  key={offer.id}
-                  offer={offer}
-                  condition={
-                    offer.book.condition.toLowerCase() as 'new' | 'used'
-                  }
-                />
-              ))}
+              {offers.map((offer) => {
+                // Validate book condition exists before accessing
+                const condition =
+                  offer.book?.condition?.toLowerCase() === 'new'
+                    ? 'new'
+                    : 'used';
+                return (
+                  <BookCard
+                    key={offer.id}
+                    offer={offer}
+                    condition={condition as 'new' | 'used'}
+                  />
+                );
+              })}
             </div>
           )}
         </div>

@@ -4,6 +4,9 @@ import { Categories } from '@/shared/ui/Categories';
 import { BookSection } from '@/shared/ui/BookSection';
 import { useGetAllOffersWithBooksQuery } from '@/app/store/api/OffersApi.ts';
 
+// Size of items per section slider
+const SECTION_SIZE = 10;
+
 const HomePage: React.FC = () => {
   const bookSections = [
     {
@@ -11,7 +14,7 @@ const HomePage: React.FC = () => {
       destination: '/search?condition=new',
       queryResult: useGetAllOffersWithBooksQuery({
         condition: 'new',
-        size: 10,
+        size: SECTION_SIZE,
       }),
     },
     {
@@ -19,13 +22,16 @@ const HomePage: React.FC = () => {
       destination: '/search?q=recommended',
       queryResult: useGetAllOffersWithBooksQuery({
         search: 'recommended',
-        size: 10,
+        size: SECTION_SIZE,
       }),
     },
     {
       title: 'Sci-fi',
       destination: '/genres/sci-fi',
-      queryResult: useGetAllOffersWithBooksQuery({ genre: 'sci-fi', size: 10 }),
+      queryResult: useGetAllOffersWithBooksQuery({
+        genre: 'sci-fi',
+        size: SECTION_SIZE,
+      }),
     },
   ];
 
