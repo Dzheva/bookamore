@@ -11,39 +11,39 @@ import { ChatsSvg } from './bottomNavImg/ChatsSvg';
 import { FaceSvg } from './bottomNavImg/FaceSvg';
 import { selectIsAuthenticated } from '@/app/store/slices/authSlice';
 
+const navItems = [
+  {
+    to: '/',
+    label: 'Home',
+    Icon: HomeSvg,
+  },
+  {
+    to: '/favorites',
+    label: 'Favorites',
+    Icon: FavoritesSvg,
+  },
+  {
+    to: '/offers/new',
+    label: 'Sell',
+    Icon: SellSvg,
+    protected: true,
+  },
+  {
+    to: '/chats',
+    label: 'Chats',
+    Icon: ChatsSvg,
+  },
+  {
+    to: '/profile',
+    label: 'Profile',
+    Icon: FaceSvg,
+    protected: true,
+  },
+];
+
 export function BottomNav() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
-
-  const navItems = [
-    {
-      to: '/',
-      label: 'Home',
-      Icon: HomeSvg,
-    },
-    {
-      to: '/favorites',
-      label: 'Favorites',
-      Icon: FavoritesSvg,
-    },
-    {
-      to: '/offers/new',
-      label: 'Sell',
-      Icon: SellSvg,
-      protected: true,
-    },
-    {
-      to: '/chats',
-      label: 'Chats',
-      Icon: ChatsSvg,
-    },
-    {
-      to: '/profile',
-      label: 'Profile',
-      Icon: FaceSvg,
-      protected: true,
-    },
-  ];
 
   const linkStyle = (isActive: boolean) =>
     clsx(
