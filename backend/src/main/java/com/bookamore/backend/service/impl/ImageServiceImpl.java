@@ -10,14 +10,13 @@ import com.bookamore.backend.repository.BookRepository;
 import com.bookamore.backend.repository.ImageRepository;
 import com.bookamore.backend.repository.ImageStorageRepository;
 import com.bookamore.backend.repository.OfferRepository;
+import com.bookamore.backend.service.BookService;
 import com.bookamore.backend.service.ImageService;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -26,26 +25,28 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.HexFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
-
     private final ImageRepository imageRepository;
     private final ImageStorageRepository imageLocalStorageRepository;
     private final ImageMapper imageMapper;
-
     private final BookRepository bookRepository;
     private final OfferRepository offerRepository;
-
     private final ServletContext servletContext;
+    private final BookService bookService;
 
     @Value("${file.hash-algorithm}")
     private String hash_algorithm;
-
     private MessageDigest digest;
 
     private final static String IMAGE_PATH_TEMPLATE = "/img/%s/%s";// '/img/{SUB_DIRECTORY}/{FILE_NAME}'
@@ -104,8 +105,15 @@ public class ImageServiceImpl implements ImageService {
 
     @Transactional
     public ImageResponse save(ImageRequest imageRequest) {
+        Image image = saveImage(imageRequest);
+
+        // spike for bookImage
+        if (imageRequest.getEntityType().equals(EntityType.BOOK)) {
+            bookService.addImage(imageRequest.getEntityId(), image.getPath());
+        }
+
         return imageMapper.toResponse(
-                saveImage(imageRequest)
+                image
         );
     }
 

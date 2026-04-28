@@ -42,6 +42,6 @@ public class BookRequest {
     @Schema(example = "[\"Classic\", \"Novel\"]", description = "List of genres")
     private List<String> genres;
 
-    @Schema(example = "[\"image1.jpg\", \"image2.jpg\"]", description = "List of image file names")
-    private List<String> images;
+//    @Schema(example = "[\"image1.jpg\", \"image2.jpg\"]", description = "List of image file names")
+//    private List<String> images;
 }

@@ -106,6 +106,16 @@ public class BookServiceImpl implements BookService {
         return managedImages;
     }
 
+    // my new method -> hot fix for bookImage
+    public Book addImage(UUID bookId, String imagePath) {
+        Book book = getBookEntityById(bookId);
+        BookImage bookImage = new BookImage();
+        bookImage.setPath(imagePath);
+        bookImage.setBook(book);
+        book.getImages().add(bookImage);
+        return bookRepository.save(book);
+    }
+
     private void resolveReferences(Book book) {
 
         book.setAuthors(resolveAuthors(book));
