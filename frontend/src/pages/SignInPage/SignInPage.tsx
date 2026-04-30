@@ -189,7 +189,7 @@ const SignInPage: React.FC = () => {
           {errors.form && (
             <div className="flex items-center justify-between mb-4 rounded-xl border border-error bg-red-50 p-3 text-sm text-error">
               {errors.form}
-              <AlertSvg className="inline-block mr-2" />
+              <AlertSvg />
             </div>
           )}
 
