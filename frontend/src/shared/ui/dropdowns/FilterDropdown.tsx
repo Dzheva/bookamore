@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { RadioBtn } from '@/shared/components/RadioBtn';
 import { Checkbox } from '@/shared/components/Checkbox';
+import { Button } from '@/shared/ui/Button/Button';
 import { CrossSvg } from '../icons/CrossSvg';
 import { ChevronUpSvg } from '../icons/ChevronUpSvg';
 
@@ -243,18 +244,12 @@ export function FilterDropdown({
 
       {/* Footer */}
       <div className="border-t border-gray-300 p-2.5 space-y-2 mt-auto">
-        <button
-          onClick={handleApply}
-          className="w-full px-3 py-2 bg-deep-blue text-white rounded-lg text-sm font-medium hover:bg-[#022F4F] active:bg-[#022F4F] transition-colors cursor-pointer"
-        >
+        <Button type="button" onClick={handleApply}>
           Apply
-        </button>
-        <button
-          onClick={handleReset}
-          className="w-full px-3 py-2 border border-deep-blue rounded-lg text-sm font-medium text-text-black bg-white hover:bg-[#DDF3FF] active:bg-[#DDF3FF] hover:text-deep-blue transition-colors cursor-pointer"
-        >
+        </Button>
+        <Button type="button" variant="secondary" onClick={handleReset}>
           Reset
-        </button>
+        </Button>
       </div>
     </div>
   );

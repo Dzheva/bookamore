@@ -1,9 +1,6 @@
-import { useState } from 'react';
-import { NavLink } from 'react-router';
+import { NavLink, useNavigate } from 'react-router';
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
-
-import { AuthPrompt } from './AuthPrompt';
 import { HomeSvg } from './bottomNavImg/HomeSvg';
 import { FavoritesSvg } from './bottomNavImg/FavoritesSvg';
 import { SellSvg } from './bottomNavImg/SellSvg';
@@ -32,6 +29,7 @@ const navItems = [
     to: '/chats',
     label: 'Chats',
     Icon: ChatsSvg,
+    protected: true,
   },
   {
     to: '/profile',
@@ -42,27 +40,23 @@ const navItems = [
 ];
 
 export function BottomNav() {
+  const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
 
   const linkStyle = (isActive: boolean) =>
     clsx(
       'flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]',
-      isActive && !isAuthPromptOpen
-        ? 'bg-[#E9EADB] text-[#28666E]'
-        : 'bg-[#28666E] text-[#E9EADB]'
+      isActive ? 'bg-[#E9EADB] text-[#28666E]' : 'bg-[#28666E] text-[#E9EADB]'
     );
 
   return (
-    <>
+    <footer className="fixed bottom-0 left-0 right-0 z-51">
       <nav
         className="
-          fixed bottom-0 left-0 right-0
           bg-[#28666E]
           min-w-[375px] h-[65px]
           pt-[6px]
           flex justify-around
-          z-51
         "
       >
         {navItems.map(({ to, label, Icon, protected: isProtected }) => (
@@ -73,9 +67,7 @@ export function BottomNav() {
             onClick={(e) => {
               if (isProtected && !isAuthenticated) {
                 e.preventDefault();
-                setIsAuthPromptOpen(true);
-              } else {
-                setIsAuthPromptOpen(false);
+                navigate('/sign-in');
               }
             }}
           >
@@ -86,11 +78,6 @@ export function BottomNav() {
           </NavLink>
         ))}
       </nav>
-
-      <AuthPrompt
-        isOpen={isAuthPromptOpen}
-        onClose={() => setIsAuthPromptOpen(false)}
-      />
-    </>
+    </footer>
   );
 }
