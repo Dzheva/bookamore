@@ -50,12 +50,17 @@ export default {
         em: ['16px', { lineHeight: 1.4, fontWeight: 350 }],
       },
       colors: {
+        error: '#E51C29',
         iconsBlack: '#153037',
         textBlack: '#153037',
-        deepBlue: '#033F63',
+        deepBlue: {
+          DEFAULT: '#033f63',
+          950: '#022f4f',
+        },
         gray: {
           400: '#B6B6B6',
           500: '#999999',
+          700: '#7B7B7B',
           800: '#676767',
         },
         grass: {
