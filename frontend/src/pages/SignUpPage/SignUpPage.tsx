@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Eye, EyeSlash } from '@/shared/ui/icons/Eye';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
 import { useNavigate, Link } from 'react-router';
@@ -9,6 +8,7 @@ import { Button } from '@/shared/ui/Button/Button';
 import { BottomNav } from '@/shared/ui/BottomNav';
 import { LogoSvg } from '@/shared/ui/LogoSvg/LogoSvg';
 import { AlertSvg } from '@/shared/ui/icons/AlertSvg';
+import { FormField } from '@/shared/ui/FormField';
 
 interface ValidationError {
   name?: string;
@@ -27,8 +27,6 @@ const SignUpPage: React.FC = () => {
     password: '',
     confirmPassword: '',
   });
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [errors, setErrors] = useState<ValidationError>({});
 
   const navigate = useNavigate();
@@ -121,150 +119,62 @@ const SignUpPage: React.FC = () => {
         </div>
 
         <form className="w-full" onSubmit={handleSubmit} noValidate>
-          {/* NAME */}
-          <div className="mb-4">
-            <label
-              htmlFor="name"
-              className="mb-2 ml-3.5 block text-sm font-normal text-text-black"
-            >
-              Name*
-            </label>
-            <input
-              id="name"
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={formData.name}
-              onChange={handleChange}
-              className={`w-full rounded-xl border-1 py-2.5 px-3 text-text-black text-sm transition-colors focus:outline-none ${
-                errors.name
-                  ? 'border-error'
-                  : 'border-gray-300 focus:border-blue-500 hover:border-gray-500'
-              }`}
-              aria-invalid={!!errors.name}
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-error">{errors.name}</p>
-            )}
-          </div>
+          <FormField
+            id="name"
+            label="Name"
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            error={errors.name}
+            required
+          />
 
-          {/* EMAIL */}
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="mb-2 ml-3.5 block text-sm font-normal text-text-black"
-            >
-              Email*
-            </label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              autoComplete="email"
-              className={`w-full rounded-xl border-1 py-2.5 px-3 text-text-black text-sm transition-colors focus:outline-none ${
-                errors.email
-                  ? 'border-error'
-                  : 'border-gray-300 focus:border-blue-500 hover:border-gray-500'
-              }`}
-              aria-invalid={!!errors.email}
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-error">{errors.email}</p>
-            )}
-          </div>
+          <FormField
+            id="email"
+            label="Email"
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            error={errors.email}
+            autoComplete="email"
+            required
+          />
 
-          {/* PASSWORD */}
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="mb-2 ml-3.5 block text-sm font-normal text-text-black"
-            >
-              Password*
-            </label>
+          <FormField
+            id="password"
+            label="Password"
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            autoComplete="new-password"
+            required
+          />
 
-            <div className="relative">
-              <input
-                id="password"
-                type={passwordVisible ? 'text' : 'password'}
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                autoComplete="new-password"
-                className={`w-full rounded-xl border-1 py-2.5 px-3 text-text-black text-sm transition-colors focus:outline-none ${
-                  errors.password
-                    ? 'border-error'
-                    : 'border-gray-300 focus:border-blue-500 hover:border-gray-500'
-                }`}
-                aria-invalid={!!errors.password}
-              />
-
-              <button
-                type="button"
-                onClick={() => setPasswordVisible((prev) => !prev)}
-                aria-pressed={passwordVisible}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
-              >
-                {passwordVisible ? <Eye /> : <EyeSlash />}
-              </button>
+          {formData.password && !errors.password && (
+            <div className="-mt-2 mb-4">
+              <PasswordValidator password={formData.password} />
             </div>
+          )}
 
-            {errors.password && (
-              <p className="mt-1 text-sm text-error">{errors.password}</p>
-            )}
-
-            {formData.password && !errors.password && (
-              <div className="mt-2">
-                <PasswordValidator password={formData.password} />
-              </div>
-            )}
-          </div>
-
-          {/* CONFIRM PASSWORD */}
-          <div className="mb-4">
-            <label
-              htmlFor="confirmPassword"
-              className="mb-2 ml-3.5 block text-sm font-normal text-text-black"
-            >
-              Confirm password*
-            </label>
-
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type={confirmPasswordVisible ? 'text' : 'password'}
-                name="confirmPassword"
-                placeholder="Confirm password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                autoComplete="new-password"
-                className={`w-full rounded-xl border-1 py-2.5 px-3 text-text-black text-sm transition-colors focus:outline-none ${
-                  errors.confirmPassword
-                    ? 'border-error'
-                    : 'border-gray-300 focus:border-blue-500 hover:border-gray-500'
-                }`}
-                aria-invalid={!!errors.confirmPassword}
-              />
-
-              <button
-                type="button"
-                onClick={() => setConfirmPasswordVisible((prev) => !prev)}
-                aria-pressed={confirmPasswordVisible}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
-              >
-                {confirmPasswordVisible ? <Eye /> : <EyeSlash />}
-              </button>
-            </div>
-
-            {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-error">
-                {errors.confirmPassword}
-              </p>
-            )}
-          </div>
+          <FormField
+            id="confirmPassword"
+            label="Confirm password"
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            error={errors.confirmPassword}
+            autoComplete="new-password"
+            required
+          />
 
           {/* FORM ERROR */}
           {errors.form && (

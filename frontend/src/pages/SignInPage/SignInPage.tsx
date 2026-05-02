@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Eye, EyeSlash } from '@/shared/ui/icons/Eye';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
 import { useNavigate, useLocation, Link } from 'react-router';
@@ -11,6 +10,7 @@ import { BottomNav } from '@/shared/ui/BottomNav';
 import { Button } from '@/shared/ui/Button/Button';
 import { LogoSvg } from '@/shared/ui/LogoSvg/LogoSvg';
 import { AlertSvg } from '@/shared/ui/icons/AlertSvg';
+import { FormField } from '@/shared/ui/FormField';
 
 interface ValidationError {
   email?: string;
@@ -22,7 +22,6 @@ const AUTH_ERROR = 'Invalid email or password';
 
 const SignInPage: React.FC = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [passwordVisible, setPasswordVisible] = useState(false);
   const [errors, setErrors] = useState<ValidationError>({});
 
   const navigate = useNavigate();
@@ -116,74 +115,31 @@ const SignInPage: React.FC = () => {
         </div>
 
         <form className="w-full" onSubmit={handleSubmit} noValidate>
-          {/* EMAIL */}
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="mb-2 ml-3.5 block text-sm font-normal text-text-black"
-            >
-              Email*
-            </label>
-            <input
-              id="email"
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              autoComplete="email"
-              className={`w-full rounded-xl border-1 py-2.5 px-3 text-text-black text-sm transition-colors focus:outline-none ${
-                errors.email
-                  ? 'border-error'
-                  : 'border-gray-300 focus:border-blue-500 hover:border-gray-500'
-              }`}
-              aria-invalid={!!errors.email}
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-error">{errors.email}</p>
-            )}
-          </div>
+          <FormField
+            id="email"
+            label="Email"
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            error={errors.email}
+            autoComplete="email"
+            required
+          />
 
-          {/* PASSWORD */}
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="mb-2 ml-3.5 block text-sm font-normal text-text-black"
-            >
-              Password*
-            </label>
-
-            <div className="relative">
-              <input
-                id="password"
-                type={passwordVisible ? 'text' : 'password'}
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                autoComplete="current-password"
-                className={`w-full rounded-xl border-1 py-2.5 px-3 text-text-black text-sm transition-colors focus:outline-none ${
-                  errors.password
-                    ? 'border-error'
-                    : 'border-gray-300 focus:border-blue-500 hover:border-gray-500'
-                }`}
-                aria-invalid={!!errors.password}
-              />
-
-              <button
-                type="button"
-                onClick={() => setPasswordVisible((prev) => !prev)}
-                aria-pressed={passwordVisible}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 focus:outline-none"
-              >
-                {passwordVisible ? <Eye /> : <EyeSlash />}
-              </button>
-            </div>
-
-            {errors.password && (
-              <p className="mt-1 text-sm text-error">{errors.password}</p>
-            )}
-          </div>
+          <FormField
+            id="password"
+            label="Password"
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            autoComplete="current-password"
+            required
+          />
 
           {/* FORM ERROR */}
           {errors.form && (

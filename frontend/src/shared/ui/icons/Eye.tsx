@@ -1,5 +1,3 @@
-import clsx from 'clsx';
-
 export const Eye = ({ className }: { className?: string }) => {
   return (
     <svg
@@ -8,7 +6,7 @@ export const Eye = ({ className }: { className?: string }) => {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={clsx('text-icons-black', className)}
+      className={className}
     >
       <g clipPath="url(#clip0_2251_627)">
         <path
@@ -41,7 +39,7 @@ export const EyeSlash = ({ className }: { className?: string }) => {
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={clsx('text-icons-black', className)}
+      className={className}
     >
       <g clipPath="url(#clip0_2251_628)">
         <path
