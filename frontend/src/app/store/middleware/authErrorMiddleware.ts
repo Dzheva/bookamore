@@ -28,10 +28,8 @@ export const authErrorMiddleware: Middleware =
         // Автоматично очищуємо авторизацію при 401 помилці
         store.dispatch(clearAuth());
 
-        // Опціонально: перенаправляємо на сторінку логіну
-        if (typeof window !== 'undefined') {
-          window.location.href = '/sign-in';
-        }
+        // Не робимо window.location.href тут, дозвіляємо компонентам обробляти помилку
+        // Якщо потрібен редирект, компонент зробить це через useNavigate
       }
     }
 

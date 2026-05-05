@@ -21,6 +21,7 @@ interface AuthResponse {
 interface SignUpResponse {
   email: string;
   message: string;
+  status: number;
 }
 
 export const AuthApi = createApi({
