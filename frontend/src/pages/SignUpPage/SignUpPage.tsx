@@ -106,7 +106,7 @@ const SignUpPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col max-h-[calc(100vh-65px)] overflow-x-auto scrollbar-custom">
+    <div className="flex flex-col max-h-[100vh] pb-[65px] overflow-x-auto scrollbar-custom">
       <header className="flex justify-center py-5">
         <Link to="/">
           <LogoSvg className="text-deep-blue" />
