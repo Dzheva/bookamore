@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAddOfferWithBookMutation } from '@app/store/api/OffersApi';
+import { useUploadImageMutation } from '@app/store/api/ImagesApi';
 import { BottomNav } from '@shared/ui/BottomNav';
 import type { OfferType, OfferStatus } from '@/types/entities/Offer.d.ts';
 import type { OfferWithBookRequest } from '@/types/entities/OfferWithBook.d.ts';
@@ -17,6 +18,7 @@ const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
   const [addOfferWithBook, { isLoading: isSubmitting }] =
     useAddOfferWithBookMutation();
+  const [uploadImage] = useUploadImageMutation();
   const user = useSelector((state: RootState) => state.auth.user);
 
   // Form state
@@ -29,6 +31,10 @@ const NewOfferPage: React.FC = () => {
     description: '',
     photos: [] as File[],
   });
+
+  const handlePhotosChange = React.useCallback((photos: File[]) => {
+    setFormData((prev) => ({ ...prev, photos }));
+  }, []);
 
   const handleInputChange = (
     field: string,
@@ -56,16 +62,43 @@ const NewOfferPage: React.FC = () => {
           title: formData.title,
           yearOfRelease: new Date().getFullYear(), // Default to current year
           description: formData.description,
-          isbn: '', // Optional
+          isbn: '',
           condition: formData.condition,
           authors: [formData.author],
-          genres: [], // Empty for now
-          images: formData.photos,
+          genres: [],
+          images: [],
         },
-        sellerId: user.id, // TODO: Get from auth context
+        sellerId: user.id,
       };
 
       const result = await addOfferWithBook(offerWithBookRequest).unwrap();
+
+      if (formData.photos.length > 0) {
+        let failedImages = 0;
+        for (const photo of formData.photos) {
+          try {
+            await uploadImage({
+              file: photo,
+              entityType: 'BOOK',
+              entityId: result.book.id,
+            }).unwrap();
+          } catch (error) {
+            console.error('Failed to upload image:', error);
+            failedImages++;
+          }
+        }
+
+        if (failedImages > 0) {
+          toast.error(
+            `Offer created but ${failedImages} image(s) failed to upload`
+          );
+        } else {
+          toast.success('Offer published with images!');
+        }
+      } else {
+        toast.success('Offer published!');
+      }
+
       navigate(`/offers/${result.id}`);
     } catch (error) {
       console.error('Error creating offer:', error);
@@ -115,7 +148,7 @@ const NewOfferPage: React.FC = () => {
               required
             />
           </div>
-          <UploadPhoto />
+          <UploadPhoto onPhotosChange={handlePhotosChange} />
 
           <div>
             <h3 className="font-kyiv text-h6m mb-[10px] ">Type of deal*</h3>
@@ -278,7 +311,6 @@ const NewOfferPage: React.FC = () => {
           </button>
         </form>
       </div>
-
       <BottomNav />
     </div>
   );
