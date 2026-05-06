@@ -1,22 +1,22 @@
 //import type { Nullable } from "@types/utils/Nullable";
 
 export type Offer = {
-  id: number;
+  id: string;
   type: OfferType;
   status: OfferStatus;
   description: string;
   price: number;
   previewImage: string;
-  bookId: number;
-  sellerId: string | number;
+  bookId: string;
+  sellerId: string;
 };
 
 export type OfferRequest = Omit<Offer, 'id' | 'previewImage'> & {
-  previewImage: File;
+  previewImage: File | null;
 };
 
 export type OfferPatchRequest = {
-  id: number | string;
+  id: string;
   offer: Partial<OfferRequest>;
 };
 

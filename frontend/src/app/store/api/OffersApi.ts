@@ -35,7 +35,7 @@ export const OffersApi = createApi({
         return params ? `?${convertObjectToSearchParams(params)}` : '';
       },
     }),
-    getOfferById: build.query<Offer, number | string>({
+    getOfferById: build.query<Offer, string>({
       query: (id) => `/${id}`,
     }),
     getAllOffersWithBooks: build.query<
@@ -46,7 +46,7 @@ export const OffersApi = createApi({
         return `/with-book?${params ? convertObjectToSearchParams(params) : ''}`;
       },
     }),
-    getOfferWithBookById: build.query<OfferWithBook, number | string>({
+    getOfferWithBookById: build.query<OfferWithBook, string>({
       query: (id) => `/with-book/${id}`,
     }),
     addOfferWithBook: build.mutation<OfferWithBook, OfferWithBookRequest>({
@@ -70,7 +70,7 @@ export const OffersApi = createApi({
         body: offerPatchRequest.offer,
       }),
     }),
-    deleteOfferById: build.mutation<void, number | string>({
+    deleteOfferById: build.mutation<void, string>({
       query: (id) => ({
         url: `/${id}`,
         method: 'DELETE',
