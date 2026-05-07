@@ -1,10 +1,33 @@
 import { AddPhotoBook } from '@/shared/ui/icons/AddPhotoBookSvg';
 import { NoImgAddPhoto } from '@/shared/ui/icons/NoImgAddSvg';
-import { useState, type ChangeEvent } from 'react';
+import { useState, type ChangeEvent, useEffect } from 'react';
 import { DeletePhotoSvg } from '@/shared/ui/icons/DeletePhotoSvg';
-const UploadPhoto = () => {
+
+interface UploadPhotoProps {
+  onPhotosChange?: (photos: File[]) => void;
+  initialPhotos?: File[];
+}
+
+const UploadPhoto: React.FC<UploadPhotoProps> = ({
+  onPhotosChange,
+  initialPhotos = [],
+}) => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [photo, setPhoto] = useState<File[]>([]);
+  const [photo, setPhoto] = useState<File[]>(initialPhotos);
+
+  useEffect(() => {
+    if (onPhotosChange) {
+      onPhotosChange(photo);
+    }
+  }, [photo, onPhotosChange]);
+
+  useEffect(() => {
+    // Create preview URLs for initial photos
+    if (initialPhotos.length > 0) {
+      const urls = initialPhotos.map((file) => URL.createObjectURL(file));
+      setPreviewUrls(urls);
+    }
+  }, [initialPhotos]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;

@@ -4,6 +4,8 @@ import noImages from '@/assest/images/noImage.jpg';
 import { Badge } from './icons/Badge';
 import { Spinner } from './Spinner';
 
+const IMAGE_HOST = import.meta.env.VITE_IMAGE_HOST || '';
+
 interface BookCardProps {
   condition?: 'new' | 'used';
   offer: OfferWithBook;
@@ -36,7 +38,7 @@ function BookCard({ condition, offer }: BookCardProps) {
     >
       <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
         <img
-          src={bookImage}
+          src={`${IMAGE_HOST}${bookImage}`}
           alt={bookTitle}
           className="w-full h-full object-cover"
         />

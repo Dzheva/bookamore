@@ -23,15 +23,15 @@ export const mockSellers = [
 // Mock book offers data
 export const mockOffers: OfferWithBook[] = [
   {
-    id: 1,
+    id: '1',
     price: 300,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Great condition sci-fi book',
     previewImage: '',
-    sellerId: 1,
+    sellerId: '1',
     book: {
-      id: 1,
+      id: '1',
       title: 'Babel',
       authors: ['Rebecca Kuang'],
       genres: ['sci-fi', 'fantasy'],
@@ -44,15 +44,15 @@ export const mockOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 2,
+    id: '2',
     price: 250,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Excellent sci-fi book',
     previewImage: '',
-    sellerId: 2,
+    sellerId: '2',
     book: {
-      id: 2,
+      id: '2',
       title: 'Babel',
       authors: ['Rebecca Kuang'],
       genres: ['sci-fi', 'fantasy'],
@@ -65,15 +65,15 @@ export const mockOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 3,
+    id: '3',
     price: 280,
     type: OfferType.EXCHANGE,
     status: OfferStatus.OPEN,
     description: 'Looking to exchange this amazing book',
     previewImage: '',
-    sellerId: 3,
+    sellerId: '3',
     book: {
-      id: 3,
+      id: '3',
       title: 'Babel',
       authors: ['Rebecca Kuang'],
       genres: ['sci-fi', 'fantasy'],
@@ -86,15 +86,15 @@ export const mockOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 4,
+    id: '4',
     price: 200,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Classic science fiction masterpiece',
     previewImage: '',
-    sellerId: 4,
+    sellerId: '4',
     book: {
-      id: 4,
+      id: '4',
       title: 'Dune',
       authors: ['Frank Herbert'],
       genres: ['sci-fi'],
@@ -107,15 +107,15 @@ export const mockOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 5,
+    id: '5',
     price: 350,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Amazing survival story',
     previewImage: '',
-    sellerId: 5,
+    sellerId: '5',
     book: {
-      id: 5,
+      id: '5',
       title: 'The Martian',
       authors: ['Andy Weir'],
       genres: ['sci-fi'],
@@ -127,15 +127,15 @@ export const mockOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 6,
+    id: '6',
     price: 180,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Classic Foundation series',
     previewImage: '',
-    sellerId: 6,
+    sellerId: '6',
     book: {
-      id: 6,
+      id: '6',
       title: 'Foundation',
       authors: ['Isaac Asimov'],
       genres: ['sci-fi'],
@@ -148,15 +148,15 @@ export const mockOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 7,
+    id: '7',
     price: 320,
     type: OfferType.EXCHANGE,
     status: OfferStatus.OPEN,
     description: 'Cyberpunk classic for trade',
     previewImage: '',
-    sellerId: 7,
+    sellerId: '7',
     book: {
-      id: 7,
+      id: '7',
       title: 'Neuromancer',
       authors: ['William Gibson'],
       genres: ['sci-fi', 'cyberpunk'],
@@ -169,15 +169,15 @@ export const mockOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 8,
+    id: '8',
     price: 275,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Ursula K. Le Guin masterpiece',
     previewImage: '',
-    sellerId: 8,
+    sellerId: '8',
     book: {
-      id: 8,
+      id: '8',
       title: 'The Left Hand of Darkness',
       authors: ['Ursula K. Le Guin'],
       genres: ['sci-fi'],
@@ -189,15 +189,15 @@ export const mockOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 9,
+    id: '9',
     price: 190,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Space military fiction',
     previewImage: '',
-    sellerId: 9,
+    sellerId: '9',
     book: {
-      id: 9,
+      id: '9',
       title: "Ender's Game",
       authors: ['Orson Scott Card'],
       genres: ['sci-fi'],
@@ -210,15 +210,15 @@ export const mockOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 10,
+    id: '10',
     price: 310,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'H.G. Wells classic',
     previewImage: '',
-    sellerId: 10,
+    sellerId: '10',
     book: {
-      id: 10,
+      id: '10',
       title: 'The Time Machine',
       authors: ['H.G. Wells'],
       genres: ['sci-fi', 'classic'],
@@ -235,15 +235,15 @@ export const mockOffers: OfferWithBook[] = [
 // Mock romantic books
 export const mockRomanticOffers: OfferWithBook[] = [
   {
-    id: 11,
+    id: '11',
     price: 280,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Classic romance novel',
     previewImage: '',
-    sellerId: 11,
+    sellerId: '11',
     book: {
-      id: 11,
+      id: '11',
       title: 'Pride and Prejudice',
       authors: ['Jane Austen'],
       genres: ['romantic', 'classic'],
@@ -256,15 +256,15 @@ export const mockRomanticOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 12,
+    id: '12',
     price: 250,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Heart-wrenching romance',
     previewImage: '',
-    sellerId: 12,
+    sellerId: '12',
     book: {
-      id: 12,
+      id: '12',
       title: 'The Notebook',
       authors: ['Nicholas Sparks'],
       genres: ['romantic', 'contemporary'],
@@ -276,15 +276,15 @@ export const mockRomanticOffers: OfferWithBook[] = [
     },
   },
   {
-    id: 13,
+    id: '13',
     price: 300,
     type: OfferType.EXCHANGE,
     status: OfferStatus.OPEN,
     description: 'Emotional contemporary romance',
     previewImage: '',
-    sellerId: 13,
+    sellerId: '13',
     book: {
-      id: 13,
+      id: '13',
       title: 'Me Before You',
       authors: ['Jojo Moyes'],
       genres: ['romantic', 'contemporary'],
@@ -385,9 +385,9 @@ export function getOffersByCondition(
 export function getOfferWithBookById(
   id: number | string
 ): OfferWithBook | null {
-  const offerId = typeof id === 'string' ? parseInt(id, 10) : id;
+  const offerId: number = typeof id === 'string' ? parseInt(id, 10) : id;
   const allOffers = [...mockOffers, ...mockRomanticOffers];
-  return allOffers.find((offer) => offer.id === offerId) || null;
+  return allOffers.find((offer) => parseInt(offer.id, 10) === offerId) || null;
 }
 
 // Sort offers
@@ -403,9 +403,17 @@ export function sortOffers(
     case 'price-high':
       return sorted.sort((a, b) => b.price - a.price);
     case 'newest':
-      return sorted.sort((a, b) => b.id - a.id); // Use ID as proxy for creation order
+      return sorted.sort((a, b) => {
+        const aId = parseInt(a.id, 10);
+        const bId = parseInt(b.id, 10);
+        return bId - aId;
+      });
     case 'oldest':
-      return sorted.sort((a, b) => a.id - b.id);
+      return sorted.sort((a, b) => {
+        const aId = parseInt(a.id, 10);
+        const bId = parseInt(b.id, 10);
+        return aId - bId;
+      });
     case 'title':
       return sorted.sort((a, b) => a.book.title.localeCompare(b.book.title));
     default:
