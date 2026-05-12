@@ -209,8 +209,8 @@ const NewOfferPage: React.FC = () => {
                 <input
                   type="radio"
                   name="dealType"
-                  value="SELL"
-                  checked={formData.dealType === 'SELL'}
+                  value="EXCHANGE"
+                  checked={formData.dealType === 'EXCHANGE'}
                   onChange={(e) =>
                     handleInputChange('dealType', e.target.value as OfferType)
                   }
@@ -229,8 +229,8 @@ const NewOfferPage: React.FC = () => {
                 <input
                   type="radio"
                   name="dealType"
-                  value="SELL"
-                  checked={formData.dealType === 'SELL'}
+                  value="SELL_EXCHANGE"
+                  checked={formData.dealType === 'SELL_EXCHANGE'}
                   onChange={(e) =>
                     handleInputChange('dealType', e.target.value as OfferType)
                   }
