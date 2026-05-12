@@ -14,6 +14,12 @@ import UploadPhoto from '@/shared/components/UploadPhoto/UploadPhoto';
 import { useSelector } from 'react-redux';
 import type { RootState } from '@/app/store/store';
 
+import Select from 'react-select';
+import { GENRES_BAZA } from '@/shared/mocks/mockDataGenres';
+import makeAnimated from 'react-select/animated';
+
+const animatedComponents = makeAnimated();
+
 const NewOfferPage: React.FC = () => {
   const navigate = useNavigate();
   const [addOfferWithBook, { isLoading: isSubmitting }] =
@@ -21,7 +27,6 @@ const NewOfferPage: React.FC = () => {
   const [uploadImage] = useUploadImageMutation();
   const user = useSelector((state: RootState) => state.auth.user);
 
-  // Form state
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -30,6 +35,7 @@ const NewOfferPage: React.FC = () => {
     price: '',
     description: '',
     photos: [] as File[],
+    genres: [] as string[],
   });
 
   const handlePhotosChange = React.useCallback((photos: File[]) => {
@@ -38,7 +44,7 @@ const NewOfferPage: React.FC = () => {
 
   const handleInputChange = (
     field: string,
-    value: string | BookCondition | OfferType
+    value: string | BookCondition | OfferType | string[]
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -65,7 +71,7 @@ const NewOfferPage: React.FC = () => {
           isbn: '',
           condition: formData.condition,
           authors: [formData.author],
-          genres: [],
+          genres: formData.genres,
           images: [],
         },
         sellerId: user.id,
@@ -149,6 +155,31 @@ const NewOfferPage: React.FC = () => {
             />
           </div>
           <UploadPhoto onPhotosChange={handlePhotosChange} />
+          <div className={formStyle.container}>
+            <h2 className={formStyle.title}>Genres</h2>
+            <Select
+              className="w-full text-gray-500 text-sm sm:text-base font-kyiv"
+              id="genres"
+              options={GENRES_BAZA}
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              defaultValue={[]}
+              isMulti
+              placeholder="Add Genres"
+              name="genres"
+              classNamePrefix="select"
+              onChange={(selectedOptions) => {
+                const selectedIds = selectedOptions
+                  ? selectedOptions.map((opt) => opt.value)
+                  : [];
+
+                handleInputChange('genres', selectedIds);
+              }}
+              value={GENRES_BAZA.filter((genre) =>
+                formData.genres.includes(genre.value)
+              )}
+            />
+          </div>
 
           <div>
             <h3 className="font-kyiv text-h6m mb-[10px] ">Type of deal*</h3>
@@ -178,8 +209,8 @@ const NewOfferPage: React.FC = () => {
                 <input
                   type="radio"
                   name="dealType"
-                  value="SELL"
-                  checked={formData.dealType === 'SELL'}
+                  value="EXCHANGE"
+                  checked={formData.dealType === 'EXCHANGE'}
                   onChange={(e) =>
                     handleInputChange('dealType', e.target.value as OfferType)
                   }
@@ -198,8 +229,8 @@ const NewOfferPage: React.FC = () => {
                 <input
                   type="radio"
                   name="dealType"
-                  value="SELL"
-                  checked={formData.dealType === 'SELL'}
+                  value="SELL_EXCHANGE"
+                  checked={formData.dealType === 'SELL_EXCHANGE'}
                   onChange={(e) =>
                     handleInputChange('dealType', e.target.value as OfferType)
                   }
