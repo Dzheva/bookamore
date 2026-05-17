@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
 import { useNavigate, useLocation, Link } from 'react-router';
 import { useLoginMutation } from '@app/store/api/AuthApi';
 import { useDispatch } from 'react-redux';
@@ -8,9 +6,12 @@ import { setCredentials, setCurrentUser } from '@app/store/slices/authSlice';
 import { useLazyGetCurrentUserQuery } from '@/app/store/api/UsersApi';
 import { BottomNav } from '@/shared/ui/BottomNav';
 import { Button } from '@/shared/ui/Button/Button';
-import { LogoSvg } from '@/shared/ui/LogoSvg/LogoSvg';
 import { AlertSvg } from '@/shared/ui/icons/AlertSvg';
 import { FormField } from '@/shared/ui/FormField';
+import { AuthHeader } from '@/shared/ui/AuthHeader';
+import { validators } from '@/shared/helpers/validators';
+import { SocialAuthButton } from '@/shared/ui/SocialAuthButton';
+import { useTranslation } from 'react-i18next';
 
 interface ValidationError {
   email?: string;
@@ -18,10 +19,19 @@ interface ValidationError {
   form?: string;
 }
 
-const AUTH_ERROR = 'Invalid email or password';
+interface SignInFormData {
+  email: string;
+  password: string;
+}
 
 const SignInPage: React.FC = () => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const { t } = useTranslation();
+
+  const [formData, setFormData] = useState<SignInFormData>({
+    email: '',
+    password: '',
+  });
+
   const [errors, setErrors] = useState<ValidationError>({});
 
   const navigate = useNavigate();
@@ -31,40 +41,44 @@ const SignInPage: React.FC = () => {
   const [login, { isLoading }] = useLoginMutation();
   const [getCurrentUser] = useLazyGetCurrentUserQuery();
 
-  const isValidEmail = (email: string): boolean => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const clearFieldError = (field: keyof SignInFormData) => {
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+      form: undefined,
+    }));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const field = e.target.name as keyof SignInFormData;
+    const { value } = e.target;
 
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
 
-    setErrors((prev) => {
-      const newErrors = { ...prev };
-      delete newErrors[name as keyof ValidationError];
-      delete newErrors.form;
-      return newErrors;
-    });
+    clearFieldError(field);
   };
 
   const validateForm = (): boolean => {
     const newErrors: ValidationError = {};
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = 'validation.emailRequired';
+    } else if (!validators.email(formData.email)) {
+      newErrors.email = 'validation.emailInvalid';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = 'validation.passwordRequired';
+    } else if (!validators.password(formData.password)) {
+      newErrors.password = 'validation.passwordMinLength';
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+    return !Object.keys(newErrors).length;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,7 +90,7 @@ const SignInPage: React.FC = () => {
       const result = await login(formData).unwrap();
 
       if (!result?.token) {
-        setErrors({ form: AUTH_ERROR });
+        setErrors({ form: 'validation.authError' });
         return;
       }
 
@@ -90,53 +104,44 @@ const SignInPage: React.FC = () => {
       }
 
       const from = location.state?.from?.pathname || '/';
-      // Use setTimeout to ensure all pending operations complete before navigation
-      setTimeout(() => {
-        navigate(from, { replace: true });
-      }, 100);
+
+      navigate(from, { replace: true });
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : AUTH_ERROR;
-      setErrors({ form: AUTH_ERROR });
-      console.error('Login failed:', errorMessage);
+      console.error('Login failed:', err);
+      setErrors({ form: 'validation.authError' });
     }
   };
 
   return (
-    <div className="flex flex-col max-h-[100vh] pb-[65px] overflow-x-auto scrollbar-custom">
-      <header className="flex justify-center py-5">
-        <Link to="/">
-          <LogoSvg className="text-deep-blue" />
-        </Link>
-      </header>
+    <div className="flex flex-col max-h-fit pb-[75px] overflow-x-auto scrollbar-custom">
+      <AuthHeader />
 
       <main className="flex flex-col items-center w-full max-w-md mx-auto px-4">
-        <div>
-          <h2 className="mb-5 text-h2m text-text-black">Login</h2>
-        </div>
+        <h2 className="mb-5 text-h2m text-text-black">{t('auth.logIn')}</h2>
 
         <form className="w-full" onSubmit={handleSubmit} noValidate>
           <FormField
             id="email"
-            label="Email"
+            label={t('auth.email')}
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder={t('auth.email')}
             value={formData.email}
             onChange={handleChange}
-            error={errors.email}
+            error={errors.email ? t(errors.email) : undefined}
             autoComplete="email"
             required
           />
 
           <FormField
             id="password"
-            label="Password"
+            label={t('auth.password')}
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder={t('auth.password')}
             value={formData.password}
             onChange={handleChange}
-            error={errors.password}
+            error={errors.password ? t(errors.password) : undefined}
             autoComplete="current-password"
             required
           />
@@ -144,7 +149,7 @@ const SignInPage: React.FC = () => {
           {/* FORM ERROR */}
           {errors.form && (
             <div className="flex items-center justify-between mb-4 rounded-xl border border-error bg-red-50 p-3 text-sm text-error">
-              {errors.form}
+              {t(errors.form)}
               <AlertSvg />
             </div>
           )}
@@ -155,65 +160,58 @@ const SignInPage: React.FC = () => {
               to="/forgot-password"
               className="text-sm text-blue-500 hover:text-blue-600"
             >
-              Forgot Password?
+              {t('auth.forgotPassword')}
             </Link>
           </div>
 
           {/* SUBMIT */}
           <Button type="submit" isLoading={isLoading}>
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? t('auth.signingIn') : t('auth.signIn')}
           </Button>
 
           {/* DIVIDER */}
           <div className="flex items-center gap-3 mt-6 mb-3">
             <div className="flex-1 h-px bg-gray-300" />
-            <span className="text-sm text-gray-700 tracking-wider">or</span>
+            <span className="text-sm text-gray-700 tracking-wider">
+              {t('auth.or')}
+            </span>
             <div className="flex-1 h-px bg-gray-300" />
           </div>
 
           {/* SOCIAL LOGIN */}
           <div className="flex flex-col max-w-fit mx-auto">
-            {/* Facebook */}
-            <button
-              type="button"
-              onClick={() => console.log('Facebook auth not implemented')}
-              className="flex mb-4 w-full items-center justify-left rounded-full border border-[#747775] p-2.5 text-sm font-medium text-[#1F1F1F] hover:bg-gray-50"
-            >
-              <FaFacebook className="mr-2 h-5 w-5 text-[#1877F2]" />
-              Continue with Facebook
-            </button>
-            {/* GOOGLE */}
-            <button
-              type="button"
-              onClick={() => console.log('Google auth not implemented')}
-              className="flex mb-4 w-full items-center justify-left rounded-full border border-[#747775] p-2.5 text-sm font-medium text-[#1F1F1F] hover:bg-gray-50"
-            >
-              <FcGoogle className="mr-2 h-5 w-5" />
-              Continue with Google
-            </button>
+            <SocialAuthButton
+              provider="google"
+              onClick={() => console.log('Google auth')}
+            />
+
+            <SocialAuthButton
+              provider="facebook"
+              onClick={() => console.log('Facebook auth')}
+            />
           </div>
         </form>
 
         {/* SIGN UP */}
         <div className="mt-6 mb-6 text-center text-sm">
-          <span className="text-text-black">Do not have an account?</span>{' '}
+          <span className="text-text-black">{t('auth.dontHaveAccount')}</span>{' '}
           <Link
             to="/sign-up"
             className="font-bold text-deep-blue hover:text-deep-blue-950"
           >
-            Sign Up now
+            {t('auth.signUp')}
           </Link>
         </div>
 
         {/* TERMS */}
         <p className="mb-4 text-center text-xs text-gray-500">
-          By continuing, you agree to our{' '}
+          {t('auth.acceptance')}{' '}
           <Link to="#" className="font-semibold text-gray-800 underline">
-            Terms
+            {t('auth.terms')}
           </Link>{' '}
-          and{' '}
+          {t('auth.and')}{' '}
           <Link to="#" className="font-semibold text-gray-800 underline">
-            Privacy Policy
+            {t('auth.privacy')}
           </Link>
         </p>
       </main>

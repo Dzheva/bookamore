@@ -3,14 +3,16 @@ import { Header } from '@/shared/ui/Header';
 import { Categories } from '@/shared/ui/Categories';
 import { BookSection } from '@/shared/ui/BookSection';
 import { useGetAllOffersWithBooksQuery } from '@/app/store/api/OffersApi.ts';
+import { useTranslation } from 'react-i18next';
 
 // Size of items per section slider
 const SECTION_SIZE = 10;
 
 const HomePage: React.FC = () => {
+  const { t } = useTranslation();
   const bookSections = [
     {
-      title: 'New',
+      title: t('categories.new'),
       destination: '/search?condition=new',
       queryResult: useGetAllOffersWithBooksQuery({
         condition: 'new',
@@ -18,7 +20,7 @@ const HomePage: React.FC = () => {
       }),
     },
     {
-      title: 'Recommended',
+      title: t('categories.recommended'),
       destination: '/search?q=recommended',
       queryResult: useGetAllOffersWithBooksQuery({
         search: 'recommended',
@@ -26,7 +28,7 @@ const HomePage: React.FC = () => {
       }),
     },
     {
-      title: 'Sci-fi',
+      title: t('categories.sci-fi'),
       destination: '/genres/sci-fi',
       queryResult: useGetAllOffersWithBooksQuery({
         genre: 'sci-fi',

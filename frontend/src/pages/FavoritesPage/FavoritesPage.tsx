@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { IoTrashOutline } from 'react-icons/io5';
 import { BottomNav } from '@shared/ui/BottomNav';
-import BackButton from '@/shared/ui/BackButton';
 import noImages from '@/assest/images/noImage.jpg';
+import HeaderTitle from '@/shared/ui/HeaderTitle';
+import { useTranslation } from 'react-i18next';
 
 // Mock data для demonstration
 const mockFavorites = [
@@ -46,6 +47,7 @@ const mockFavorites = [
 ];
 
 const FavoritesPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState(mockFavorites);
 
@@ -62,25 +64,17 @@ const FavoritesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex items-center border-b border-gray-200">
-        <BackButton />
-        <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold flex-1 text-center">
-          My Favorites
-        </h1>
-        <div className="w-8"></div>
-      </div>
-
+      <HeaderTitle title={t('favorites.title')} />
       <div className="w-full max-w-md mx-auto lg:max-w-4xl xl:max-w-6xl">
         {favorites.length > 0 ? (
           <>
             {/* Summary */}
             <div className="px-4 sm:px-6 lg:px-8 py-4 bg-white">
               <p className="text-sm sm:text-base text-gray-600">
-                {favorites.length} items on your list
+                {t('favorites.itemsNumber', { count: favorites.length })}
               </p>
               <p className="text-sm sm:text-base lg:text-lg font-semibold text-gray-800">
-                Your Total: {totalValue} UAH
+                {t('favorites.total', { total: totalValue })}
               </p>
             </div>
 

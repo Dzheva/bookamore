@@ -28,15 +28,17 @@ const HeaderTitle = ({ title, icon, onIconClick }: HeaderProps) => {
         >
           {title}
         </h1>
-        {icon && (
-          <span
-            onClick={handleClick}
-            className="cursor-pointer"
-            style={{ color: active ? '#FDBD4C' : '#000000' }}
-          >
-            {icon}
-          </span>
-        )}
+        <div className="flex items-center gap-4">
+          {icon && (
+            <span
+              onClick={handleClick}
+              className="cursor-pointer"
+              style={{ color: active ? '#FDBD4C' : '#000000' }}
+            >
+              {icon}
+            </span>
+          )}
+        </div>
       </div>
     </>
   );

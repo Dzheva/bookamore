@@ -15,17 +15,30 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '@/app/store/store';
 
 import Select from 'react-select';
-import { GENRES_BAZA } from '@/shared/mocks/mockDataGenres';
 import makeAnimated from 'react-select/animated';
+import { useTranslation } from 'react-i18next';
+import { categories, type Category } from '@/shared/constants/categories.ts';
+import { Button } from '@/shared/ui/Button/Button';
+
+type CategoryOption = {
+  value: Category;
+  label: string;
+};
 
 const animatedComponents = makeAnimated();
 
 const NewOfferPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [addOfferWithBook, { isLoading: isSubmitting }] =
     useAddOfferWithBookMutation();
   const [uploadImage] = useUploadImageMutation();
   const user = useSelector((state: RootState) => state.auth.user);
+
+  const categoryOptions: CategoryOption[] = categories.map((category) => ({
+    value: category,
+    label: t(`categories.${category}`),
+  }));
 
   const [formData, setFormData] = useState({
     title: '',
@@ -118,13 +131,14 @@ const NewOfferPage: React.FC = () => {
     <div className="min-h-screen">
       <Toaster />
 
-      <HeaderTitle title="Sell book" />
+      <HeaderTitle title={t('sellBook.title')} />
 
       <div className="w-full  max-w-md mx-auto lg:max-w-2xl xl:max-w-4xl px-4 sm:px-6 lg:px-8 py-6">
         <form onSubmit={handleSubmit} className="space-y-6 lg:space-y-8">
           <div className={formStyle.container}>
             <label htmlFor="title" className={formStyle.title}>
-              Book Title*
+              {t('sellBook.bookTitle')}
+              {'*'}
             </label>
 
             <input
@@ -141,7 +155,8 @@ const NewOfferPage: React.FC = () => {
 
           <div className={formStyle.container}>
             <label htmlFor="author" className={formStyle.title}>
-              Author*
+              {t('sellBook.author')}
+              {'*'}
             </label>
             <input
               id="author"
@@ -156,33 +171,40 @@ const NewOfferPage: React.FC = () => {
           </div>
           <UploadPhoto onPhotosChange={handlePhotosChange} />
           <div className={formStyle.container}>
-            <h2 className={formStyle.title}>Genres</h2>
-            <Select
-              className="w-full text-gray-500 text-sm sm:text-base font-kyiv"
+            <h2 className={formStyle.title}>{t('sellBook.genres')}</h2>
+            <Select<CategoryOption, true>
+              className="
+                w-full
+                text-gray-500
+                text-sm
+                sm:text-base
+                font-kyiv
+              "
               id="genres"
-              options={GENRES_BAZA}
+              options={categoryOptions}
               closeMenuOnSelect={false}
               components={animatedComponents}
-              defaultValue={[]}
               isMulti
-              placeholder="Add Genres"
+              placeholder={t('sellBook.genresPlaceholder')}
               name="genres"
               classNamePrefix="select"
               onChange={(selectedOptions) => {
-                const selectedIds = selectedOptions
-                  ? selectedOptions.map((opt) => opt.value)
-                  : [];
-
-                handleInputChange('genres', selectedIds);
+                handleInputChange(
+                  'genres',
+                  selectedOptions.map((opt) => opt.value)
+                );
               }}
-              value={GENRES_BAZA.filter((genre) =>
+              value={categoryOptions.filter((genre) =>
                 formData.genres.includes(genre.value)
               )}
             />
           </div>
 
           <div>
-            <h3 className="font-kyiv text-h6m mb-[10px] ">Type of deal*</h3>
+            <h3 className="font-kyiv text-h6m mb-[10px] ">
+              {t('titles.typeOfDeal')}
+              {'*'}
+            </h3>
 
             <div className="space-y-3 lg:space-y-4">
               <label className={`${labelStyle} group`}>
@@ -201,7 +223,7 @@ const NewOfferPage: React.FC = () => {
                   className="font-kyiv text-h6m 
               peer-checked:text-aquamarine-950"
                 >
-                  Purchase only
+                  {t('typeOfDeal.purchaseOnly')}
                 </p>
               </label>
 
@@ -221,7 +243,7 @@ const NewOfferPage: React.FC = () => {
                   className="font-kyiv text-h6m 
               peer-checked:text-aquamarine-950"
                 >
-                  Exchange only
+                  {t('typeOfDeal.exchangeOnly')}
                 </p>
               </label>
 
@@ -241,7 +263,7 @@ const NewOfferPage: React.FC = () => {
                   className="font-kyiv text-h6m 
               peer-checked:text-aquamarine-950"
                 >
-                  Both
+                  {t('typeOfDeal.both')}
                 </p>
               </label>
             </div>
@@ -257,7 +279,8 @@ const NewOfferPage: React.FC = () => {
                 htmlFor="condition"
                 className="text-h6m text-aquamarine-950 py-[4px] px-[12px] "
               >
-                Condition*
+                {t('titles.condition')}
+                {'*'}
               </label>
               <select
                 name="condition"
@@ -277,9 +300,9 @@ const NewOfferPage: React.FC = () => {
                 focus:outline-none focus:ring-0 appearance-none 
                  "
               >
-                <option value="NEW">New</option>
-                <option value="AS_NEW">As New</option>
-                <option value="USED">Used</option>
+                <option value="NEW">{t('condition.NEW')}</option>
+                <option value="AS_NEW">{t('condition.AS_NEW')}</option>
+                <option value="USED">{t('condition.USED')}</option>
               </select>
             </div>
 
@@ -288,7 +311,7 @@ const NewOfferPage: React.FC = () => {
                 htmlFor="price"
                 className="text-h6m text-aquamarine-950 py-[4px] px-[12px]"
               >
-                Price, UAH
+                {`${t('titles.price')}, UAH`}
               </label>
 
               <input
@@ -313,13 +336,13 @@ const NewOfferPage: React.FC = () => {
 
           <div>
             <label htmlFor="desc" className="text-h4m mb-1    ">
-              Add description
+              {t('sellBook.description')}
             </label>
             <textarea
               id="desc"
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              placeholder="Used, in good condition."
+              placeholder={t('sellBook.descriptionPlaceholder')}
               rows={4}
               className="w-full px-[10px] py-[14px] 
               rounded-lg  lg:py-4
@@ -329,17 +352,9 @@ const NewOfferPage: React.FC = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-3 sm:py-4 lg:py-5 mb-[78px]
-            bg-[#033F63] text-white
-             font-semibold rounded-lg
-             transition-colors disabled:bg-gray-400 
-             disabled:cursor-not-allowed text-base sm:text-lg lg:text-xl"
-          >
-            {isSubmitting ? 'Publishing...' : 'Publish'}
-          </button>
+          <Button type="submit" isLoading={isSubmitting} className="mb-[78px]">
+            {isSubmitting ? t('sellBook.publishing') : t('sellBook.publish')}
+          </Button>
         </form>
       </div>
       <BottomNav />

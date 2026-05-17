@@ -1,8 +1,10 @@
 import { logout } from '@/app/store/slices/authSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 const LogOut = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -21,7 +23,7 @@ text-[#153037] text-h4m
      "
         type="button"
       >
-        Log Out
+        {t('auth.logOut')}
       </button>
     </>
   );

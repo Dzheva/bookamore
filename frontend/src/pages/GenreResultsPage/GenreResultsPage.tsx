@@ -10,6 +10,7 @@ import {
 } from '../../shared/mocks/mockData';
 import type { OfferWithBook } from '@/types/entities/OfferWithBook';
 import BackButton from '@/shared/ui/BackButton';
+import type { Category } from '@/shared/constants/categories';
 
 // Mock mode flag - set to true to use mocks instead of API
 const USE_MOCKS = true;
@@ -47,13 +48,13 @@ function FilterChip({
 }
 
 const GenreResultsPage: React.FC = () => {
-  const { genre } = useParams<{ genre: string }>();
+  const { genre } = useParams<{ genre: Category }>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   // Get filter parameters from URL
   const filters = {
-    genre: genre || undefined,
+    genre: genre,
     condition:
       (searchParams.get('condition') as 'new' | 'used' | null) || undefined,
     exchange:
