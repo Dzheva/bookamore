@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { OfferWithBook } from '@/types/entities/OfferWithBook';
 import noImages from '@/assest/images/noImage.jpg';
 import { Badge } from './icons/Badge';
@@ -20,13 +21,15 @@ function getAuthorName(authors: unknown): string {
 }
 
 function BookCard({ condition, offer }: BookCardProps) {
+  const { t } = useTranslation();
+
   // Validate book data structure exists
   if (!offer?.book) {
     return null;
   }
 
   // Extract and validate data with defensive checks
-  const bookImage = offer.book.images?.[0] || noImages;
+  const bookImage = offer.book.images?.[0];
   const bookTitle = offer.book?.title || 'Unknown Title';
   const authorName = getAuthorName(offer.book?.authors);
   const bookPrice = offer.price?.toFixed(2) || '0.00';
@@ -38,7 +41,7 @@ function BookCard({ condition, offer }: BookCardProps) {
     >
       <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
         <img
-          src={`${IMAGE_HOST}${bookImage}`}
+          src={bookImage ? `${IMAGE_HOST}${bookImage}` : noImages}
           alt={bookTitle}
           className="w-full h-full object-cover"
         />
@@ -48,12 +51,12 @@ function BookCard({ condition, offer }: BookCardProps) {
           </div>
         )}
       </div>
-      <div className="bg-white pt-2 sm:pt-2.5 flex-1 flex flex-col">
+      <div className="pt-2 sm:pt-2.5 flex-1 flex flex-col">
         <p className="text-h5m font-medium text-text-black truncate">
           {bookTitle}
         </p>
         <p className="text-captionm font-normal text-gray-600 truncate mt-1">
-          {`by ${authorName}`}
+          {`${t('common.by')} ${authorName}`}
         </p>
         <p className="text-sm sm:text-base font-semibold text-text-black mt-1">
           {`${bookPrice} UAH`}
@@ -80,6 +83,7 @@ export function BookSection({
   showViewAll = true,
   viewAllDestination,
 }: BookSectionProps) {
+  const { t } = useTranslation();
   const hasError = Boolean(error);
   const viewAllLink =
     viewAllDestination ??
@@ -98,7 +102,7 @@ export function BookSection({
                 to={viewAllLink}
                 className="text-sm sm:text-base font-extralight text-gray-800 hover:bg-grass-100 hover:text-text-black focus-visible:bg-grass-100 outline-grass-500 focus-visible:text-text-black transition-colors px-1.5 py-0.5 rounded-[8px]"
               >
-                View all
+                {t('common.viewAll')}
               </Link>
             )}
           </div>

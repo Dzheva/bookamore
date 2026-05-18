@@ -9,8 +9,11 @@ import { SortSvg } from './icons/SortSvg';
 import { LogoSvg } from './LogoSvg/LogoSvg';
 import type { SortOption } from '@shared/ui/dropdowns/SortDropdown';
 import type { FilterState } from '@shared/ui/dropdowns/FilterDropdown';
+import { LanguageSwitch } from '../components/LanguageSwitch/LanguageSwitch';
+import { useTranslation } from 'react-i18next';
 
 export function Header() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,7 +24,7 @@ export function Header() {
   const [filters, setFilters] = useState<FilterState>({
     condition: 'any',
     categories: [],
-    typeOfDeal: 'Both',
+    typeOfDeal: 'both',
   });
   const [exchangeOnly, setExchangeOnly] = useState(false);
 
@@ -37,7 +40,7 @@ export function Header() {
 
     setSearchQuery(query);
     setSelectedSort(sort);
-    setFilters({ condition, categories, typeOfDeal: 'Both' });
+    setFilters({ condition, categories, typeOfDeal: 'both' });
     setExchangeOnly(exchange);
   }, [searchParams]);
 
@@ -130,13 +133,13 @@ export function Header() {
   const getSortLabel = (sort: SortOption) => {
     switch (sort) {
       case 'relevance':
-        return 'Sort';
+        return t('titles.sort');
       case 'lowest-price':
-        return 'Price ↑';
+        return `${t('titles.price')} ↑`;
       case 'highest-price':
-        return 'Price ↓';
+        return `${t('titles.price')} ↓`;
       default:
-        return 'Sort';
+        return t('titles.sort');
     }
   };
 
@@ -144,7 +147,9 @@ export function Header() {
     const activeFiltersCount =
       (filters.condition !== 'any' ? 1 : 0) + filters.categories.length;
 
-    return activeFiltersCount > 0 ? `Filter (${activeFiltersCount})` : 'Filter';
+    return activeFiltersCount > 0
+      ? `(${t('titles.filter')}) (${activeFiltersCount})`
+      : t('titles.filter');
   };
 
   return (
@@ -153,6 +158,7 @@ export function Header() {
         {/* Top row - Logo */}
         <div className="flex items-center justify-between py-4 px-[10px]">
           <LogoSvg className="text-deep-blue" />
+          <LanguageSwitch />
         </div>
 
         {/* Search Bar */}
@@ -163,7 +169,7 @@ export function Header() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleSearchKeyPress}
-              placeholder="Search: name, author, seller"
+              placeholder={t('common.searchBarPlaceholder')}
               className="w-full rounded-xl px-4 py-2.5 pr-10 text-sm sm:text-base text-text-black outline-none border border-gray-400 placeholder-gray-500 lg:py-3"
             />
             <button
@@ -180,19 +186,18 @@ export function Header() {
           <Checkbox
             isChecked={exchangeOnly}
             onChange={() => handleExchangeOnlyChange(!exchangeOnly)}
-            label="Exchange only"
+            label={t('common.exchangeOnly')}
           />
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Filter button with dropdown */}
             <div>
               <button
                 onClick={handleFilterClick}
-                className={`flex items-center gap-2 px-4 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500 cursor-pointer
+                className={`flex items-center gap-2 px-2.5 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500 cursor-pointer
                   ${isFilterDropdownOpen ? 'bg-grass-200' : 'bg-white hover:bg-grass-100 focus:bg-grass-100'}`}
               >
                 <FilterSvg className="text-icons-black" />
-                <span className="hidden xs:inline">{getFilterLabel()}</span>
-                <span className="xs:hidden">Filter</span>
+                <span>{getFilterLabel()}</span>
               </button>
 
               {/* Filter Dropdown */}
@@ -207,14 +212,13 @@ export function Header() {
             <div className="relative">
               <button
                 onClick={handleSortClick}
-                className={`flex items-center gap-2 px-4 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500 cursor-pointer
+                className={`flex items-center gap-2 px-2.5 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500 cursor-pointer
                   ${isSortModalOpen ? 'bg-grass-200' : 'bg-white hover:bg-grass-100 focus:bg-grass-100'}`}
               >
                 <SortSvg className="text-icons-black" />
-                <span className="hidden xs:inline">
+                <span className="max-w-[55px] xs:max-w-full truncate">
                   {getSortLabel(selectedSort)}
                 </span>
-                <span className="xs:hidden text-icons-black">Sort</span>
               </button>
 
               {/* Sort Dropdown */}

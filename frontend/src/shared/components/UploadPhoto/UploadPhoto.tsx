@@ -2,6 +2,7 @@ import { AddPhotoBook } from '@/shared/ui/icons/AddPhotoBookSvg';
 import { NoImgAddPhoto } from '@/shared/ui/icons/NoImgAddSvg';
 import { useState, type ChangeEvent, useEffect } from 'react';
 import { DeletePhotoSvg } from '@/shared/ui/icons/DeletePhotoSvg';
+import { useTranslation } from 'react-i18next';
 
 interface UploadPhotoProps {
   onPhotosChange?: (photos: File[]) => void;
@@ -14,6 +15,7 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({
 }) => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [photo, setPhoto] = useState<File[]>(initialPhotos);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (onPhotosChange) {
@@ -49,7 +51,7 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({
   return (
     <>
       <div>
-        <h3 className=" text-h3m   p-[10px]">Upload photo</h3>
+        <h3 className=" text-h3m p-[10px]">{t('sellBook.uploadPhoto')}</h3>
 
         {photo.length < 4 ? (
           <div className="flex  ">

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ValidationRequirement } from '@/shared/ui/ValidationRequirement'; // компонент, який ми обговорювали раніше
 
 interface PasswordValidatorProps {
@@ -8,23 +9,26 @@ interface PasswordValidatorProps {
 export const PasswordValidator: React.FC<PasswordValidatorProps> = ({
   password,
 }) => {
+  const { t } = useTranslation(undefined, {
+    keyPrefix: 'passwordValidator',
+  });
   // Логіка перевірки збігається з вашим Backend (@Pattern)
   const requirements = [
     {
-      label: 'At least 6 characters',
+      label: t('minLength'),
       isValid: password.length >= 6,
     },
     {
-      label: 'At least 1 uppercase letter (A-Z)',
+      label: t('uppercase'),
       isValid: /[A-Z]/.test(password),
     },
     {
-      label: 'At least 1 lowercase letter (a-z)',
+      label: t('lowercase'),
       isValid: /[a-z]/.test(password),
     },
     // Можна додати спецсимволи, якщо вирішите їх вимагати пізніше
     {
-      label: 'Supports special characters (!@#$%)',
+      label: t('specialChar'),
       isValid: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     },
   ];
@@ -34,7 +38,7 @@ export const PasswordValidator: React.FC<PasswordValidatorProps> = ({
   return (
     <div className="mt-3 space-y-2 rounded-lg bg-gray-50 p-3 border border-gray-100">
       <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400 mb-2">
-        Security requirements
+        {t('requirements')}
       </p>
       <div className="grid grid-cols-1 gap-1.5">
         {requirements.map((req, index) => (

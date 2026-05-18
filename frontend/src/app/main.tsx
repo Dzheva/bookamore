@@ -7,6 +7,8 @@ import { Provider as ReduxProvider } from 'react-redux';
 import '@app/styles/globals.css';
 import { store } from '@app/store/store.ts';
 
+import '../i18n.js';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ReduxProvider store={store}>

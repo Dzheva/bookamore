@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { BottomNav } from '@shared/ui/BottomNav';
-import BackButton from '@/shared/ui/BackButton';
+import HeaderTitle from '@/shared/ui/HeaderTitle';
+import { useTranslation } from 'react-i18next';
 
 // Mock data types
 interface ChatMessage {
@@ -139,6 +140,7 @@ interface TabSwitcherProps {
 }
 
 function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
+  const { t } = useTranslation();
   return (
     <div className="flex bg-gray-100 rounded-lg p-1 mx-4 mb-4">
       <button
@@ -149,7 +151,7 @@ function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
             : 'text-gray-600 hover:text-gray-900'
         }`}
       >
-        My sellings
+        {t('chats.mySellings')}
       </button>
       <button
         onClick={() => onTabChange('buying')}
@@ -159,13 +161,14 @@ function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
             : 'text-gray-600 hover:text-gray-900'
         }`}
       >
-        My purchases
+        {t('chats.myPurchases')}
       </button>
     </div>
   );
 }
 
 const AllChatsPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'selling' | 'buying'>('selling');
 
@@ -180,14 +183,7 @@ const AllChatsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="bg-white px-4 sm:px-6 lg:px-8 py-3 flex items-center border-b border-gray-200">
-        <BackButton />
-        <h1 className="text-base sm:text-lg lg:text-xl font-semibold flex-1 text-center">
-          Chats
-        </h1>
-        <div className="w-6 sm:w-8"></div>
-      </div>
+      <HeaderTitle title={t('chats.title')} />
 
       <div className="w-full max-w-md mx-auto lg:max-w-4xl xl:max-w-6xl">
         {/* Tab Switcher */}

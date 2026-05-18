@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-
+import { useTranslation } from 'react-i18next';
 import { useGetOfferWithBookByIdQuery } from '../../app/store/api/OffersApi';
 import { BottomNav } from '../../shared/ui/BottomNav';
 import {
@@ -19,6 +19,8 @@ import {
   ArrowUp,
   SynchronizeArrows,
 } from '@/shared/ui/icons/Arrows';
+
+const IMAGE_HOST = import.meta.env.VITE_IMAGE_HOST || '';
 
 function Dots({
   count,
@@ -48,6 +50,7 @@ function Dots({
 }
 
 const OfferDetailsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { offerId } = useParams<{ offerId: string }>();
   const navigate = useNavigate();
   // const [isFavorite, setIsFavorite] = useState(false);
@@ -127,7 +130,7 @@ const OfferDetailsPage: React.FC = () => {
   return (
     <div className="min-h-screen">
       <HeaderTitle
-        title="Detail Book"
+        title={t('bookDetails.title')}
         icon={<FavoritesSvg />}
         onIconClick={handleFavoriteToggle}
       />
@@ -154,7 +157,7 @@ const OfferDetailsPage: React.FC = () => {
               <div className="w-32 sm:w-40 lg:w-full flex-shrink-0 h-44 sm:h-56 lg:h-80 rounded-xl   flex items-center justify-center mx-auto lg:mx-0">
                 {images.length > 0 && images[imgIndex] ? (
                   <img
-                    src={images[imgIndex]}
+                    src={`${IMAGE_HOST}${images[imgIndex]}`}
                     alt={book.title}
                     className="w-full h-full object-cover rounded-xl"
                   />
@@ -165,26 +168,6 @@ const OfferDetailsPage: React.FC = () => {
                     className="rounded-[10px] "
                   />
                 )}
-
-                {/* then remove */}
-                <div
-                  className="absolute
-                flex justify-between
-                min-w-[243px]
-                "
-                >
-                  <button onClick={onPrev} className="cursor-pointer">
-                    <ArrowLeft />
-                  </button>
-                  <Dots
-                    count={images.length}
-                    active={imgIndex}
-                    onPick={setImgIndex}
-                  />
-                  <button onClick={onNext} className="cursor-pointer">
-                    <ArrowRight />
-                  </button>
-                </div>
               </div>
 
               {hasMultipleImages && (
@@ -256,7 +239,7 @@ const OfferDetailsPage: React.FC = () => {
                 onClick={handleContact}
                 className="w-full min-w-[311px] lg:w-auto lg:px-8 py-3 lg:py-4 rounded-[12px] bg-[#033F63] text-white font-semibold hover:bg-black transition-colors text-sm sm:text-base lg:text-lg"
               >
-                Contact
+                {t('common.contact')}
               </button>
             </div>
           </div>
@@ -266,31 +249,28 @@ const OfferDetailsPage: React.FC = () => {
           <div className="space-y-3 lg:space-y-4">
             <div className="flex items-center ">
               <h3 className="mr-4 font-h4m font-medium text-black ">
-                Condition
+                {t('titles.condition')}
               </h3>
               <p
                 className="font-h6m text-gray-700
               border-[1px] border-solid border-[#F0FBFB] rounded-[12px] px-2 py-1
               "
               >
-                Used
+                {t(`condition.${offer.book.condition}`)}
               </p>
             </div>
 
             <div className="flex items-start">
               <span className="text-base lg:text-lg font-semibold text-gray-800 w-24 lg:w-32 mt-1">
-                Category
+                {t('titles.category')}
               </span>
               <div className="flex flex-wrap gap-4">
-                {(book.genres?.length
-                  ? book.genres
-                  : ['Fantasy', 'Fantasy']
-                ).map((g: string, i: number) => (
+                {book.genres?.map((g: string) => (
                   <span
-                    key={`${g}-${i}`}
+                    key={g}
                     className="px-3 py-1 lg:px-4 lg:py-2 bg-[#F0FBFB] rounded-full text-sm lg:text-base font-h6m text-gray-700"
                   >
-                    {g}
+                    {t(`categories.${g.toLowerCase()}`)}
                   </span>
                 ))}
               </div>
@@ -311,7 +291,7 @@ const OfferDetailsPage: React.FC = () => {
             mb-4
             font-h3m font-medium text-gray-800"
             >
-              About the book
+              {t('bookDetails.description')}
             </h2>
             {isAboutOpen ? <ArrowUp /> : <ArrowDown />}
           </button>
@@ -333,7 +313,7 @@ const OfferDetailsPage: React.FC = () => {
             className="font-h4m font-medium mb-1
           "
           >
-            The Owner
+            {t('bookDetails.seller')}
           </h2>
 
           <div className="flex items-center gap-3 lg:gap-4">
@@ -363,7 +343,9 @@ const OfferDetailsPage: React.FC = () => {
         bg-[#F0FBFB]
         "
         >
-          <h2 className="font-h3m mb-[28px] "> Similar books</h2>
+          <h2 className="font-h3m mb-[28px] ">
+            {t('bookDetails.similarBooks')}
+          </h2>
           <div className="flex gap-3 lg:gap-4 -mx-4 px-4 overflow-x-auto pb-2 lg:grid lg:grid-cols-4 xl:grid-cols-6 lg:overflow-visible lg:mx-0 lg:px-0">
             {similarBooks.length > 0
               ? similarBooks.map((similarOffer) => (

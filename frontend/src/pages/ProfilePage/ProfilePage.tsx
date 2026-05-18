@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   FaBoxOpen,
   FaRegHeart,
@@ -12,36 +13,8 @@ import { SettingLinkSvg } from '@/shared/ui/icons/SettingLinkSvg';
 import { ArrowRight } from '@/shared/ui/icons/Arrows';
 import LogOut from '@/shared/components/LogOut/LogOut';
 
-// Масив пунктів меню з іконками Font Awesome
-const menuItems = [
-  {
-    title: 'My Announcements',
-    path: '/my-announcements',
-    icon: <FaBook className="w-5 h-5" />,
-  },
-  {
-    title: 'My Orders',
-    path: '/orders',
-    icon: <FaBoxOpen className="w-5 h-5" />,
-  },
-  {
-    title: 'My Favorites',
-    path: '/favorites',
-    icon: <FaRegHeart className="w-5 h-5" />,
-  },
-  {
-    title: 'My Chats',
-    path: '/chats/:chatId',
-    icon: <FaRegComments className="w-5 h-5" />,
-  },
-  {
-    title: 'Settings',
-    path: '/settings',
-    icon: <FaCog className="w-5 h-5" />,
-  },
-];
-
 const ProfilePage = () => {
+  const { t } = useTranslation();
   // Тимчасові дані користувача
   const user = {
     name: 'Jane Walker',
@@ -49,9 +22,37 @@ const ProfilePage = () => {
     avatar: 'https://v0.dev/placeholder.svg', // Сюди підставиться реальне фото пізніше
   };
 
+  const menuItems = [
+    {
+      title: t('profileItems.announcements'),
+      path: '/my-announcements',
+      icon: <FaBook className="w-5 h-5" />,
+    },
+    {
+      title: t('profileItems.orders'),
+      path: '/orders',
+      icon: <FaBoxOpen className="w-5 h-5" />,
+    },
+    {
+      title: t('profileItems.favorites'),
+      path: '/favorites',
+      icon: <FaRegHeart className="w-5 h-5" />,
+    },
+    {
+      title: t('profileItems.chats'),
+      path: '/chats/:chatId',
+      icon: <FaRegComments className="w-5 h-5" />,
+    },
+    {
+      title: t('profileItems.settings'),
+      path: '/settings',
+      icon: <FaCog className="w-5 h-5" />,
+    },
+  ];
+
   return (
     <div className="flex flex-col min-h-screen pb-24">
-      <HeaderTitle title="Profile" />
+      <HeaderTitle title={t('titles.profile')} />
 
       <div className="px-6 ">
         <div className="flex items-center justify-between mb-10">
