@@ -20,5 +20,6 @@ public class OfferWithBookResponse {
     private String description;
     private BigDecimal price;
     private BookResponse book;
-    private UUID sellerId;
+    //private UUID sellerId;
+    private Seller seller;
 }

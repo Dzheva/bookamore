@@ -19,5 +19,5 @@ public class OfferResponse {
     private String description;
     private BigDecimal price;
     private UUID bookId;
-    private UUID sellerId;
+    private Seller seller;
 }
