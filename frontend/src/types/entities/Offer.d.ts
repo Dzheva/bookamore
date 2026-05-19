@@ -9,7 +9,13 @@ export type Offer = {
   previewImage: string;
   bookId: string;
   sellerId: string;
+  seller: Seller;
 };
+
+export interface Seller {
+  id: string;
+  name: string;
+}
 
 export type OfferRequest = Omit<Offer, 'id' | 'previewImage'> & {
   previewImage: File | null;

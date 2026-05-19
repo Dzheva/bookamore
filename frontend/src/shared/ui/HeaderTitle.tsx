@@ -24,7 +24,10 @@ const HeaderTitle = ({ title, icon, onIconClick }: HeaderProps) => {
         <h1
           className="absolute left-1/2 transform -translate-x-1/2
         text-[#153037] text-[20px] font-kyiv   font-medium
-          sm:text-lg lg:text-xl "
+          sm:text-lg lg:text-xl
+          min-w-[260px]
+          flex justify-center
+           "
         >
           {title}
         </h1>
