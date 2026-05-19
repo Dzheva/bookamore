@@ -55,14 +55,15 @@ const clearStoredAuth = (): void => {
   }
 };
 
-// Ініціальний стан - завжди намагаємось відновити з localStorage
+// Ініціальний стан - намагаємось відновити з localStorage
 const storedToken = getStoredToken();
 const storedUser = getStoredUser();
 
 const initialState: AuthState = {
   user: storedUser,
   token: storedToken,
-  isAuthenticated: !!(storedToken && storedUser),
+  // Для авторизації достатньо наявності токену
+  isAuthenticated: !!storedToken,
   isLoading: false,
 };
 
@@ -71,8 +72,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // Встановлення креденшелів після успішного логіну
-    setCredentials: (state, action: PayloadAction<{ token: string }>) => {
-      const { token } = action.payload;
+    setCredentials: (
+      state,
+      action: PayloadAction<{ token: string; user?: User }>
+    ) => {
+      const { token, user } = action.payload;
 
       state.token = token;
       state.isAuthenticated = true;
@@ -80,10 +84,18 @@ const authSlice = createSlice({
 
       // Синхронізуємо з localStorage
       setStoredAuth(token);
+
+      if (user) {
+        state.user = user;
+        setStoredUser(user);
+      }
     },
 
     setCurrentUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
+      state.isAuthenticated = true;
+      // Зберігаємо користувача в localStorage
+      setStoredUser(action.payload);
     },
 
     // Очищення при логауті
@@ -106,11 +118,6 @@ const authSlice = createSlice({
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
-
-        // Оновлюємо localStorage
-        if (state.token) {
-          setStoredAuth(state.token);
-        }
 
         if (state.user) {
           setStoredUser(state.user);
