@@ -42,6 +42,11 @@ export const mockOffers: OfferWithBook[] = [
       isbn: '978-0-06-303752-8',
       yearOfRelease: 2022,
     },
+    seller: {
+      id: 1,
+      name: 'Alex Johnson',
+      avatar: '',
+    },
   },
   {
     id: '2',
@@ -62,6 +67,11 @@ export const mockOffers: OfferWithBook[] = [
       images: [],
       isbn: '978-0-06-303752-8',
       yearOfRelease: 2022,
+    },
+    seller: {
+      id: 2,
+      name: 'Maria Garcia',
+      avatar: '',
     },
   },
   {
@@ -84,6 +94,11 @@ export const mockOffers: OfferWithBook[] = [
       isbn: '978-0-06-303752-8',
       yearOfRelease: 2022,
     },
+    seller: {
+      id: 3,
+      name: 'Jane Walker',
+      avatar: '',
+    },
   },
   {
     id: '4',
@@ -105,6 +120,11 @@ export const mockOffers: OfferWithBook[] = [
       isbn: '978-0-441-17271-9',
       yearOfRelease: 1965,
     },
+    seller: {
+      id: 4,
+      name: 'John Smith',
+      avatar: '',
+    },
   },
   {
     id: '5',
@@ -124,6 +144,11 @@ export const mockOffers: OfferWithBook[] = [
       images: [],
       isbn: '978-0-553-41802-6',
       yearOfRelease: 2011,
+    },
+    seller: {
+      id: 5,
+      name: 'Sarah Davis',
+      avatar: '',
     },
   },
   {
@@ -146,6 +171,11 @@ export const mockOffers: OfferWithBook[] = [
       isbn: '978-0-553-29335-0',
       yearOfRelease: 1951,
     },
+    seller: {
+      id: 6,
+      name: 'Robert Brown',
+      avatar: '',
+    },
   },
   {
     id: '7',
@@ -167,6 +197,11 @@ export const mockOffers: OfferWithBook[] = [
       isbn: '978-0-441-56956-9',
       yearOfRelease: 1984,
     },
+    seller: {
+      id: 7,
+      name: 'David Lee',
+      avatar: '',
+    },
   },
   {
     id: '8',
@@ -186,6 +221,11 @@ export const mockOffers: OfferWithBook[] = [
       images: [],
       isbn: '978-0-441-47812-5',
       yearOfRelease: 1969,
+    },
+    seller: {
+      id: 8,
+      name: 'Michael Wilson',
+      avatar: '',
     },
   },
   {
@@ -208,6 +248,11 @@ export const mockOffers: OfferWithBook[] = [
       isbn: '978-0-312-93208-2',
       yearOfRelease: 1985,
     },
+    seller: {
+      id: 9,
+      name: 'Lisa Martinez',
+      avatar: '',
+    },
   },
   {
     id: '10',
@@ -228,6 +273,11 @@ export const mockOffers: OfferWithBook[] = [
       images: [],
       isbn: '978-0-486-28472-1',
       yearOfRelease: 1895,
+    },
+    seller: {
+      id: 10,
+      name: 'Lisa Martinez',
+      avatar: '',
     },
   },
 ];
@@ -254,6 +304,11 @@ export const mockRomanticOffers: OfferWithBook[] = [
       isbn: '978-0-14-143951-8',
       yearOfRelease: 1813,
     },
+    seller: {
+      id: 11,
+      name: 'Lisa Martinez',
+      avatar: '',
+    },
   },
   {
     id: '12',
@@ -273,6 +328,11 @@ export const mockRomanticOffers: OfferWithBook[] = [
       images: [],
       isbn: '978-0-446-60523-4',
       yearOfRelease: 1996,
+    },
+    seller: {
+      id: 12,
+      name: 'James Wilson',
+      avatar: '',
     },
   },
   {
@@ -294,6 +354,11 @@ export const mockRomanticOffers: OfferWithBook[] = [
       images: [],
       isbn: '978-0-14-312454-1',
       yearOfRelease: 2012,
+    },
+    seller: {
+      id: 13,
+      name: 'Lisa Martinez',
+      avatar: '',
     },
   },
 ];

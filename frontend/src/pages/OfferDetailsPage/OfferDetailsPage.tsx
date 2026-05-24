@@ -7,7 +7,6 @@ import {
   getOfferWithBookById,
   createMockOfferResponse,
   getOffersByGenre,
-  getSellerById,
 } from '../../shared/mocks/mockData';
 import noImages from '@/assest/images/noImage.jpg';
 import HeaderTitle from '@/shared/ui/HeaderTitle';
@@ -99,7 +98,7 @@ const OfferDetailsPage: React.FC = () => {
     );
   }
 
-  const { book } = offer;
+  const { book, seller } = offer;
   const images: string[] =
     Array.isArray(book.images) && book.images.length ? book.images : [];
   const hasMultipleImages = images.length > 1;
@@ -119,13 +118,6 @@ const OfferDetailsPage: React.FC = () => {
   };
 
   const similarBooks = getSimilarBooks();
-
-  // Get seller information
-  const seller = getSellerById(offer.sellerId) || {
-    id: 0,
-    name: 'Unknown Seller',
-    avatar: '',
-  };
 
   return (
     <div className="min-h-screen">
@@ -325,16 +317,16 @@ const OfferDetailsPage: React.FC = () => {
                   className="w-full h-full object-cover rounded-full"
                 />
               ) : (
-                <span className="text-sm lg:text-base font-medium text-gray-500">
+                <span className="text-sm lg:text-base font-medium text-gray-500 uppercase">
                   {seller.name
                     .split(' ')
-                    .map((n) => n[0])
+                    .map((n: string) => n[0])
                     .join('')
                     .slice(0, 2)}
                 </span>
               )}
             </div>
-            <p className="font-h6m ">{seller.name}</p>
+            <p className="font-h6m capitalize">{seller.name}</p>
           </div>
         </div>
 
