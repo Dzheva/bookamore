@@ -71,9 +71,9 @@ cat ~/.ssh/bookamore_deploy
 ### 2.3 Create deployment directories
 
 ```bash
-sudo mkdir -p /home/mrx/deploy/bookamore-prod
-sudo mkdir -p /home/mrx/deploy/bookamore-dev
-sudo chown -R mrx:mrx /home/mrx/deploy
+sudo mkdir -p /home/devuser/deploy/bookamore-prod
+sudo mkdir -p /home/devuser/deploy/bookamore-dev
+sudo chown -R mrx:mrx /home/devuser/deploy
 ```
 
 ### 2.4 Create `.env` files for each environment
@@ -84,13 +84,13 @@ The CI workflow generates a `.env` file on every deploy. However, you must creat
 ```bash
 # Dev environment
 cp /path/to/repo/.env.example /home/mrx/deploy/bookamore-dev/.env
-nano /home/mrx/deploy/bookamore-dev/.env
+nano /home/devuser/deploy/bookamore-dev/.env
 ```
 
 ```bash
 # Prod environment
 cp /path/to/repo/.env.example /home/mrx/deploy/bookamore-prod/.env
-nano /home/mrx/deploy/bookamore-prod/.env
+nano /home/devuser/deploy/bookamore-prod/.env
 ```
 
 Fill in the sensitive values (`DB_PASSWORD`, `JWT_SECRET`, OAuth credentials) and update
