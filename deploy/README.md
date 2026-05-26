@@ -10,25 +10,14 @@
 
 Go to **GitHub → Repository → Settings → Secrets and variables → Actions** and add the following:
 
-| Secret name            | Description                                                     | Example value                          |
-|------------------------|-----------------------------------------------------------------|----------------------------------------|
-| `VPS_HOST`             | Public IP or hostname of the VPS                                | `185.143.145.151`                      |
-| `VPS_USER`             | SSH user on VPS                                                 | `mrx`                                  |
-| `VPS_SSH_PRIVATE_KEY`  | Private key whose public key is in `~/.ssh/authorized_keys` on VPS | `-----BEGIN OPENSSH PRIVATE KEY-----…` |
-| `VPS_SSH_PORT`         | SSH port (usually 22)                                           | `22`                                   |
-| `DEPLOY_REPO_SSH_URL`  | SSH clone URL of the repo                                       | `git@github.com:your-org/bookamore.git`|
-| `DB_USER`              | PostgreSQL username (used for both envs)                        | `bookamore`                            |
-| `DB_PASSWORD`          | PostgreSQL password (used for both envs)                        | *(strong random string)*               |
-| `JWT_SECRET`           | JWT signing secret                                              | *(strong random string)*               |
-| `JWT_EXPIRATION`       | JWT token lifetime in milliseconds                              | `86400000`                             |
-| `GOOGLE_CLIENT_ID`     | Google OAuth2 client ID                                         | *(from Google Cloud Console)*          |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth2 client secret                                     | *(from Google Cloud Console)*          |
-| `FACEBOOK_CLIENT_ID`   | Facebook OAuth2 app ID                                          | *(from Meta Developer Console)*        |
-| `FACEBOOK_CLIENT_SECRET` | Facebook OAuth2 app secret                                    | *(from Meta Developer Console)*        |
+| Secret name     | Description                                                                | Example value                          |
+|-----------------|----------------------------------------------------------------------------|----------------------------------------|
+| `VPS_HOST`      | Public IP or hostname of the VPS                                           | `185.143.145.151`                      |
+| `VPS_SSH_KEY`   | Private key whose public key is in `/home/deploy/.ssh/authorized_keys`     | `-----BEGIN OPENSSH PRIVATE KEY-----…` |
 
-> **Note:** `APP_NAME`, `FE_PORT`, `BE_PORT`, `DB_PORT`, `DB_NAME`, `CLIENT_URL`, and `SPRING_PROFILES_ACTIVE`
-> are set automatically by the deploy workflow based on the branch (`main` or `dev`).
-> You do **not** need GitHub Secrets for those.
+> **Note:** App credentials (`DB_USER`, `DB_PASSWORD`, JWT, OAuth keys) are read from
+> `/home/deploy/www/dev/.env` and `/home/deploy/www/prod/.env` on the VPS.
+> They are not required as GitHub Secrets in this workflow.
 
 ---
 
@@ -62,7 +51,7 @@ cat ~/.ssh/bookamore_deploy.pub
 
 Copy the output and add it to **GitHub → Repo → Settings → Deploy keys** (read-only access).
 
-Then make sure the private key is added to your GitHub Secret `VPS_SSH_PRIVATE_KEY`:
+Then make sure the private key is added to your GitHub Secret `VPS_SSH_KEY`:
 
 ```bash
 cat ~/.ssh/bookamore_deploy
@@ -71,26 +60,26 @@ cat ~/.ssh/bookamore_deploy
 ### 2.3 Create deployment directories
 
 ```bash
-sudo mkdir -p /home/devuser/deploy/bookamore-prod
-sudo mkdir -p /home/devuser/deploy/bookamore-dev
-sudo chown -R mrx:mrx /home/devuser/deploy
+sudo mkdir -p /home/deploy/www/prod
+sudo mkdir -p /home/deploy/www/dev
+sudo chown -R deploy:deploy /home/deploy/www
 ```
 
 ### 2.4 Create `.env` files for each environment
 
-The CI workflow generates a `.env` file on every deploy. However, you must create one
+The CI workflow expects `.env` to already exist in each target directory. Create these files
 **manually before the first deploy triggers** so that `docker compose` can start:
 
 ```bash
 # Dev environment
-cp /path/to/repo/.env.example /home/mrx/deploy/bookamore-dev/.env
-nano /home/devuser/deploy/bookamore-dev/.env
+cp /path/to/repo/.env.example /home/deploy/www/dev/.env
+nano /home/deploy/www/dev/.env
 ```
 
 ```bash
 # Prod environment
-cp /path/to/repo/.env.example /home/mrx/deploy/bookamore-prod/.env
-nano /home/devuser/deploy/bookamore-prod/.env
+cp /path/to/repo/.env.example /home/deploy/www/prod/.env
+nano /home/deploy/www/prod/.env
 ```
 
 Fill in the sensitive values (`DB_PASSWORD`, `JWT_SECRET`, OAuth credentials) and update
@@ -98,7 +87,7 @@ the infrastructure values to match each environment:
 
 | Variable               | Dev value                               | Prod value                           |
 |------------------------|-----------------------------------------|--------------------------------------|
-| `APP_NAME`             | `bookamore_dev`                         | `bookamore_prod`                     |
+| `APP_NAME`             | `dev_bookamore`                         | `bookamore_prod`                     |
 | `FE_PORT`              | `3000`                                  | `4000`                               |
 | `BE_PORT`              | `3100`                                  | `4100`                               |
 | `DB_PORT`              | `5433`                                  | `5432`                               |
@@ -106,7 +95,17 @@ the infrastructure values to match each environment:
 | `SPRING_PROFILES_ACTIVE` | `dev`                                 | `prod`                               |
 | `CLIENT_URL`           | `https://bookamore-dev.alt-web.biz.ua`  | `https://bookamore.alt-web.biz.ua`   |
 
-> After the **first** deploy, the workflow regenerates `.env` from GitHub Secrets automatically.
+> The workflow keeps env-specific routing values synchronized (`APP_NAME`, ports, profile, `CLIENT_URL`),
+> while sensitive credentials stay in each VPS `.env` file.
+
+### 2.5 Bootstrap Git repositories (one-time)
+
+The deploy workflow updates an existing checkout in each target directory. Initialize both once:
+
+```bash
+sudo -u deploy git clone <YOUR_REPO_SSH_OR_HTTPS_URL> /home/deploy/www/prod
+sudo -u deploy git clone <YOUR_REPO_SSH_OR_HTTPS_URL> /home/deploy/www/dev
+```
 
 ---
 
@@ -192,8 +191,8 @@ After the one-time VPS setup is complete, every deploy is fully automatic:
 
 The GitHub Actions workflow:
 1. SSHs into the VPS.
-2. `git clone` (first time) or `git reset --hard origin/<branch>` (subsequent runs).
-3. Writes `.env` from GitHub Secrets.
+2. Uses `/home/deploy/www/prod` for `main` and `/home/deploy/www/dev` for `dev`.
+3. Syncs non-sensitive env routing values in `.env`.
 4. Runs `docker compose --env-file .env up -d --build`.
 
 ### Useful monitoring commands on the VPS
@@ -203,7 +202,7 @@ The GitHub Actions workflow:
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 # Tail backend logs for dev
-docker logs -f bookamore_dev_backend
+docker logs -f dev_bookamore_backend
 
 # Tail backend logs for prod
 docker logs -f bookamore_prod_backend
