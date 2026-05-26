@@ -62,7 +62,7 @@ const OfferDetailsPage: React.FC = () => {
 
         return item.book.genres?.some((genre) => currentGenres.includes(genre));
       })
-      .slice(0, 6) || [];
+      .slice(0, 10) || [];
 
   return (
     <>
