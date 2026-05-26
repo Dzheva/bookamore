@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import BackButton from './BackButton';
 
 type HeaderProps = {
@@ -7,40 +7,21 @@ type HeaderProps = {
   onIconClick?: () => void;
 };
 
-const HeaderTitle = ({ title, icon, onIconClick }: HeaderProps) => {
-  const [active, setActive] = useState(false);
-
-  const handleClick = () => {
-    setActive(!active);
-    onIconClick?.();
-  };
+const HeaderTitle = ({ title, icon }: HeaderProps) => {
   return (
-    <>
-      <div
-        className=" px-[16px] py-[20px] sm:px-6 lg:px-8 
-        flex items-center justify-between "
-      >
-        <BackButton />
-        <h1
-          className="absolute left-1/2 transform -translate-x-1/2
-        text-[#153037] text-[20px] font-kyiv   font-medium
-          sm:text-lg lg:text-xl "
-        >
-          {title}
-        </h1>
-        <div className="flex items-center gap-4">
-          {icon && (
-            <span
-              onClick={handleClick}
-              className="cursor-pointer"
-              style={{ color: active ? '#FDBD4C' : '#000000' }}
-            >
-              {icon}
-            </span>
-          )}
-        </div>
-      </div>
-    </>
+    <header
+      className="
+        flex items-center justify-between
+        w-full lg:max-w-6xl xl:max-w-7xl
+        mx-auto
+        p-4
+        lg:py-5
+        sm:px-6 lg:px-8 xl:px-12"
+    >
+      <BackButton />
+      <h1 className="text-h2m lg:text-[22px] text-text-black">{title}</h1>
+      {icon && <>{icon}</>}
+    </header>
   );
 };
 
