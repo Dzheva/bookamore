@@ -1,13 +1,19 @@
-import { FiSearch, FiFilter, FiBarChart2 } from "react-icons/fi";
-import { SortDropdown } from "@shared/ui/dropdowns/SortDropdown";
-import { FilterDropdown } from "@shared/ui/dropdowns/FilterDropdown";
-import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate, useLocation } from "react-router";
-import type { SortOption } from "@shared/ui/dropdowns/SortDropdown";
-import type { FilterState } from "@shared/ui/dropdowns/FilterDropdown";
-
+import { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate, useLocation } from 'react-router';
+import { SortDropdown } from '@shared/ui/dropdowns/SortDropdown';
+import { FilterDropdown } from '@shared/ui/dropdowns/FilterDropdown';
+import { Checkbox } from '../components/Checkbox';
+import { SearchSvg } from './icons/SearchSvg';
+import { FilterSvg } from './icons/FilterSvg';
+import { SortSvg } from './icons/SortSvg';
+import { LogoSvg } from './LogoSvg/LogoSvg';
+import type { SortOption } from '@shared/ui/dropdowns/SortDropdown';
+import type { FilterState } from '@shared/ui/dropdowns/FilterDropdown';
+import { LanguageSwitch } from '../components/LanguageSwitch/LanguageSwitch';
+import { useTranslation } from 'react-i18next';
 
 export function Header() {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,39 +23,49 @@ export function Header() {
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>({
     condition: 'any',
-    categories: []
+    categories: [],
+    typeOfDeal: 'both',
   });
   const [exchangeOnly, setExchangeOnly] = useState(false);
 
   // Initialize state from URL params
   useEffect(() => {
     const query = searchParams.get('q') || '';
-    const sort = searchParams.get('sort') as SortOption || 'relevance';
-    const condition = searchParams.get('condition') as FilterState['condition'] || 'any';
-    const categories = searchParams.get('categories')?.split(',').filter(Boolean) || [];
+    const sort = (searchParams.get('sort') as SortOption) || 'relevance';
+    const condition =
+      (searchParams.get('condition') as FilterState['condition']) || 'any';
+    const categories =
+      searchParams.get('categories')?.split(',').filter(Boolean) || [];
     const exchange = searchParams.get('exchange') === 'true';
 
     setSearchQuery(query);
     setSelectedSort(sort);
-    setFilters({ condition, categories });
+    setFilters({ condition, categories, typeOfDeal: 'both' });
     setExchangeOnly(exchange);
   }, [searchParams]);
 
-  const updateURLParams = (updates: Partial<{
-    q: string;
-    sort: SortOption;
-    condition: string;
-    categories: string[];
-    exchange: boolean;
-  }>) => {
+  const updateURLParams = (
+    updates: Partial<{
+      q: string;
+      sort: SortOption;
+      condition: string;
+      categories: string[];
+      typeOfDeal: string;
+      exchange: boolean;
+    }>
+  ) => {
     const newParams = new URLSearchParams(searchParams);
-    
+
     Object.entries(updates).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === '' || 
-          (Array.isArray(value) && value.length === 0) ||
-          (key === 'sort' && value === 'relevance') ||
-          (key === 'condition' && value === 'any') ||
-          (key === 'exchange' && value === false)) {
+      if (
+        value === undefined ||
+        value === null ||
+        value === '' ||
+        (Array.isArray(value) && value.length === 0) ||
+        (key === 'sort' && value === 'relevance') ||
+        (key === 'condition' && value === 'any') ||
+        (key === 'exchange' && value === false)
+      ) {
         newParams.delete(key);
       } else if (Array.isArray(value)) {
         newParams.set(key, value.join(','));
@@ -87,9 +103,9 @@ export function Header() {
 
   const handleFiltersChange = (newFilters: FilterState) => {
     setFilters(newFilters);
-    updateURLParams({ 
+    updateURLParams({
       condition: newFilters.condition,
-      categories: newFilters.categories
+      categories: newFilters.categories,
     });
   };
 
@@ -99,7 +115,7 @@ export function Header() {
   };
 
   const handleSortClick = () => {
-    setIsSortModalOpen(prev => !prev);
+    setIsSortModalOpen((prev) => !prev);
     // Close filter dropdown if it's open
     if (isFilterDropdownOpen) {
       setIsFilterDropdownOpen(false);
@@ -107,7 +123,7 @@ export function Header() {
   };
 
   const handleFilterClick = () => {
-    setIsFilterDropdownOpen(prev => !prev);
+    setIsFilterDropdownOpen((prev) => !prev);
     // Close sort dropdown if it's open
     if (isSortModalOpen) {
       setIsSortModalOpen(false);
@@ -116,71 +132,72 @@ export function Header() {
 
   const getSortLabel = (sort: SortOption) => {
     switch (sort) {
-      case 'relevance': return 'Sort';
-      case 'lowest-price': return 'Price ↑';
-      case 'highest-price': return 'Price ↓';
-      default: return 'Sort';
+      case 'relevance':
+        return t('titles.sort');
+      case 'lowest-price':
+        return `${t('titles.price')} ↑`;
+      case 'highest-price':
+        return `${t('titles.price')} ↓`;
+      default:
+        return t('titles.sort');
     }
   };
 
   const getFilterLabel = () => {
-    const activeFiltersCount = 
-      (filters.condition !== 'any' ? 1 : 0) + 
-      filters.categories.length;
-    
-    return activeFiltersCount > 0 ? `Filter (${activeFiltersCount})` : 'Filter';
+    const activeFiltersCount =
+      (filters.condition !== 'any' ? 1 : 0) + filters.categories.length;
+
+    return activeFiltersCount > 0
+      ? `(${t('titles.filter')}) (${activeFiltersCount})`
+      : t('titles.filter');
   };
 
   return (
     <header className="bg-white w-full">
       <div className="px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Top row - Logo */}
-        <div className="flex items-center justify-between py-3 ml-2">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-black">BookAmore</h1>
+        <div className="flex items-center justify-between py-4 px-[10px]">
+          <LogoSvg className="text-deep-blue" />
+          <LanguageSwitch />
         </div>
 
         {/* Search Bar */}
-        <div className="pb-3">
-          <form onSubmit={handleSearchSubmit} className="relative max-w-2xl lg:max-w-4xl">
+        <div className="mb-[10px]">
+          <form onSubmit={handleSearchSubmit} className="relative w-full">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleSearchKeyPress}
-              placeholder="Search: name, author, seller"
-              className="w-full bg-gray-100 rounded-xl px-4 py-2.5 pr-10 text-sm sm:text-base text-black outline-none border-none placeholder-gray-500 lg:py-3"
+              placeholder={t('common.searchBarPlaceholder')}
+              className="w-full rounded-xl px-4 py-2.5 pr-10 text-sm sm:text-base text-text-black outline-none border border-gray-400 placeholder-gray-500 lg:py-3"
             />
-            <button 
+            <button
               type="submit"
-              className="absolute right-3.5 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              className="absolute right-[10px] top-1/2 transform -translate-y-1/2 p-1 rounded-[8px] text-icons-black hover:bg-grass-100 outline-grass-500 focus:bg-grass-100 cursor-pointer"
             >
-              <FiSearch size={20} className="sm:w-6 sm:h-6" />
+              <SearchSvg />
             </button>
           </form>
         </div>
 
         {/* Filter Controls */}
-        <div className="pb-4 flex items-center justify-between flex-wrap gap-2">
-          <label className="flex items-center gap-2 text-sm sm:text-base cursor-pointer ml-3">
-            <input
-              type="checkbox"
-              checked={exchangeOnly}
-              onChange={(e) => handleExchangeOnlyChange(e.target.checked)}
-              className="w-4 h-4 sm:w-5 sm:h-5 accent-black cursor-pointer"
-            />
-            <span className="text-black">Exchange only</span>
-          </label>
-
-          <div className="flex items-center gap-2 sm:gap-3 mr-3">
+        <div className="relative flex items-center justify-between flex-wrap gap-2">
+          <Checkbox
+            isChecked={exchangeOnly}
+            onChange={() => handleExchangeOnlyChange(!exchangeOnly)}
+            label={t('common.exchangeOnly')}
+          />
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Filter button with dropdown */}
-            <div className="relative">
-              <button 
+            <div>
+              <button
                 onClick={handleFilterClick}
-                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-sm sm:text-base text-black bg-white hover:bg-gray-50 transition-colors"
+                className={`flex items-center gap-2 px-2.5 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500 cursor-pointer
+                  ${isFilterDropdownOpen ? 'bg-grass-200' : 'bg-white hover:bg-grass-100 focus:bg-grass-100'}`}
               >
-                <FiFilter size={16} className="sm:w-5 sm:h-5" />
-                <span className="hidden xs:inline">{getFilterLabel()}</span>
-                <span className="xs:hidden">Filter</span>
+                <FilterSvg className="text-icons-black" />
+                <span>{getFilterLabel()}</span>
               </button>
 
               {/* Filter Dropdown */}
@@ -191,16 +208,17 @@ export function Header() {
                 onFiltersChange={handleFiltersChange}
               />
             </div>
-
             {/* Sort button with dropdown */}
             <div className="relative">
-              <button 
+              <button
                 onClick={handleSortClick}
-                className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-sm sm:text-base text-black bg-white hover:bg-gray-50 transition-colors"
+                className={`flex items-center gap-2 px-2.5 py-1.5 border border-grass-500 rounded-lg text-sm sm:text-base text-icons-black outline-grass-500 cursor-pointer
+                  ${isSortModalOpen ? 'bg-grass-200' : 'bg-white hover:bg-grass-100 focus:bg-grass-100'}`}
               >
-                <FiBarChart2 size={16} className="transform rotate-90 sm:w-5 sm:h-5" />
-                <span className="hidden xs:inline">{getSortLabel(selectedSort)}</span>
-                <span className="xs:hidden">Sort</span>
+                <SortSvg className="text-icons-black" />
+                <span className="max-w-[55px] xs:max-w-full truncate">
+                  {getSortLabel(selectedSort)}
+                </span>
               </button>
 
               {/* Sort Dropdown */}

@@ -14,16 +14,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OfferWithBookResponse {
-
     private UUID id;
     private OfferType type;
     private OfferStatus status;
     private String description;
     private BigDecimal price;
-    private String previewImage;
-
     private BookResponse book;
-
-    private UUID sellerId;
-
+    //private UUID sellerId;
+    private Seller seller;
 }

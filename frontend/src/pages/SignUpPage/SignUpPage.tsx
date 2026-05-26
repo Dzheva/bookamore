@@ -1,182 +1,256 @@
 import React, { useState } from 'react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { FcGoogle } from 'react-icons/fc';
-import { IoChevronBack } from "react-icons/io5";
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { useRegisterMutation } from '@app/store/api/AuthApi';
+import { PasswordValidator } from '../../modules/auth/ui/PasswordValidator';
+import { Button } from '@/shared/ui/Button/Button';
+import { BottomNav } from '@/shared/ui/BottomNav';
+import { AlertSvg } from '@/shared/ui/icons/AlertSvg';
+import { FormField } from '@/shared/ui/FormField';
+import { AuthHeader } from '@/shared/ui/AuthHeader';
+import { validators } from '@/shared/helpers/validators';
+import { SocialAuthButton } from '@/shared/ui/SocialAuthButton';
+import { useTranslation } from 'react-i18next';
+
+interface ValidationError {
+  name?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  form?: string;
+}
+
+interface SignUpFormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
 
 const SignUpPage: React.FC = () => {
-    const [passwordVisible, setPasswordVisible] = useState(false);
-    const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const navigate = useNavigate();
-    const [register, { isLoading, error }] = useRegisterMutation();
+  const { t } = useTranslation();
 
-    const togglePasswordVisibility = () => {
-        setPasswordVisible(!passwordVisible);
-    };
+  const [formData, setFormData] = useState<SignUpFormData>({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
-    const toggleConfirmPasswordVisibility = () => {
-        setConfirmPasswordVisible(!confirmPasswordVisible);
-    };
+  const [errors, setErrors] = useState<ValidationError>({});
 
-    const handleBackClick = () => {
-        navigate(-1); // Повернутися на попередню сторінку
-    };
+  const navigate = useNavigate();
+  const [register, { isLoading }] = useRegisterMutation();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!name || !email || !password || !confirmPassword) return;
-        
-        if (password !== confirmPassword) {
-            alert('Passwords do not match');
-            return;
-        }
-        
-        try {
-            const result = await register({ name, email, password }).unwrap();
-            alert(`Registration successful! ${result.message}`);
-            navigate('/sign-in');
-        } catch (error) {
-            console.error('Registration failed:', error);
-        }
-    };
+  const clearFieldError = (field: keyof SignUpFormData) => {
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+      form: undefined,
+    }));
+  };
 
-    return (
-        <div className="flex min-h-screen flex-col items-center bg-white">
-            <div className="w-full max-w-sm">
-                <div className="w-full pt-4 pb-2 px-4">
-                    <button onClick={handleBackClick} className="p-1">
-                        <IoChevronBack className="text-2xl" />
-                    </button>
-                </div>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const field = e.target.name as keyof SignUpFormData;
+    const { value } = e.target;
 
-                <div className="px-6">
-                    <div className="flex flex-col items-center">
-                        <h2 className="mb-2 text-3xl font-bold text-gray-800">Create account</h2>
-                        <p className="mb-10 text-center text-sm text-gray-500">
-                            {/* eget Morbi lacus vel placerat fringilla varius quis risus enim */}
-                        </p>
-                    </div>
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
 
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="mb-2 block text-sm font-medium text-gray-700">Name</label>
-                        <input
-                            type="text"
-                            placeholder="Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 focus:border-blue-500 focus:outline-none"
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="mb-2 block text-sm font-medium text-gray-700">Email</label>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 focus:border-blue-500 focus:outline-none"
-                            required
-                        />
-                    </div>
+    clearFieldError(field);
+  };
 
-                    <div className="mb-4">
-                        <label className="mb-2 block text-sm font-medium text-gray-700">Password, 6 characters</label>
-                        <div className="relative">
-                            <input
-                                type={passwordVisible ? 'text' : 'password'}
-                                placeholder="Password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 pr-10 focus:border-blue-500 focus:outline-none"
-                                required
-                                minLength={6}
-                            />
-                            <button
-                                type="button"
-                                onClick={togglePasswordVisibility}
-                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
-                            >
-                                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-                            </button>
-                        </div>
-                    </div>
+  const validateForm = (): boolean => {
+    const newErrors: ValidationError = {};
 
-                    <div className="mb-6">
-                        <label className="mb-2 block text-sm font-medium text-gray-700">Confirm password</label>
-                        <div className="relative">
-                            <input
-                                type={confirmPasswordVisible ? 'text' : 'password'}
-                                placeholder="Confirm password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="w-full rounded-lg border-2 border-transparent bg-gray-100 p-3 pr-10 focus:border-blue-500 focus:outline-none"
-                                required
-                            />
-                            <button
-                                type="button"
-                                onClick={toggleConfirmPasswordVisibility}
-                                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
-                            >
-                                {confirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
-                            </button>
-                        </div>
-                    </div>
+    if (!formData.name.trim()) {
+      newErrors.name = 'validation.nameRequired';
+    } else if (!validators.name(formData.name)) {
+      newErrors.name = 'validation.nameInvalid';
+    }
 
-                    {error && (
-                        <div className="mb-4 text-red-500 text-sm">
-                            Registration failed. Please try again.
-                        </div>
-                    )}
+    if (!formData.email.trim()) {
+      newErrors.email = 'validation.emailRequired';
+    } else if (!validators.email(formData.email)) {
+      newErrors.email = 'validation.emailInvalid';
+    }
 
-                    <div className="relative mb-6 text-center text-gray-400">
-                        <hr className="absolute top-1/2 w-full -translate-y-1/2 border-gray-200" />
-                        <span className="relative z-10 bg-white px-2 text-sm">or</span>
-                    </div>
+    if (!formData.password) {
+      newErrors.password = 'validation.passwordRequired';
+    } else if (!validators.password(formData.password)) {
+      newErrors.password = 'validation.passwordMinLength';
+    }
 
-                    <button
-                        type="button"
-                        className="mb-6 flex w-full items-center justify-center rounded-lg border border-gray-300 p-3 font-medium text-gray-700 transition-colors hover:bg-gray-50"
-                    >
-                        <FcGoogle className="mr-2 h-5 w-5" /> Continue with Google
-                    </button>
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'validation.confirmPassword';
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'validation.passwordsDoNotMatch';
+    }
 
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className="w-full rounded-lg bg-gray-800 p-3 font-medium text-white transition-colors hover:bg-gray-900 disabled:opacity-50"
-                    >
-                        {isLoading ? 'Signing up...' : 'Sign Up'}
-                    </button>
-                </form>
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-                <p className="mt-8 text-center text-xs text-gray-500">
-                    By continuing, you agree to our{' '}
-                    <a href="#" className="font-semibold text-gray-800 underline">
-                        Terms
-                    </a>{' '}
-                    and{' '}
-                    <a href="#" className="font-semibold text-gray-800 underline">
-                        Privacy Policy
-                    </a>
-                </p>
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-                <div className="mt-6 mb-10 text-center text-sm">
-                    <span className="text-gray-500">Already have an account?</span>{' '}
-                    <a href="/sign-in" className="font-bold text-gray-800">
-                        Log in
-                    </a>
-                </div>
-                </div>
+    if (!validateForm()) return;
+
+    try {
+      const result = await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      }).unwrap();
+
+      if (result?.message && result?.status !== 409) {
+        navigate('/sign-in');
+      } else if (result?.status === 409) {
+        setErrors({ form: 'validation.emailInUse' });
+      } else {
+        setErrors({ form: 'validation.RegisterError' });
+      }
+    } catch (err) {
+      setErrors({ form: 'validation.RegisterError' });
+      console.error('Registration failed:', err);
+    }
+  };
+
+  return (
+    <div className="flex flex-col max-h-fit pb-[75px] overflow-x-auto scrollbar-custom">
+      <AuthHeader />
+
+      <main className="flex flex-col items-center max-w-md w-full mx-auto px-4">
+        <h2 className="mb-5 text-h2m text-text-black">
+          {t('auth.createAccount')}
+        </h2>
+
+        <form className="w-full" onSubmit={handleSubmit} noValidate>
+          <FormField
+            id="name"
+            label={t('auth.name')}
+            type="text"
+            name="name"
+            placeholder={t('auth.name')}
+            value={formData.name}
+            onChange={handleChange}
+            error={errors.name ? t(errors.name) : undefined}
+            required
+          />
+
+          <FormField
+            id="email"
+            label={t('auth.email')}
+            type="email"
+            name="email"
+            placeholder={t('auth.email')}
+            value={formData.email}
+            onChange={handleChange}
+            error={errors.email ? t(errors.email) : undefined}
+            autoComplete="email"
+            required
+          />
+
+          <FormField
+            id="password"
+            label={t('auth.password')}
+            type="password"
+            name="password"
+            placeholder={t('auth.password')}
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password ? t(errors.password) : undefined}
+            autoComplete="current-password"
+            required
+          />
+
+          {formData.password && !errors.password && (
+            <div className="-mt-2 mb-4">
+              <PasswordValidator password={formData.password} />
             </div>
+          )}
+
+          <FormField
+            id="confirmPassword"
+            label={t('auth.confirmPassword')}
+            type="password"
+            name="confirmPassword"
+            placeholder={t('auth.confirmPassword')}
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            error={
+              errors.confirmPassword ? t(errors.confirmPassword) : undefined
+            }
+            autoComplete="new-password"
+            required
+          />
+
+          {/* FORM ERROR */}
+          {errors.form && (
+            <div className="flex items-center justify-between mb-4 rounded-xl border border-error bg-red-50 p-3 text-sm text-error">
+              {t(errors.form)}
+              <AlertSvg />
+            </div>
+          )}
+
+          {/* SUBMIT */}
+          <Button type="submit" isLoading={isLoading}>
+            {isLoading ? t('auth.signingUp') : t('auth.signUp')}
+          </Button>
+
+          {/* DIVIDER */}
+          <div className="flex items-center gap-3 mt-6 mb-3">
+            <div className="flex-1 h-px bg-gray-300" />
+            <span className="text-sm text-gray-700 tracking-wider">
+              {t('auth.or')}
+            </span>
+            <div className="flex-1 h-px bg-gray-300" />
+          </div>
+
+          {/* SOCIAL LOGIN */}
+          <div className="flex flex-col max-w-fit mx-auto">
+            <SocialAuthButton
+              provider="google"
+              onClick={() => console.log('Google auth')}
+            />
+
+            <SocialAuthButton
+              provider="facebook"
+              onClick={() => console.log('Facebook auth')}
+            />
+          </div>
+        </form>
+
+        {/* SIGN IN */}
+        <div className="mt-6 mb-6 text-center text-sm">
+          <span className="text-text-black">
+            {t('auth.alreadyHaveAccount')}
+          </span>{' '}
+          <Link
+            to="/sign-in"
+            className="font-bold text-deep-blue hover:text-deep-blue-950"
+          >
+            {t('auth.signIn')}
+          </Link>
         </div>
-    );
+
+        {/* TERMS */}
+        <p className="mb-4 text-center text-xs text-gray-500">
+          {t('auth.acceptance')}{' '}
+          <Link to="#" className="font-semibold text-gray-800 underline">
+            {t('auth.terms')}
+          </Link>{' '}
+          {t('auth.and')}{' '}
+          <Link to="#" className="font-semibold text-gray-800 underline">
+            {t('auth.privacy')}
+          </Link>
+        </p>
+      </main>
+
+      <BottomNav />
+    </div>
+  );
 };
 
 export { SignUpPage };

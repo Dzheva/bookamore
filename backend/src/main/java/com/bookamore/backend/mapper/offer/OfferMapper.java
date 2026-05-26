@@ -19,15 +19,19 @@ import java.util.UUID;
 public interface OfferMapper {
 
     @Mapping(target = "bookId", source = "book.id")
-    @Mapping(target = "sellerId", source = "user.id")
+    @Mapping(target = "seller", source = "user")
     OfferResponse toResponse(Offer offer);
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "name", source = "name")
+    Seller toSeller(User user); // Helper method for mapping user to Seller DTO
 
     @Mapping(target = "book", source = "bookId", qualifiedByName = "createBookFromId")
     @Mapping(target = "user", source = "sellerId", qualifiedByName = "createUserFromId")
     Offer toEntity(OfferRequest request);
 
     @Mapping(target = "book", source = "book")
-    @Mapping(target = "sellerId", source = "user.id")
+    @Mapping(target = "seller", source = "user")
     OfferWithBookResponse toResponseWithBook(Offer offer);
 
     @Mapping(target = "book", source = "request")

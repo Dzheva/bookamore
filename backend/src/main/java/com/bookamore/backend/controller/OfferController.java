@@ -2,7 +2,12 @@ package com.bookamore.backend.controller;
 
 import com.bookamore.backend.annotation.No401Swgr;
 import com.bookamore.backend.annotation.No404Swgr;
-import com.bookamore.backend.dto.offer.*;
+import com.bookamore.backend.dto.offer.OfferFilter;
+import com.bookamore.backend.dto.offer.OfferRequest;
+import com.bookamore.backend.dto.offer.OfferResponse;
+import com.bookamore.backend.dto.offer.OfferUpdateRequest;
+import com.bookamore.backend.dto.offer.OfferWithBookRequest;
+import com.bookamore.backend.dto.offer.OfferWithBookResponse;
 import com.bookamore.backend.service.OfferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,12 +16,21 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
@@ -58,7 +72,8 @@ public class OfferController {
     @Operation(summary = "Get offers page with book fields", description = "Get offers page with book fields")
     @GetMapping("/with-book")
     @ResponseStatus(HttpStatus.OK)
-    public Page<OfferWithBookResponse> getOffersWithBookPage(@RequestParam(defaultValue = "0") Integer page,
+    public Page<OfferWithBookResponse> getOffersWithBookPage(@ParameterObject OfferFilter filter,
+                                                             @RequestParam(defaultValue = "0") Integer page,
                                                              @RequestParam(defaultValue = "5") Integer size,
                                                              @Parameter(
                                                                      description = "Sort by field",
@@ -79,7 +94,7 @@ public class OfferController {
                                                              )
                                                              @RequestParam(defaultValue = "desc") String sortDir) {
 
-        return offerService.getOffersWithBooksPage(page, size, sortBy, sortDir);
+        return offerService.getOffersWithBooksPage(filter, page, size, sortBy, sortDir);
     }
 
     @No401Swgr
@@ -146,21 +161,4 @@ public class OfferController {
         return ResponseEntity.noContent().build();
     }
 
-    /*
-     * Offer preview image controller
-     */
-
-    // upload preview image
-    @PostMapping(value = "/{offerId}/previewImage", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> uploadPreviewImage(@PathVariable UUID offerId,
-                                                     @RequestParam("previewImage") MultipartFile previewImage) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(offerService.savePreviewImage(offerId, previewImage));
-    }
-
-    // delete preview image
-    @DeleteMapping(value = "/{offerId}/previewImage")
-    public ResponseEntity<Void> deletePreviewImage(@PathVariable UUID offerId) {
-        offerService.deletePreviewImage(offerId);
-        return ResponseEntity.noContent().build();
-    }
 }

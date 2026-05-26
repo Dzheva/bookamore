@@ -17,7 +17,5 @@ public class FileConfig {
 
     private String uploadDir;
 
-    private Map<String, String> subDirs;
-
     private String subDirsPerms;
 }

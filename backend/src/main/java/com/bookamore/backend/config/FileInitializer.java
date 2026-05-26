@@ -1,6 +1,7 @@
 package com.bookamore.backend.config;
 
-import com.bookamore.backend.repository.ImageRepository;
+import com.bookamore.backend.entity.enums.EntityType;
+import com.bookamore.backend.repository.ImageStorageRepository;
 import com.bookamore.backend.repository.impl.ImageLocalStorageRepositoryImpl;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -35,7 +37,7 @@ public class FileInitializer {
     }
 
     @Bean
-    public ImageRepository imageRepository() {
+    public ImageStorageRepository imageStorageRepository() {
         return new ImageLocalStorageRepositoryImpl(uploadDir);
     }
 
@@ -87,15 +89,17 @@ public class FileInitializer {
             attributes = new FileAttribute<?>[]{fileAttributes};
         }
 
-        Map<String, String> subDirs = fileConfig.getSubDirs();
+        List<String> subDirs = Arrays.stream(EntityType.values())
+                .map(Enum::toString)
+                .map(String::toLowerCase)
+                .toList();
 
-        for (String subDirKey : subDirs.keySet()) {
-            String subDirName = subDirs.get(subDirKey);
-            Path subDirLocation = uploadDir.resolve(subDirName);
+        for (String subDir : subDirs) {
+            Path subDirLocation = uploadDir.resolve(subDir);
 
             try {
                 if (!Files.exists(subDirLocation)) {
-                    log.info("Creating subdirectory '{}'", subDirName);
+                    log.info("Creating subdirectory '{}'", subDir);
                 }
 
                 if (attributes != null) {

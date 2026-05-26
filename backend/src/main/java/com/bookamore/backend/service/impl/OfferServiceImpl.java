@@ -1,7 +1,12 @@
 package com.bookamore.backend.service.impl;
 
 import com.bookamore.backend.dto.book.BookRequest;
-import com.bookamore.backend.dto.offer.*;
+import com.bookamore.backend.dto.offer.OfferFilter;
+import com.bookamore.backend.dto.offer.OfferRequest;
+import com.bookamore.backend.dto.offer.OfferResponse;
+import com.bookamore.backend.dto.offer.OfferUpdateRequest;
+import com.bookamore.backend.dto.offer.OfferWithBookRequest;
+import com.bookamore.backend.dto.offer.OfferWithBookResponse;
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.Offer;
 import com.bookamore.backend.entity.User;
@@ -18,14 +23,13 @@ import com.bookamore.backend.service.ImageService;
 import com.bookamore.backend.service.OfferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -50,8 +54,7 @@ public class OfferServiceImpl implements OfferService {
             "title", "yearOfRelease", "description", "condition", "authorName"
     );
 
-    @Value("${file.sub-dirs.offer-previews}")
-    private String offerPreviewsSubDir;
+    private final String offerPreviewsSubDir = "offer";
 
     @Transactional
     public OfferResponse create(OfferRequest request) {
@@ -100,10 +103,6 @@ public class OfferServiceImpl implements OfferService {
         return offerRepository.findAll(pageable);
     }
 
-    private boolean isBookField(String field) {
-        return BOOK_FIELDS.contains(field);
-    }
-
     private Page<Offer> getOffersPageSortedByBookField(Integer page, Integer size, String sortBy, String sortDir) {
 
         Sort.Direction direction = Sort.Direction.fromString(sortDir);
@@ -121,13 +120,52 @@ public class OfferServiceImpl implements OfferService {
         );
     }
 
+    private boolean isBookField(String field) {
+        return BOOK_FIELDS.contains(field);
+    }
+
+
     public Page<OfferResponse> getOffersPage(Integer page, Integer size, String sortBy, String sortDir) {
         return getOffersEntityPage(page, size, sortBy, sortDir).map(offerMapper::toResponse);
     }
 
-    public Page<OfferWithBookResponse> getOffersWithBooksPage(Integer page, Integer size,
+    public Page<OfferWithBookResponse> getOffersWithBooksPage(OfferFilter filter, Integer page, Integer size,
                                                               String sortBy, String sortDir) {
-        return getOffersEntityPage(page, size, sortBy, sortDir).map(offerMapper::toResponseWithBook);
+        return getOffersEntityPageWithFilter(filter, page, size, sortBy, sortDir).map(offerMapper::toResponseWithBook);
+    }
+
+    public Page<Offer> getOffersEntityPageWithFilter(OfferFilter filter, Integer page, Integer size, String sortBy, String sortDir) {
+
+        if (isBookField(sortBy)) {
+            return getOffersPageSortedByBookFieldWithFilter(filter, page, size, sortBy, sortDir);
+        }
+
+        Specification<Offer> spec = OfferSpecification.filterBy(filter);
+
+        Sort.Direction direction = Sort.Direction.fromString(sortDir);
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return offerRepository.findAll(spec, pageable);
+    }
+
+    private Page<Offer> getOffersPageSortedByBookFieldWithFilter(OfferFilter filter, Integer page, Integer size, String sortBy, String sortDir) {
+
+        Specification<Offer> spec = OfferSpecification.filterBy(filter);
+        Sort.Direction direction = Sort.Direction.fromString(sortDir);
+
+        if (sortBy.equals("authorName")) {
+            Specification<Offer> sortSpec = OfferSpecification.sortByBookAuthorName(direction);
+            // Безпечно комбінуємо: якщо фільтр порожній (spec == null), залишається тільки сортування
+            spec = (spec == null) ? sortSpec : spec.and(sortSpec);
+
+            return offerRepository.findAll(spec, PageRequest.of(page, size));
+        }
+
+        Specification<Offer> sortSpec = OfferSpecification.sortByBookSimpleField(direction, sortBy);
+        spec = (spec == null) ? sortSpec : spec.and(sortSpec);
+
+        return offerRepository.findAll(spec, PageRequest.of(page, size));
     }
 
     public Offer getEntityById(UUID offerId) {
@@ -165,14 +203,12 @@ public class OfferServiceImpl implements OfferService {
         // Patch Fields
         String patchDescription = patch.getDescription();
         BigDecimal patchPrice = patch.getPrice();
-        String patchPreviewImage = patch.getPreviewImage();
         OfferType patchType = patch.getType();
         OfferStatus patchStatus = patch.getStatus();
 
         // Fields to update
         String description = existingOffer.getDescription();
         BigDecimal price = existingOffer.getPrice();
-        String previewImage = existingOffer.getPreviewImage();
         OfferType type = existingOffer.getType();
         OfferStatus status = existingOffer.getStatus();
 
@@ -185,11 +221,6 @@ public class OfferServiceImpl implements OfferService {
 
         if (patchPrice != null && !patchPrice.equals(price)) {
             existingOffer.setPrice(patchPrice);
-            isModified = true;
-        }
-
-        if (patchPreviewImage != null && !patchPreviewImage.equals(previewImage)) {
-            existingOffer.setPreviewImage(patchPreviewImage);
             isModified = true;
         }
 
@@ -214,41 +245,4 @@ public class OfferServiceImpl implements OfferService {
         offerRepository.delete(offer);
     }
 
-    @Transactional
-    public String savePreviewImage(UUID offerId, MultipartFile previewImage) {
-
-        Offer existingOffer = offerRepository.findById(offerId).orElseThrow(
-                () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
-        );
-
-        // TODO remove existing image
-
-        String savedPreviewImagePath = imageService.saveImage(previewImage, offerPreviewsSubDir);
-
-        existingOffer.setPreviewImage(savedPreviewImagePath);
-
-        offerRepository.save(existingOffer);
-
-        return savedPreviewImagePath;
-    }
-
-    @Transactional
-    public void deletePreviewImage(UUID offerId) {
-        Offer existingOffer = offerRepository.findById(offerId).orElseThrow(
-                () -> new ResourceNotFoundException("Offer not found with id: " + offerId)
-        );
-
-        String previewImagePath = existingOffer.getPreviewImage();
-
-        try {
-            String fileName = previewImagePath.substring(previewImagePath.lastIndexOf('/') + 1);
-            imageService.deleteImage(fileName, offerPreviewsSubDir);
-        } catch (Exception ex) {
-            log.warn(String.format("An error occurred while deleting image '%s' at subdirectory '%s' : %s",
-                    previewImagePath, this.offerPreviewsSubDir, ex));
-        }
-
-        existingOffer.setPreviewImage(null);
-        offerRepository.save(existingOffer);
-    }
 }

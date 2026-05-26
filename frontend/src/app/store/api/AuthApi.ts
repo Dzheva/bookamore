@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { RootState } from "../store";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { User } from '../slices/authSlice';
 
 interface LoginRequest {
   email: string;
@@ -21,6 +21,7 @@ interface AuthResponse {
 interface SignUpResponse {
   email: string;
   message: string;
+  status: number;
 }
 
 export const AuthApi = createApi({
@@ -36,6 +37,7 @@ export const AuthApi = createApi({
         body: credentials,
       }),
     }),
+
     register: builder.mutation<SignUpResponse, RegisterRequest>({
       query: (userData) => ({
         url: '/signup',
@@ -43,7 +45,15 @@ export const AuthApi = createApi({
         body: userData,
       }),
     }),
+
+    currentUser: builder.query<User, void>({
+      query: () => ({
+        url: '/current-user',
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = AuthApi;
+export const { useLoginMutation, useRegisterMutation, useCurrentUserQuery } =
+  AuthApi;

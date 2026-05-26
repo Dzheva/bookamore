@@ -23,7 +23,11 @@ logs/
 # Environment files
 .env
 .env.local
-.env.production
+frontend/.env.development
+.env.development
+#.env.production
 
 # Docker
 .dockerignore
+
+certs

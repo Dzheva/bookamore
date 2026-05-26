@@ -1,17 +1,14 @@
 package com.bookamore.backend.repository;
 
-import org.springframework.core.io.Resource;
-import org.springframework.web.multipart.MultipartFile;
+import com.bookamore.backend.entity.Image;
+import com.bookamore.backend.entity.enums.EntityType;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
-public interface ImageRepository {
+public interface ImageRepository extends JpaRepository<Image, UUID> {
+    long countByEntityId(UUID entityId);
 
-    String saveImage(MultipartFile file, String fileName, String subDir);
-
-    boolean isExists(String fileName, String subDir);
-
-    Resource readImage(String fileName, String subDir);
-
-    void deleteImage(String fileName, String subDir) throws IOException;
+    List<Image> findAllByEntityTypeAndEntityId(EntityType entityType, UUID entityId);
 }

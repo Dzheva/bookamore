@@ -1,0 +1,171 @@
+{
+  "common": {
+    "exchange": "Exchange",
+    "exchangeOnly": "Exchange only",
+    "searchBarPlaceholder": "Search: name, author, seller",
+    "apply": "Apply",
+    "reset": "Reset",
+    "by": "by",
+    "viewAll": "View all",
+    "contact": "Contact"
+  },
+
+  "titles": {
+    "filter": "Filter",
+    "sort": "Sort",
+    "sortBy": "Sort by",
+    "price": "Price",
+    "categories": "Categories",
+    "category": "Category",
+    "condition": "Condition",
+    "typeOfDeal": "Type of deal",
+    "profile": "Profile"
+  },
+
+  "typeOfDeal": {
+    "purchaseOnly": "Purchase only",
+    "exchangeOnly": "Exchange only",
+    "both": "Both"
+  },
+
+  "condition": {
+    "NEW": "New",
+    "AS_NEW": "As new",
+    "USED": "Used",
+    "ANY": "Any"
+  },
+
+  "sortOptions": {
+    "relevance": "Relevance",
+    "lowestPrice": "Lowest Price",
+    "highestPrice": "Highest Price"
+  },
+
+  "categories": {
+    "all": "All",
+    "new": "New",
+    "recommended": "Recommended",
+    "sci-fi": "Sci-fi",
+    "romantic": "Romantic",
+    "historical": "Historical",
+    "detective": "Detective",
+    "fantasy": "Fantasy",
+    "biography": "Biography",
+    "horror": "Horror",
+    "comedy": "Comedy",
+    "drama": "Drama",
+    "adventure": "Adventure",
+    "children": "Children",
+    "psychology": "Psychology"
+  },
+
+  "auth": {
+    "name": "Name",
+    "logIn": "Log In",
+    "logOut": "Log Out",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "signUp": "Sign Up",
+    "signingUp": "Signing up...",
+    "createAccount": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot password?",
+    "or": "or",
+    "continueWith": "Continue with",
+    "dontHaveAccount": "Do not have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "acceptance": "By continuing, you agree to our",
+    "terms": "Terms",
+    "and": "and",
+    "privacy": "Privacy Policy"
+  },
+
+  "validation": {
+    "nameRequired": "Name is required",
+    "nameInvalid": "Name must be at least 2 characters",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "confirmPassword": "Please confirm your password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "authError": "Invalid email or password",
+    "emailInUse": "Email is already in use",
+    "RegisterError": "Registration failed. Please try again"
+  },
+
+  "passwordValidator": {
+    "requirements": "Security Requirements",
+    "minLength": "At least 6 characters",
+    "uppercase": "At least 1 uppercase letter (A-Z)",
+    "lowercase": "At least 1 lowercase letter (a-z)",
+    "specialChar": "Supports special characters (!@#$%)"
+  },
+
+  "profileItems": {
+    "announcements": "My Announcements",
+    "orders": "My Orders",
+    "favorites": "My Favorites",
+    "chats": "My Chats",
+    "settings": "Settings"
+  },
+
+  "bottomNav": {
+    "home": "Home",
+    "favorites": "Favorites",
+    "sell": "Sell",
+    "chats": "Chats",
+    "profile": "Profile"
+  },
+
+  "sellBook": {
+    "title": "Sell book",
+    "bookTitle": "Book title",
+    "author": "Author",
+    "genres": "Genres",
+    "genresPlaceholder": "Add genres",
+    "uploadPhoto": "Upload photo",
+    "description": "Add description",
+    "descriptionPlaceholder": "Used, in good condition.",
+    "publish": "Publish",
+    "publishing": "Publishing..."
+  },
+
+  "chats": {
+    "title": "Chats",
+    "mySellings": "My sellings",
+    "myPurchases": "My purchases"
+  },
+
+  "favorites": {
+    "title": "My Favorites",
+    "itemsNumber": "{count, plural, one {# item in your list} other {# items in your list}}",
+    "total": "Your Total: {total} UAH"
+  },
+
+  "bookDetails": {
+    "title": "Book Details",
+    "description": "About the book",
+    "dateAdded": "Date added:",
+    "seller": "The Owner",
+    "similarBooks": "Similar Books"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "lng": "Language",
+    "en": "English",
+    "ua": "Ukrainian",
+    "notifications": "Notifications",
+    "myProfile": "My Profile",
+    "privacyPolicy": "Privacy & Policy"
+  },
+
+  "languageSwitcher": {
+    "label": "Language switcher",
+    "english": "Switch language to English",
+    "ukrainian": "Switch language to Ukrainian"
+  }
+}

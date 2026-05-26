@@ -25,4 +25,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AuthProvider> authProviders = new ArrayList<>();
+
+//    @Column(name = "test_field")
+//    private String testField;
 }

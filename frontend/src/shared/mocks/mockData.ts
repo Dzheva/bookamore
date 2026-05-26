@@ -17,101 +17,125 @@ export const mockSellers = [
   { id: 10, name: 'Robert Taylor', avatar: '' },
   { id: 11, name: 'Anna Thompson', avatar: '' },
   { id: 12, name: 'Chris Martinez', avatar: '' },
-  { id: 13, name: 'Sophie Lee', avatar: '' }
+  { id: 13, name: 'Sophie Lee', avatar: '' },
 ];
 
 // Mock book offers data
 export const mockOffers: OfferWithBook[] = [
   {
-    id: 1,
+    id: '1',
     price: 300,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Great condition sci-fi book',
     previewImage: '',
-    sellerId: 1,
+    sellerId: '1',
     book: {
-      id: 1,
+      id: '1',
       title: 'Babel',
       authors: ['Rebecca Kuang'],
       genres: ['sci-fi', 'fantasy'],
       condition: BookCondition.NEW,
-      description: 'A dark academic fantasy novel about the power of translation and colonialism.',
+      description:
+        'A dark academic fantasy novel about the power of translation and colonialism.',
       images: [],
       isbn: '978-0-06-303752-8',
-      yearOfRelease: 2022
-    }
+      yearOfRelease: 2022,
+    },
+    seller: {
+      id: 1,
+      name: 'Alex Johnson',
+      avatar: '',
+    },
   },
   {
-    id: 2,
+    id: '2',
     price: 250,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Excellent sci-fi book',
     previewImage: '',
-    sellerId: 2,
+    sellerId: '2',
     book: {
-      id: 2,
+      id: '2',
       title: 'Babel',
       authors: ['Rebecca Kuang'],
       genres: ['sci-fi', 'fantasy'],
       condition: BookCondition.NEW,
-      description: 'A dark academic fantasy novel about the power of translation and colonialism.',
+      description:
+        'A dark academic fantasy novel about the power of translation and colonialism.',
       images: [],
       isbn: '978-0-06-303752-8',
-      yearOfRelease: 2022
-    }
+      yearOfRelease: 2022,
+    },
+    seller: {
+      id: 2,
+      name: 'Maria Garcia',
+      avatar: '',
+    },
   },
   {
-    id: 3,
+    id: '3',
     price: 280,
     type: OfferType.EXCHANGE,
     status: OfferStatus.OPEN,
     description: 'Looking to exchange this amazing book',
     previewImage: '',
-    sellerId: 3,
+    sellerId: '3',
     book: {
-      id: 3,
+      id: '3',
       title: 'Babel',
       authors: ['Rebecca Kuang'],
       genres: ['sci-fi', 'fantasy'],
       condition: BookCondition.NEW,
-      description: 'A dark academic fantasy novel about the power of translation and colonialism.',
+      description:
+        'A dark academic fantasy novel about the power of translation and colonialism.',
       images: [],
       isbn: '978-0-06-303752-8',
-      yearOfRelease: 2022
-    }
+      yearOfRelease: 2022,
+    },
+    seller: {
+      id: 3,
+      name: 'Jane Walker',
+      avatar: '',
+    },
   },
   {
-    id: 4,
+    id: '4',
     price: 200,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Classic science fiction masterpiece',
     previewImage: '',
-    sellerId: 4,
+    sellerId: '4',
     book: {
-      id: 4,
+      id: '4',
       title: 'Dune',
       authors: ['Frank Herbert'],
       genres: ['sci-fi'],
       condition: BookCondition.USED,
-      description: 'Epic science fiction novel set on the desert planet Arrakis.',
+      description:
+        'Epic science fiction novel set on the desert planet Arrakis.',
       images: [],
       isbn: '978-0-441-17271-9',
-      yearOfRelease: 1965
-    }
+      yearOfRelease: 1965,
+    },
+    seller: {
+      id: 4,
+      name: 'John Smith',
+      avatar: '',
+    },
   },
   {
-    id: 5,
+    id: '5',
     price: 350,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Amazing survival story',
     previewImage: '',
-    sellerId: 5,
+    sellerId: '5',
     book: {
-      id: 5,
+      id: '5',
       title: 'The Martian',
       authors: ['Andy Weir'],
       genres: ['sci-fi'],
@@ -119,59 +143,76 @@ export const mockOffers: OfferWithBook[] = [
       description: 'A thrilling story of survival on Mars.',
       images: [],
       isbn: '978-0-553-41802-6',
-      yearOfRelease: 2011
-    }
+      yearOfRelease: 2011,
+    },
+    seller: {
+      id: 5,
+      name: 'Sarah Davis',
+      avatar: '',
+    },
   },
   {
-    id: 6,
+    id: '6',
     price: 180,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Classic Foundation series',
     previewImage: '',
-    sellerId: 6,
+    sellerId: '6',
     book: {
-      id: 6,
+      id: '6',
       title: 'Foundation',
       authors: ['Isaac Asimov'],
       genres: ['sci-fi'],
       condition: BookCondition.USED,
-      description: 'Classic science fiction about psychohistory and the fall of empire.',
+      description:
+        'Classic science fiction about psychohistory and the fall of empire.',
       images: [],
       isbn: '978-0-553-29335-0',
-      yearOfRelease: 1951
-    }
+      yearOfRelease: 1951,
+    },
+    seller: {
+      id: 6,
+      name: 'Robert Brown',
+      avatar: '',
+    },
   },
   {
-    id: 7,
+    id: '7',
     price: 320,
     type: OfferType.EXCHANGE,
     status: OfferStatus.OPEN,
     description: 'Cyberpunk classic for trade',
     previewImage: '',
-    sellerId: 7,
+    sellerId: '7',
     book: {
-      id: 7,
+      id: '7',
       title: 'Neuromancer',
       authors: ['William Gibson'],
       genres: ['sci-fi', 'cyberpunk'],
       condition: BookCondition.NEW,
-      description: 'Groundbreaking cyberpunk novel about cyberspace and artificial intelligence.',
+      description:
+        'Groundbreaking cyberpunk novel about cyberspace and artificial intelligence.',
       images: [],
       isbn: '978-0-441-56956-9',
-      yearOfRelease: 1984
-    }
+      yearOfRelease: 1984,
+    },
+    seller: {
+      id: 7,
+      name: 'David Lee',
+      avatar: '',
+    },
   },
   {
-    id: 8,
+    id: '8',
     price: 275,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Ursula K. Le Guin masterpiece',
     previewImage: '',
-    sellerId: 8,
+    sellerId: '8',
     book: {
-      id: 8,
+      id: '8',
       title: 'The Left Hand of Darkness',
       authors: ['Ursula K. Le Guin'],
       genres: ['sci-fi'],
@@ -179,83 +220,106 @@ export const mockOffers: OfferWithBook[] = [
       description: 'Influential science fiction exploring gender and society.',
       images: [],
       isbn: '978-0-441-47812-5',
-      yearOfRelease: 1969
-    }
+      yearOfRelease: 1969,
+    },
+    seller: {
+      id: 8,
+      name: 'Michael Wilson',
+      avatar: '',
+    },
   },
   {
-    id: 9,
+    id: '9',
     price: 190,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Space military fiction',
     previewImage: '',
-    sellerId: 9,
+    sellerId: '9',
     book: {
-      id: 9,
-      title: 'Ender\'s Game',
+      id: '9',
+      title: "Ender's Game",
       authors: ['Orson Scott Card'],
       genres: ['sci-fi'],
       condition: BookCondition.USED,
-      description: 'Military science fiction about a child prodigy in space war.',
+      description:
+        'Military science fiction about a child prodigy in space war.',
       images: [],
       isbn: '978-0-312-93208-2',
-      yearOfRelease: 1985
-    }
+      yearOfRelease: 1985,
+    },
+    seller: {
+      id: 9,
+      name: 'Lisa Martinez',
+      avatar: '',
+    },
   },
   {
-    id: 10,
+    id: '10',
     price: 310,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'H.G. Wells classic',
     previewImage: '',
-    sellerId: 10,
+    sellerId: '10',
     book: {
-      id: 10,
+      id: '10',
       title: 'The Time Machine',
       authors: ['H.G. Wells'],
       genres: ['sci-fi', 'classic'],
       condition: BookCondition.NEW,
-      description: 'Classic time travel story by the father of science fiction.',
+      description:
+        'Classic time travel story by the father of science fiction.',
       images: [],
       isbn: '978-0-486-28472-1',
-      yearOfRelease: 1895
-    }
-  }
+      yearOfRelease: 1895,
+    },
+    seller: {
+      id: 10,
+      name: 'Lisa Martinez',
+      avatar: '',
+    },
+  },
 ];
 
 // Mock romantic books
 export const mockRomanticOffers: OfferWithBook[] = [
   {
-    id: 11,
+    id: '11',
     price: 280,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Classic romance novel',
     previewImage: '',
-    sellerId: 11,
+    sellerId: '11',
     book: {
-      id: 11,
+      id: '11',
       title: 'Pride and Prejudice',
       authors: ['Jane Austen'],
       genres: ['romantic', 'classic'],
       condition: BookCondition.NEW,
-      description: 'Classic romance novel about Elizabeth Bennet and Mr. Darcy.',
+      description:
+        'Classic romance novel about Elizabeth Bennet and Mr. Darcy.',
       images: [],
       isbn: '978-0-14-143951-8',
-      yearOfRelease: 1813
-    }
+      yearOfRelease: 1813,
+    },
+    seller: {
+      id: 11,
+      name: 'Lisa Martinez',
+      avatar: '',
+    },
   },
   {
-    id: 12,
+    id: '12',
     price: 250,
     type: OfferType.SELL,
     status: OfferStatus.OPEN,
     description: 'Heart-wrenching romance',
     previewImage: '',
-    sellerId: 12,
+    sellerId: '12',
     book: {
-      id: 12,
+      id: '12',
       title: 'The Notebook',
       authors: ['Nicholas Sparks'],
       genres: ['romantic', 'contemporary'],
@@ -263,33 +327,47 @@ export const mockRomanticOffers: OfferWithBook[] = [
       description: 'Heart-wrenching love story spanning decades.',
       images: [],
       isbn: '978-0-446-60523-4',
-      yearOfRelease: 1996
-    }
+      yearOfRelease: 1996,
+    },
+    seller: {
+      id: 12,
+      name: 'James Wilson',
+      avatar: '',
+    },
   },
   {
-    id: 13,
+    id: '13',
     price: 300,
     type: OfferType.EXCHANGE,
     status: OfferStatus.OPEN,
     description: 'Emotional contemporary romance',
     previewImage: '',
-    sellerId: 13,
+    sellerId: '13',
     book: {
-      id: 13,
+      id: '13',
       title: 'Me Before You',
       authors: ['Jojo Moyes'],
       genres: ['romantic', 'contemporary'],
       condition: BookCondition.NEW,
-      description: 'Emotional love story that will change your perspective on life.',
+      description:
+        'Emotional love story that will change your perspective on life.',
       images: [],
       isbn: '978-0-14-312454-1',
-      yearOfRelease: 2012
-    }
-  }
+      yearOfRelease: 2012,
+    },
+    seller: {
+      id: 13,
+      name: 'Lisa Martinez',
+      avatar: '',
+    },
+  },
 ];
 
 // Function to create mock API response
-export function createMockResponse<T>(content: T[], totalElements?: number): ListResponse<T> {
+export function createMockResponse<T>(
+  content: T[],
+  totalElements?: number
+): ListResponse<T> {
   return {
     content,
     totalElements: totalElements || content.length,
@@ -305,14 +383,14 @@ export function createMockResponse<T>(content: T[], totalElements?: number): Lis
       sort: {
         empty: true,
         sorted: false,
-        unsorted: true
-      }
+        unsorted: true,
+      },
     },
     sort: {
       empty: true,
       sorted: false,
-      unsorted: true
-    }
+      unsorted: true,
+    },
   };
 }
 
@@ -320,67 +398,87 @@ export function createMockResponse<T>(content: T[], totalElements?: number): Lis
 export function getAllGenres(): string[] {
   const allOffers = [...mockOffers, ...mockRomanticOffers];
   const genresSet = new Set<string>();
-  
-  allOffers.forEach(offer => {
-    offer.book.genres.forEach(genre => genresSet.add(genre));
+
+  allOffers.forEach((offer) => {
+    offer.book.genres.forEach((genre) => genresSet.add(genre));
   });
-  
+
   return Array.from(genresSet).sort();
 }
 
 // Filter functions for different scenarios
 export function getOffersByGenre(genre: string): OfferWithBook[] {
   const allOffers = [...mockOffers, ...mockRomanticOffers];
-  return allOffers.filter(offer => 
-    offer.book.genres.some(bookGenre => 
-      bookGenre.toLowerCase() === genre.toLowerCase()
+  return allOffers.filter((offer) =>
+    offer.book.genres.some(
+      (bookGenre) => bookGenre.toLowerCase() === genre.toLowerCase()
     )
   );
 }
 
 export function getOffersBySearch(query: string): OfferWithBook[] {
   const lowerQuery = query.toLowerCase();
-  
+
   // Special case for "recommended" - return a curated selection
   if (lowerQuery === 'recommended') {
     // Return a mix of popular books (first few from each category)
-    return [
-      ...mockOffers.slice(0, 3),
-      ...mockRomanticOffers.slice(0, 2)
-    ];
+    return [...mockOffers.slice(0, 3), ...mockRomanticOffers.slice(0, 2)];
   }
-  
-  return [...mockOffers, ...mockRomanticOffers].filter(offer => 
-    offer.book.title.toLowerCase().includes(lowerQuery) ||
-    offer.book.authors.some(author => author.toLowerCase().includes(lowerQuery)) ||
-    offer.book.genres.some(genre => genre.toLowerCase().includes(lowerQuery))
+
+  return [...mockOffers, ...mockRomanticOffers].filter(
+    (offer) =>
+      offer.book.title.toLowerCase().includes(lowerQuery) ||
+      offer.book.authors.some((author) =>
+        author.toLowerCase().includes(lowerQuery)
+      ) ||
+      offer.book.genres.some((genre) =>
+        genre.toLowerCase().includes(lowerQuery)
+      )
   );
 }
 
-export function getOffersByCondition(offers: OfferWithBook[], condition: 'new' | 'used'): OfferWithBook[] {
-  return offers.filter(offer => offer.book.condition.toLowerCase() === condition);
+export function getOffersByCondition(
+  offers: OfferWithBook[],
+  condition: 'new' | 'used'
+): OfferWithBook[] {
+  return offers.filter(
+    (offer) => offer.book.condition.toLowerCase() === condition
+  );
 }
 
 // Get offer by ID
-export function getOfferWithBookById(id: number | string): OfferWithBook | null {
-  const offerId = typeof id === 'string' ? parseInt(id, 10) : id;
+export function getOfferWithBookById(
+  id: number | string
+): OfferWithBook | null {
+  const offerId: number = typeof id === 'string' ? parseInt(id, 10) : id;
   const allOffers = [...mockOffers, ...mockRomanticOffers];
-  return allOffers.find(offer => offer.id === offerId) || null;
+  return allOffers.find((offer) => parseInt(offer.id, 10) === offerId) || null;
 }
 
 // Sort offers
-export function sortOffers(offers: OfferWithBook[], sortBy: string): OfferWithBook[] {
+export function sortOffers(
+  offers: OfferWithBook[],
+  sortBy: string
+): OfferWithBook[] {
   const sorted = [...offers];
-  
+
   switch (sortBy) {
     case 'price-low':
       return sorted.sort((a, b) => a.price - b.price);
     case 'price-high':
       return sorted.sort((a, b) => b.price - a.price);
     case 'newest':
-      return sorted.sort((a, b) => b.id - a.id); // Use ID as proxy for creation order
+      return sorted.sort((a, b) => {
+        const aId = parseInt(a.id, 10);
+        const bId = parseInt(b.id, 10);
+        return bId - aId;
+      });
     case 'oldest':
-      return sorted.sort((a, b) => a.id - b.id);
+      return sorted.sort((a, b) => {
+        const aId = parseInt(a.id, 10);
+        const bId = parseInt(b.id, 10);
+        return aId - bId;
+      });
     case 'title':
       return sorted.sort((a, b) => a.book.title.localeCompare(b.book.title));
     default:
@@ -411,8 +509,8 @@ export function applyFiltersAndSort(filters: {
 
   // Filter by exchange availability
   if (filters.exchange !== undefined) {
-    offers = offers.filter(offer => 
-      filters.exchange 
+    offers = offers.filter((offer) =>
+      filters.exchange
         ? offer.type === 'EXCHANGE' || offer.type === 'SELL_EXCHANGE'
         : offer.type === 'SELL'
     );
@@ -425,10 +523,10 @@ export function applyFiltersAndSort(filters: {
 
   // Filter by categories/genres
   if (filters.categories && filters.categories.length > 0) {
-    offers = offers.filter(offer => 
-      offer.book.genres.some(genre => 
-        filters.categories!.some(category => 
-          genre.toLowerCase() === category.toLowerCase()
+    offers = offers.filter((offer) =>
+      offer.book.genres.some((genre) =>
+        filters.categories!.some(
+          (category) => genre.toLowerCase() === category.toLowerCase()
         )
       )
     );
@@ -443,11 +541,15 @@ export function applyFiltersAndSort(filters: {
 }
 
 // Get seller by ID
-export function getSellerById(sellerId: number): typeof mockSellers[0] | null {
-  return mockSellers.find(seller => seller.id === sellerId) || null;
+export function getSellerById(
+  sellerId: number | string
+): (typeof mockSellers)[0] | null {
+  return mockSellers.find((seller) => seller.id === sellerId) || null;
 }
 
 // Create mock response for single offer
-export function createMockOfferResponse(offer: OfferWithBook | null): OfferWithBook | null {
+export function createMockOfferResponse(
+  offer: OfferWithBook | null
+): OfferWithBook | null {
   return offer;
 }

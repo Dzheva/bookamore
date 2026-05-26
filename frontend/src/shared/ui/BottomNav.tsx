@@ -1,98 +1,87 @@
-import { useState } from "react";
-import { NavLink } from "react-router";
-import clsx from "clsx";
+import { NavLink, useNavigate } from 'react-router';
+import clsx from 'clsx';
+import { useSelector } from 'react-redux';
+import { HomeSvg } from './bottomNavImg/HomeSvg';
+import { FavoritesSvg } from './bottomNavImg/FavoritesSvg';
+import { SellSvg } from './bottomNavImg/SellSvg';
+import { ChatsSvg } from './bottomNavImg/ChatsSvg';
+import { FaceSvg } from './bottomNavImg/FaceSvg';
+import { selectIsAuthenticated } from '@/app/store/slices/authSlice';
+import { useTranslation } from 'react-i18next';
 
-import { AuthPrompt } from "./AuthPrompt";
-import { HomeSvg } from "./bottomNavImg/HomeSvg";
-import { FavoritesSvg } from "./bottomNavImg/FavoritesSvg";
-import { SellSvg } from "./bottomNavImg/SellSvg";
-import { ChatsSvg } from "./bottomNavImg/ChatsSvg";
-import { FaceSvg } from "./bottomNavImg/FaceSvg";
-import { useSelector } from "react-redux";
-import { selectIsAuthenticated } from "@/app/store/slices/authSlice";
+export function BottomNav() {
+  const { t } = useTranslation(undefined, {
+    keyPrefix: 'bottomNav',
+  });
+  const navItems = [
+    {
+      to: '/',
+      label: t('home'),
+      Icon: HomeSvg,
+    },
+    {
+      to: '/favorites',
+      label: t('favorites'),
+      Icon: FavoritesSvg,
+    },
+    {
+      to: '/offers/new',
+      label: t('sell'),
+      Icon: SellSvg,
+      protected: true,
+    },
+    {
+      to: '/chats',
+      label: t('chats'),
+      Icon: ChatsSvg,
+      protected: true,
+    },
+    {
+      to: '/profile',
+      label: t('profile'),
+      Icon: FaceSvg,
+      protected: true,
+    },
+  ];
 
-interface BottomNavProps {
-  isProfilePage?: boolean;
-}
-
-export function BottomNav({ isProfilePage = false }: BottomNavProps) {
+  const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
-  const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
 
-  const handleUserIconClick = () => {
-    if (!isAuthenticated) {
-      setIsAuthPromptOpen(true);
-    } else {
-      console.log("User is logged in - navigate to profile");
-    }
-  };
-
-  const containerStyle = () => clsx("pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]");
-
-  const textStyle = () => clsx("text-[#E9EADB] font-[KyivType Sans]");
-
-  const isActiveStyle = ({ isActive }: { isActive: boolean }) =>
+  const linkStyle = (isActive: boolean) =>
     clsx(
-      "flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]",
-      isActive ? "bg-[#E9EADB] text-[#28666E]" : "bg-[#28666E] text-[#E9EADB]"
+      'flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]',
+      isActive ? 'bg-[#E9EADB] text-[#28666E]' : 'bg-[#28666E] text-[#E9EADB]'
     );
 
   return (
-    <>
+    <footer className="fixed bottom-0 left-0 right-0 z-51">
       <nav
         className="
-          fixed bottom-0 left-0 right-0
           bg-[#28666E]
           min-w-[375px] h-[65px]
           pt-[6px]
           flex justify-around
         "
       >
-        <NavLink className={isActiveStyle} to="/">
-          <div className={containerStyle()}>
-            <HomeSvg />
-          </div>
-          <p className={textStyle()}>Home</p>
-        </NavLink>
-
-        <NavLink className={isActiveStyle} to="/favorites">
-          <div className={containerStyle()}>
-            <FavoritesSvg />
-          </div>
-          <p className={textStyle()}>Favorites</p>
-        </NavLink>
-
-        <NavLink className={isActiveStyle} to="/offers/new">
-          <div className={containerStyle()}>
-            <SellSvg />
-          </div>
-          <p className={textStyle()}>Sell</p>
-        </NavLink>
-
-        <NavLink className={isActiveStyle} to="/chats">
-          <div className={containerStyle()}>
-            <ChatsSvg />
-          </div>
-          <p className={textStyle()}>Chats</p>
-        </NavLink>
-
-        <div className={isActiveStyle({ isActive: isProfilePage })}>
-          <div
-            className={`${containerStyle()} cursor-pointer`}
-            onClick={handleUserIconClick}
+        {navItems.map(({ to, label, Icon, protected: isProtected }) => (
+          <NavLink
+            key={label}
+            to={to}
+            className={({ isActive }) => linkStyle(isActive)}
+            onClick={(e) => {
+              if (isProtected && !isAuthenticated) {
+                e.preventDefault();
+                navigate('/sign-in');
+              }
+            }}
           >
-            <FaceSvg />
-          </div>
-          <p className={`${textStyle()}`}>Profile</p>
-        </div>
+            <div className="pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]">
+              <Icon />
+            </div>
+            <p className="text-[#E9EADB] font-kyiv">{label}</p>
+          </NavLink>
+        ))}
       </nav>
-      {/* 
-<h1></h1>
-*/}
-      <AuthPrompt
-        isOpen={isAuthPromptOpen}
-        onClose={() => setIsAuthPromptOpen(false)}
-      />
-    </>
+    </footer>
   );
 }

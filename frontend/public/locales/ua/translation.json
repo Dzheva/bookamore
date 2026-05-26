@@ -1,0 +1,171 @@
+{
+  "common": {
+    "exchange": "Обмін",
+    "exchangeOnly": "Тільки обмін",
+    "searchBarPlaceholder": "Пошук: ім'я, автор, продавець",
+    "apply": "Застосувати",
+    "reset": "Скинути",
+    "by": "від",
+    "viewAll": "Показати всі",
+    "contact": "Зв'язатись"
+  },
+
+  "titles": {
+    "filter": "Фільтр",
+    "sort": "Сортувати",
+    "sortBy": "Сортувати за",
+    "price": "Ціна",
+    "categories": "Категорії",
+    "category": "Категорія",
+    "condition": "Стан",
+    "typeOfDeal": "Тип угоди",
+    "profile": "Профіль"
+  },
+
+  "typeOfDeal": {
+    "purchaseOnly": "Тільки покупка",
+    "exchangeOnly": "Тільки обмін",
+    "both": "Обидва"
+  },
+
+  "condition": {
+    "NEW": "Новий",
+    "AS_NEW": "Як новий",
+    "USED": "Вживаний",
+    "ANY": "Любий"
+  },
+
+  "sortOptions": {
+    "relevance": "Актуальність",
+    "lowestPrice": "Найнижча ціна",
+    "highestPrice": "Найвища ціна"
+  },
+
+  "categories": {
+    "all": "Усі",
+    "new": "Нові",
+    "recommended": "Рекомендовані",
+    "sci-fi": "Наукова фантастика",
+    "romantic": "Романтика",
+    "historical": "Історичний",
+    "detective": "Детектив",
+    "fantasy": "Фентезі",
+    "biography": "Біографія",
+    "horror": "Жахи",
+    "comedy": "Комедія",
+    "drama": "Драма",
+    "adventure": "Пригоди",
+    "children": "Дитячі",
+    "psychology": "Психологія"
+  },
+
+  "auth": {
+    "name": "Ім'я",
+    "logIn": "Вхід",
+    "logOut": "Вийти",
+    "signIn": "Увійти",
+    "signingIn": "Вхід...",
+    "signUp": "Зареєструватися",
+    "signingUp": "Реєстрація...",
+    "createAccount": "Створити профіль",
+    "email": "Електронна пошта",
+    "password": "Пароль",
+    "confirmPassword": "Підтвердіть пароль",
+    "forgotPassword": "Забули пароль?",
+    "or": "або",
+    "continueWith": "Продовжити з",
+    "dontHaveAccount": "Немає облікового запису?",
+    "alreadyHaveAccount": "Вже є обліковий запис?",
+    "acceptance": "Продовжуючи, ви погоджуєтеся з нашими",
+    "terms": "Умовами",
+    "and": "та",
+    "privacy": "Політикою конфіденційності"
+  },
+
+  "validation": {
+    "nameRequired": "Потрібно вказати ім'я",
+    "nameInvalid": "Ім'я повинно містити принаймні 2 символи",
+    "emailRequired": "Потрібно вказати електронну пошту",
+    "emailInvalid": "Будь ласка, введіть правильну адресу",
+    "passwordRequired": "Потрібно вказати пароль",
+    "passwordMinLength": "Пароль повинен бути не менше 6 символів",
+    "confirmPassword": "Будь ласка, підтвердіть ваш пароль",
+    "passwordsDoNotMatch": "Паролі не збігаються.",
+    "authError": "Невірна електронна пошта або пароль",
+    "emailInUse": "Електронна пошта вже використовується",
+    "RegisterError": "Реєстрація не вдалася. Спробуйте ще раз."
+  },
+
+  "passwordValidator": {
+    "requirements": "Вимоги безпеки",
+    "minLength": "Принаймні 6 символів",
+    "uppercase": "Принаймні 1 велика літера (A-Z)",
+    "lowercase": "Принаймні 1 мала літера (a-z)",
+    "specialChar": "Підтримує спеціальні символи (!@#$%)"
+  },
+
+  "profileItems": {
+    "announcements": "Мої оголошення",
+    "orders": "Мої замовлення",
+    "favorites": "Моє обране",
+    "chats": "Мої чати",
+    "settings": "Налаштування"
+  },
+
+  "bottomNav": {
+    "home": "Головна",
+    "favorites": "Обране",
+    "sell": "Продати",
+    "chats": "Чати",
+    "profile": "Профіль"
+  },
+
+  "sellBook": {
+    "title": "Продати книгу",
+    "bookTitle": "Назва книги",
+    "author": "Автор",
+    "genres": "Жанри",
+    "genresPlaceholder": "Додати жанри",
+    "uploadPhoto": "Завантажити фото",
+    "description": "Додати опис",
+    "descriptionPlaceholder": "Вживаний, у хорошому стані.",
+    "publish": "Опублікувати",
+    "publishing": "Публікуємо..."
+  },
+
+  "chats": {
+    "title": "Чати",
+    "mySellings": "Мої продажі",
+    "myPurchases": "Мої покупки"
+  },
+
+  "favorites": {
+    "title": "Моє обране",
+    "itemsNumber": "{count, plural, one {# товар у вашому списку} few {# товари у вашому списку} many {# товарів у вашому списку} other {# товарів у вашому списку}}",
+    "total": "Ваша загальна сума: {total} UAH"
+  },
+
+  "bookDetails": {
+    "title": "Деталі книги",
+    "description": "Про книгу",
+    "dateAdded": "Дата додавання:",
+    "seller": "Власник",
+    "similarBooks": "Схожі книги"
+  },
+
+  "settings": {
+    "title": "Налаштування",
+    "lng": "Мова",
+    "en": "Англійська",
+    "ua": "Українська",
+    "notifications": "Сповіщення",
+    "myProfile": "Мій профіль",
+    "privacyPolicy": "Політика конфіденційності"
+  },
+
+  "languageSwitcher": {
+    "label": "Перемикач мови",
+    "english": "Перемкнути мову на англійську",
+    "ukrainian": "Перемкнути мову на українську"
+  }
+}
