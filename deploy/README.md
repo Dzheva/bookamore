@@ -13,8 +13,8 @@ Go to **GitHub → Repository → Settings → Secrets and variables → Actions
 | Secret name            | Description                                                     | Example value                          |
 |------------------------|-----------------------------------------------------------------|----------------------------------------|
 | `VPS_HOST`             | Public IP or hostname of the VPS                                | `185.143.145.151`                      |
-| `VPS_USER`             | SSH user on VPS                                                 | `mrx`                                  |
-| `VPS_SSH_PRIVATE_KEY`  | Private key whose public key is in `~/.ssh/authorized_keys` on VPS | `-----BEGIN OPENSSH PRIVATE KEY-----…` |
+| `VPS_USER`             | SSH user on VPS                                                 | `devuser`                                  |
+| `VPS_SSH_PRIVATE_KEY(old - VPS_SSH_KEY)`  | Private key whose public key is in `~/.ssh/authorized_keys` on VPS | `-----BEGIN OPENSSH PRIVATE KEY-----…` |
 | `VPS_SSH_PORT`         | SSH port (usually 22)                                           | `22`                                   |
 | `DEPLOY_REPO_SSH_URL`  | SSH clone URL of the repo                                       | `git@github.com:your-org/bookamore.git`|
 | `DB_USER`              | PostgreSQL username (used for both envs)                        | `bookamore`                            |
