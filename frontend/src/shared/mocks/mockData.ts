@@ -322,7 +322,7 @@ export function getAllGenres(): string[] {
   const genresSet = new Set<string>();
   
   allOffers.forEach(offer => {
-    offer.book.genres.forEach(genre => genresSet.add(genre));
+    offer.book.genres.forEach((genre: string) => genresSet.add(genre));
   });
   
   return Array.from(genresSet).sort();
@@ -332,7 +332,7 @@ export function getAllGenres(): string[] {
 export function getOffersByGenre(genre: string): OfferWithBook[] {
   const allOffers = [...mockOffers, ...mockRomanticOffers];
   return allOffers.filter(offer => 
-    offer.book.genres.some(bookGenre => 
+    offer.book.genres.some((bookGenre: string) =>
       bookGenre.toLowerCase() === genre.toLowerCase()
     )
   );
@@ -352,8 +352,8 @@ export function getOffersBySearch(query: string): OfferWithBook[] {
   
   return [...mockOffers, ...mockRomanticOffers].filter(offer => 
     offer.book.title.toLowerCase().includes(lowerQuery) ||
-    offer.book.authors.some(author => author.toLowerCase().includes(lowerQuery)) ||
-    offer.book.genres.some(genre => genre.toLowerCase().includes(lowerQuery))
+    offer.book.authors.some((author: string) => author.toLowerCase().includes(lowerQuery)) ||
+    offer.book.genres.some((genre: string) => genre.toLowerCase().includes(lowerQuery))
   );
 }
 
@@ -426,8 +426,8 @@ export function applyFiltersAndSort(filters: {
   // Filter by categories/genres
   if (filters.categories && filters.categories.length > 0) {
     offers = offers.filter(offer => 
-      offer.book.genres.some(genre => 
-        filters.categories!.some(category => 
+      offer.book.genres.some((genre: string) =>
+        filters.categories!.some(category =>
           genre.toLowerCase() === category.toLowerCase()
         )
       )
