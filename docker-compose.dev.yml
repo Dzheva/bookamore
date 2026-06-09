@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # Бекенд (Spring Boot)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bookamore_dev_backend
+    ports:
+      - "3001:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_HOST=db
+      # Додайте сюди інші змінні оточення, якщо вони потрібні (напр. паролі до БД)
+    depends_on:
+      - db
+
+  # Фронтенд (Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bookamore_dev_frontend
+    ports:
+      - "3433:80"
+    depends_on:
+      - backend
+
+  # База даних (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: bookamore_dev_db
+    environment:
+      POSTGRES_DB: bookamore
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
