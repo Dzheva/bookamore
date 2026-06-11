@@ -21,13 +21,13 @@ jobs:
           script: |
             set -euo pipefail
 
-            TARGET_DIR_PROD="/home/deploy/www/prod"
-            TARGET_DIR_DEV="/home/deploy/www/dev"
+            TARGET_DIR_PROD="/home/devuser/www/prod"
+            TARGET_DIR_DEV="/home/devuser/www/dev"
 
             if [ "${{ github.ref_name }}" = "main" ]; then
               TARGET_DIR="$TARGET_DIR_PROD"
-              FE_PORT="4000"
-              BE_PORT="4100"
+              FE_PORT="3432"
+              BE_PORT="3000"
               DB_PORT="5432"
               DB_NAME="bookamore_prod"
               APP_NAME="bookamore_prod"
@@ -35,8 +35,8 @@ jobs:
               CLIENT_URL="https://bookamore.alt-web.biz.ua"
             elif [ "${{ github.ref_name }}" = "dev" ]; then
               TARGET_DIR="$TARGET_DIR_DEV"
-              FE_PORT="3000"
-              BE_PORT="3100"
+              FE_PORT="3433"
+              BE_PORT="3001"
               DB_PORT="5433"
               DB_NAME="bookamore_dev"
               APP_NAME="dev_bookamore"

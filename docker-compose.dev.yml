@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Бекенд (Spring Boot)
+  # Backend (Spring Boot)
   backend:
     build:
       context: ./backend
@@ -12,11 +12,13 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - DB_HOST=db
-      # Додайте сюди інші змінні оточення, якщо вони потрібні (напр. паролі до БД)
+    volumes:
+      # Мапимо папку з контейнера на папку на вашому VPS
+      - uploads_data:/app/uploads
     depends_on:
       - db
 
-  # Фронтенд (Nginx)
+  # Frontend (Nginx)
   frontend:
     build:
       context: ./frontend
@@ -40,3 +42,10 @@ services:
 
 volumes:
   pgdata:
+  uploads_data:
+    driver: local
+    driver_opts:
+      type: none
+      # Вкажіть шлях на вашому сервері, де будуть лежати фото
+      device: /home/devuser/www/dev/uploads
+      o: bind
