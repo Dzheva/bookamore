@@ -1,4 +1,4 @@
-version: '3.8'
+name: bookamore_dev
 
 services:
   # Backend (Spring Boot)
@@ -11,7 +11,16 @@ services:
       - "3001:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - DB_HOST=db
+      - DB_URL=jdbc:postgresql://db:5432/${DB_NAME}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - CLIENT_URL=${CLIENT_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - FACEBOOK_CLIENT_ID=${FACEBOOK_CLIENT_ID}
+      - FACEBOOK_CLIENT_SECRET=${FACEBOOK_CLIENT_SECRET}
     volumes:
       # Мапимо папку з контейнера на папку на вашому VPS
       - uploads_data:/app/uploads
@@ -26,17 +35,19 @@ services:
     container_name: bookamore_dev_frontend
     ports:
       - "3433:80"
+    volumes:
+      - uploads_data:/usr/share/nginx/html/uploads:ro
     depends_on:
       - backend
 
   # База даних (PostgreSQL)
   db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: bookamore_dev_db
     environment:
-      POSTGRES_DB: bookamore
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
 
