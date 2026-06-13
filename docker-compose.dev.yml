@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Backend (Spring Boot)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bookamore_dev_backend
+    ports:
+      - "3001:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_HOST=db
+    volumes:
+      # Мапимо папку з контейнера на папку на вашому VPS
+      - uploads_data:/app/uploads
+    depends_on:
+      - db
+
+  # Frontend (Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bookamore_dev_frontend
+    ports:
+      - "3433:80"
+    depends_on:
+      - backend
+
+  # База даних (PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    container_name: bookamore_dev_db
+    environment:
+      POSTGRES_DB: bookamore
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+  uploads_data:
+    driver: local
+    driver_opts:
+      type: none
+      # Вкажіть шлях на вашому сервері, де будуть лежати фото
+      device: /home/devuser/www/dev/uploads
+      o: bind

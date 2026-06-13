@@ -1,0 +1,79 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy on VPS via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: deploy
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+
+            TARGET_DIR_PROD="/home/devuser/www/prod"
+            TARGET_DIR_DEV="/home/devuser/www/dev"
+
+            if [ "${{ github.ref_name }}" = "main" ]; then
+              TARGET_DIR="$TARGET_DIR_PROD"
+              FE_PORT="3432"
+              BE_PORT="3000"
+              DB_PORT="5432"
+              DB_NAME="bookamore_prod"
+              APP_NAME="bookamore_prod"
+              SPRING_PROFILES_ACTIVE="prod"
+              CLIENT_URL="https://bookamore.alt-web.biz.ua"
+            elif [ "${{ github.ref_name }}" = "dev" ]; then
+              TARGET_DIR="$TARGET_DIR_DEV"
+              FE_PORT="3433"
+              BE_PORT="3001"
+              DB_PORT="5433"
+              DB_NAME="bookamore_dev"
+              APP_NAME="dev_bookamore"
+              SPRING_PROFILES_ACTIVE="dev"
+              CLIENT_URL="https://bookamore-dev.alt-web.biz.ua"
+            else
+              echo "Unsupported branch: ${{ github.ref_name }}"
+              exit 1
+            fi
+
+            mkdir -p "$TARGET_DIR"
+
+            if [ ! -d "$TARGET_DIR/.git" ]; then
+              echo "Repository is not initialized in $TARGET_DIR"
+              echo "Run first-time bootstrap clone manually, then rerun the workflow"
+              exit 1
+            fi
+
+            cd "$TARGET_DIR"
+            git fetch --all --prune
+            git checkout "${{ github.ref_name }}"
+            git reset --hard "origin/${{ github.ref_name }}"
+
+            if [ ! -f .env ]; then
+              echo "Missing $TARGET_DIR/.env"
+              echo "Create it from .env.example during VPS bootstrap"
+              exit 1
+            fi
+
+            # Keep env-specific values in sync without storing app secrets in GitHub Actions.
+            sed -i "s/^APP_NAME=.*/APP_NAME=$APP_NAME/" .env
+            sed -i "s/^FE_PORT=.*/FE_PORT=$FE_PORT/" .env
+            sed -i "s/^BE_PORT=.*/BE_PORT=$BE_PORT/" .env
+            sed -i "s/^DB_PORT=.*/DB_PORT=$DB_PORT/" .env
+            sed -i "s/^DB_NAME=.*/DB_NAME=$DB_NAME/" .env
+            sed -i "s/^SPRING_PROFILES_ACTIVE=.*/SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE/" .env
+            sed -i "s|^CLIENT_URL=.*|CLIENT_URL=$CLIENT_URL|" .env
+
+            docker compose --env-file .env up -d --build
+
