@@ -13,10 +13,10 @@ Go to **GitHub → Repository → Settings → Secrets and variables → Actions
 | Secret name   | Description                                                            | Example value                          |
 |--------------|------------------------------------------------------------------------|----------------------------------------|
 | `VPS_HOST`   | Public IP or hostname of the VPS                                       | `185.143.145.151`                      |
-| `VPS_SSH_KEY`| Private key whose public key is in `/home/deploy/.ssh/authorized_keys` | `-----BEGIN OPENSSH PRIVATE KEY-----…` |
+| `VPS_SSH_KEY`| Private key whose public key is in `/home/devuser/.ssh/authorized_keys` | `-----BEGIN OPENSSH PRIVATE KEY-----…` |
 
 > **Note:** App credentials (`DB_USER`, `DB_PASSWORD`, JWT, OAuth keys) are read from
-> `/home/deploy/www/dev/.env` and `/home/deploy/www/prod/.env` on the VPS.
+> `/home/devuser/www/dev/.env` and `/home/devuser/www/prod/.env` on the VPS.
 > They are not required as GitHub Secrets in this workflow.
 
 ---
@@ -60,9 +60,9 @@ cat ~/.ssh/bookamore_deploy
 ### 2.3 Create deployment directories
 
 ```bash
-sudo mkdir -p /home/deploy/www/prod
-sudo mkdir -p /home/deploy/www/dev
-sudo chown -R deploy:deploy /home/deploy/www
+sudo mkdir -p /home/devuser/www/prod
+sudo mkdir -p /home/devuser/www/dev
+sudo chown -R devuser:devuser /home/devuser/www
 ```
 
 ### 2.4 Create `.env` files for each environment
@@ -72,14 +72,14 @@ The CI workflow expects `.env` to already exist in each target directory. Create
 
 ```bash
 # Dev environment
-cp /path/to/repo/.env.example /home/deploy/www/dev/.env
-nano /home/deploy/www/dev/.env
+cp /path/to/repo/.env.example /home/devuser/www/dev/.env
+nano /home/devuser/www/dev/.env
 ```
 
 ```bash
 # Prod environment
-cp /path/to/repo/.env.example /home/deploy/www/prod/.env
-nano /home/deploy/www/prod/.env
+cp /path/to/repo/.env.example /home/devuser/www/prod/.env
+nano /home/devuser/www/prod/.env
 ```
 
 Fill in the sensitive values (`DB_PASSWORD`, `JWT_SECRET`, OAuth credentials) and update
@@ -93,6 +93,7 @@ the infrastructure values to match each environment:
 | `DB_PORT`              | `5433`                                  | `5432`                               |
 | `DB_NAME`              | `bookamore_dev`                         | `bookamore_prod`                     |
 | `SPRING_PROFILES_ACTIVE` | `dev`                                 | `prod`                               |
+| `UPLOADS_DIR`          | `/home/devuser/www/dev/uploads`         | `/home/devuser/www/prod/uploads`     |
 | `CLIENT_URL`           | `https://bookamore-dev.alt-web.biz.ua`  | `https://bookamore.alt-web.biz.ua`   |
 
 > The workflow keeps env-specific routing values synchronized (`APP_NAME`, ports, profile, `CLIENT_URL`),
@@ -103,8 +104,8 @@ the infrastructure values to match each environment:
 The deploy workflow updates an existing checkout in each target directory. Initialize both once:
 
 ```bash
-sudo -u deploy git clone <YOUR_REPO_SSH_OR_HTTPS_URL> /home/deploy/www/prod
-sudo -u deploy git clone <YOUR_REPO_SSH_OR_HTTPS_URL> /home/deploy/www/dev
+sudo -u devuser git clone <YOUR_REPO_SSH_OR_HTTPS_URL> /home/devuser/www/prod
+sudo -u devuser git clone <YOUR_REPO_SSH_OR_HTTPS_URL> /home/devuser/www/dev
 ```
 
 ---
@@ -191,7 +192,7 @@ After the one-time VPS setup is complete, every deploy is fully automatic:
 
 The GitHub Actions workflow:
 1. SSHs into the VPS.
-2. Uses `/home/deploy/www/prod` for `main` and `/home/deploy/www/dev` for `dev`.
+2. Uses `/home/devuser/www/prod` for `main` and `/home/devuser/www/dev` for `dev`.
 3. Syncs non-sensitive env routing values in `.env`.
 4. Runs `docker compose -f docker-compose.yaml --env-file .env up -d --build` (prod) or `docker compose -f docker-compose.dev.yml --env-file .env up -d --build` (dev).
 
@@ -210,4 +211,3 @@ docker logs -f bookamore_prod_backend
 # Check disk usage of Docker volumes
 docker system df -v
 ```
-

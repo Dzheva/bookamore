@@ -31,7 +31,7 @@ services:
       db:
         condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DB_USER}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
@@ -77,5 +77,5 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/deploy/www/prod/uploads # Шлях для ПРОДу
+      device: ${UPLOADS_DIR}
       o: bind

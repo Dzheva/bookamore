@@ -16,14 +16,14 @@ jobs:
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.VPS_HOST }}
-          username: deploy
+          username: devuser
           key: ${{ secrets.VPS_SSH_KEY }}
           script_stop: true
           script: |
             set -euo pipefail
 
-            TARGET_DIR_PROD="/home/deploy/www/prod"
-            TARGET_DIR_DEV="/home/deploy/www/dev"
+            TARGET_DIR_PROD="/home/devuser/www/prod"
+            TARGET_DIR_DEV="/home/devuser/www/dev"
 
             if [ "${{ github.ref_name }}" = "main" ]; then
               TARGET_DIR="$TARGET_DIR_PROD"
@@ -34,6 +34,7 @@ jobs:
               DB_NAME="bookamore_prod"
               APP_NAME="bookamore_prod"
               SPRING_PROFILES_ACTIVE="prod"
+              UPLOADS_DIR="$TARGET_DIR/uploads"
               CLIENT_URL="https://bookamore.alt-web.biz.ua"
             elif [ "${{ github.ref_name }}" = "dev" ]; then
               TARGET_DIR="$TARGET_DIR_DEV"
@@ -44,6 +45,7 @@ jobs:
               DB_NAME="bookamore_dev"
               APP_NAME="dev_bookamore"
               SPRING_PROFILES_ACTIVE="dev"
+              UPLOADS_DIR="$TARGET_DIR/uploads"
               CLIENT_URL="https://bookamore-dev.alt-web.biz.ua"
             else
               echo "Unsupported branch: ${{ github.ref_name }}"
@@ -75,6 +77,7 @@ jobs:
             sed -i "s/^DB_PORT=.*/DB_PORT=$DB_PORT/" .env
             sed -i "s/^DB_NAME=.*/DB_NAME=$DB_NAME/" .env
             sed -i "s/^SPRING_PROFILES_ACTIVE=.*/SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE/" .env
+            sed -i "s|^UPLOADS_DIR=.*|UPLOADS_DIR=$UPLOADS_DIR|" .env
             sed -i "s|^CLIENT_URL=.*|CLIENT_URL=$CLIENT_URL|" .env
 
             docker compose -f "$COMPOSE_FILE" --env-file .env up -d --build
