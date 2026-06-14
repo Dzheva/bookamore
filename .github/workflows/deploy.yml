@@ -21,11 +21,12 @@ jobs:
           script: |
             set -euo pipefail
 
-            TARGET_DIR_PROD="/home/devuser/www/prod"
-            TARGET_DIR_DEV="/home/devuser/www/dev"
+            TARGET_DIR_PROD="/home/deploy/www/prod"
+            TARGET_DIR_DEV="/home/deploy/www/dev"
 
             if [ "${{ github.ref_name }}" = "main" ]; then
               TARGET_DIR="$TARGET_DIR_PROD"
+              COMPOSE_FILE="docker-compose.yaml"
               FE_PORT="3432"
               BE_PORT="3000"
               DB_PORT="5432"
@@ -35,6 +36,7 @@ jobs:
               CLIENT_URL="https://bookamore.alt-web.biz.ua"
             elif [ "${{ github.ref_name }}" = "dev" ]; then
               TARGET_DIR="$TARGET_DIR_DEV"
+              COMPOSE_FILE="docker-compose.dev.yml"
               FE_PORT="3433"
               BE_PORT="3001"
               DB_PORT="5433"
@@ -57,7 +59,7 @@ jobs:
 
             cd "$TARGET_DIR"
             git fetch --all --prune
-            git checkout "${{ github.ref_name }}"
+            git checkout -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
             git reset --hard "origin/${{ github.ref_name }}"
 
             if [ ! -f .env ]; then
@@ -75,5 +77,5 @@ jobs:
             sed -i "s/^SPRING_PROFILES_ACTIVE=.*/SPRING_PROFILES_ACTIVE=$SPRING_PROFILES_ACTIVE/" .env
             sed -i "s|^CLIENT_URL=.*|CLIENT_URL=$CLIENT_URL|" .env
 
-            docker compose --env-file .env up -d --build
+            docker compose -f "$COMPOSE_FILE" --env-file .env up -d --build
 
