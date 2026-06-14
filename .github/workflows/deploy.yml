@@ -61,7 +61,6 @@ jobs:
             cd "$TARGET_DIR"
             git fetch --all --prune
             git checkout -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
-            git reset --hard "origin/${{ github.ref_name }}"
 
             if [ ! -f .env ]; then
               echo "Missing $TARGET_DIR/.env"
@@ -79,4 +78,3 @@ jobs:
             sed -i "s|^CLIENT_URL=.*|CLIENT_URL=$CLIENT_URL|" .env
 
             docker compose -f "$COMPOSE_FILE" --env-file .env up -d --build
-
