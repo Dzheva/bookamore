@@ -203,7 +203,7 @@ The GitHub Actions workflow:
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
 # Tail backend logs for dev
-docker logs -f dev_bookamore_backend
+docker logs -f bookamore_dev_backend
 
 # Tail backend logs for prod
 docker logs -f bookamore_prod_backend
