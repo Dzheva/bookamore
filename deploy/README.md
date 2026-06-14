@@ -10,28 +10,10 @@
 
 Go to **GitHub → Repository → Settings → Secrets and variables → Actions** and add the following:
 
-<<<<<<< HEAD
-| Secret name     | Description                                                                | Example value                          |
-|-----------------|----------------------------------------------------------------------------|----------------------------------------|
-| `VPS_HOST`      | Public IP or hostname of the VPS                                           | `185.143.145.151`                      |
-| `VPS_SSH_KEY`   | Private key whose public key is in `/home/deploy/.ssh/authorized_keys`     | `-----BEGIN OPENSSH PRIVATE KEY-----…` |
-=======
-| Secret name            | Description                                                     | Example value                          |
-|------------------------|-----------------------------------------------------------------|----------------------------------------|
-| `VPS_HOST`             | Public IP or hostname of the VPS                                | `185.143.145.151`                      |
-| `VPS_USER`             | SSH user on VPS                                                 | `devuser`                                  |
-| `VPS_SSH_PRIVATE_KEY(old - VPS_SSH_KEY)`  | Private key whose public key is in `~/.ssh/authorized_keys` on VPS | `-----BEGIN OPENSSH PRIVATE KEY-----…` |
-| `VPS_SSH_PORT`         | SSH port (usually 22)                                           | `22`                                   |
-| `DEPLOY_REPO_SSH_URL`  | SSH clone URL of the repo                                       | `git@github.com:your-org/bookamore.git`|
-| `DB_USER`              | PostgreSQL username (used for both envs)                        | `bookamore`                            |
-| `DB_PASSWORD`          | PostgreSQL password (used for both envs)                        | *(strong random string)*               |
-| `JWT_SECRET`           | JWT signing secret                                              | *(strong random string)*               |
-| `JWT_EXPIRATION`       | JWT token lifetime in milliseconds                              | `86400000`                             |
-| `GOOGLE_CLIENT_ID`     | Google OAuth2 client ID                                         | *(from Google Cloud Console)*          |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth2 client secret                                     | *(from Google Cloud Console)*          |
-| `FACEBOOK_CLIENT_ID`   | Facebook OAuth2 app ID                                          | *(from Meta Developer Console)*        |
-| `FACEBOOK_CLIENT_SECRET` | Facebook OAuth2 app secret                                    | *(from Meta Developer Console)*        |
->>>>>>> 3428748589fe684e94afc285415096455ba6a5e2
+| Secret name   | Description                                                            | Example value                          |
+|--------------|------------------------------------------------------------------------|----------------------------------------|
+| `VPS_HOST`   | Public IP or hostname of the VPS                                       | `185.143.145.151`                      |
+| `VPS_SSH_KEY`| Private key whose public key is in `/home/deploy/.ssh/authorized_keys` | `-----BEGIN OPENSSH PRIVATE KEY-----…` |
 
 > **Note:** App credentials (`DB_USER`, `DB_PASSWORD`, JWT, OAuth keys) are read from
 > `/home/deploy/www/dev/.env` and `/home/deploy/www/prod/.env` on the VPS.
