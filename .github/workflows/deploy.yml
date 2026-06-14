@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions: {}
 
     steps:
       - name: Deploy on VPS via SSH
