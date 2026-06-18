@@ -32,3 +32,4 @@ frontend/.env.development
 
 certs
 .claude/
+backup.sql
