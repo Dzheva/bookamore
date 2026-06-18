@@ -2,16 +2,17 @@ services:
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "8080:80"   # змінено з 80:80 — уникаємо конфлікту з системним Nginx
     volumes:
       - ./nginx-local.conf:/etc/nginx/nginx.conf
-      - ./backend/src/main/resources/uploads:/usr/share/nginx/html/uploads:ro
+      - uploads_data:/usr/share/nginx/html/uploads:ro   # читає з того ж volume, куди пише backend
     depends_on:
       - backend
       - frontend
     networks:
       - app-network
     restart: unless-stopped
+
   backend:
     tty: true
     build:
@@ -22,12 +23,16 @@ services:
     expose:
       - "8080"
     environment:
+      - SPRING_PROFILES_ACTIVE=local
       - SPRING_DATASOURCE_URL=jdbc:postgresql://bookamore-db:5432/bookamore-db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      - FILE_UPLOAD_DIR=/app/uploads
+      - CLIENT_URL=http://localhost:8080
     volumes:
       - ./backend:/app
       - ~/.m2:/root/.m2
+      - uploads_data:/app/uploads   # named volume — backend пише сюди, nginx читає звідси
     networks:
       - app-network
     healthcheck:
@@ -35,10 +40,10 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 30s
+      start_period: 60s
 
   bookamore-db:
-    image: postgres
+    image: postgres:16-alpine   # фіксована версія замість latest
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -46,7 +51,9 @@ services:
     networks:
       - app-network
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5433:5432"   # змінено з 5432:5432 — уникаємо конфлікту з системним PostgreSQL
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # named volume — дані не губляться між рестартами
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d bookamore-db"]
       interval: 10s
@@ -65,7 +72,7 @@ services:
       - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./frontend:/usr/app
-      - /app/node_modules
+      - /usr/app/node_modules   # виправлено: /app → /usr/app (відповідає WORKDIR у Dockerfile-local)
     depends_on:
       - backend
     networks:
@@ -76,6 +83,10 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+
+volumes:
+  pgdata:       # дані PostgreSQL
+  uploads_data: # завантажені файли — shared між backend і nginx
 
 networks:
   app-network:
