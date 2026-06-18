@@ -31,3 +31,4 @@ frontend/.env.development
 .dockerignore
 
 certs
+.claude/
