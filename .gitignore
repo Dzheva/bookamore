@@ -6,6 +6,7 @@ frontend/build/
 # Dependencies
 backend/.mvn/
 frontend/node_modules/
+.venv/
 
 # IDE
 .idea/
