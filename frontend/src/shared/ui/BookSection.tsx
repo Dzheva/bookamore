@@ -21,10 +21,10 @@ function BookCard({ condition, offer }: BookCardProps) {
       onClick={handleClick}
     >
       {/* Book image */}
-      {offer?.previewImage ? (
-        <img 
-          src={offer.previewImage} 
-          alt={offer.book.title}
+      {(offer?.previewImage ?? offer?.book?.images?.[0]) ? (
+        <img
+          src={offer?.previewImage ?? offer?.book?.images?.[0]}
+          alt={offer?.book?.title}
           className="w-full h-full rounded-lg object-cover"
         />
       ) : (
