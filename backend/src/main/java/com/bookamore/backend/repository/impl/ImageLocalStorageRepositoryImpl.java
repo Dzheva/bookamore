@@ -35,8 +35,7 @@ public class ImageLocalStorageRepositoryImpl implements ImageStorageRepository {
     }
 
     public boolean isExists(String fileName, String subDir) {
-        Path location = uploadDir.resolve(uploadDir).normalize();
-        location = location.resolve(fileName).normalize();
+        Path location = uploadDir.resolve(subDir).normalize().resolve(fileName).normalize();
         return Files.exists(location);
     }
 
