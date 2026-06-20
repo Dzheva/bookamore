@@ -62,9 +62,9 @@ jobs:
 
             cd "$TARGET_DIR"
             git fetch --all --prune
+            git clean -ffd -e '.env' -e 'uploads/'
             git checkout -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
             git reset --hard "origin/${{ github.ref_name }}"
-            git clean -fd
 
             if [ ! -f .env ]; then
               echo "Missing $TARGET_DIR/.env"
