@@ -62,14 +62,9 @@ jobs:
 
             cd "$TARGET_DIR"
             git fetch --all --prune
-            
-            # Примусово скидаємо зміни та видаляємо все зайве, що блокувало деплой
-            git reset --hard HEAD
-            git clean -fd
-            
-            # Перемикаємося на актуальну гілку та примусово оновлюємося
-            git checkout -B "${{ github.ref_name }}"
+            git checkout -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
             git reset --hard "origin/${{ github.ref_name }}"
+            git clean -fd
 
             if [ ! -f .env ]; then
               echo "Missing $TARGET_DIR/.env"
