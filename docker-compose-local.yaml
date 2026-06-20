@@ -5,7 +5,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx-local.conf:/etc/nginx/nginx.conf
-      - ./data/uploads/img:/usr/share/nginx/html/uploads:ro
+      - ./data/uploads:/usr/share/nginx/html/uploads:ro
     depends_on:
       backend:
         condition: service_healthy
@@ -29,13 +29,13 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://bookamore-db:5432/bookamore-db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - FILE_UPLOAD_DIR=/uploads
+      - FILE_UPLOAD_DIR=/uploads/img
       - SPRING_JPA_HIBERNATE_DDL_AUTO=${SPRING_JPA_HIBERNATE_DDL_AUTO:-create}
       - SPRING_SQL_INIT_MODE=${SPRING_SQL_INIT_MODE:-always}
     volumes:
       - ./backend:/app
       - ~/.m2:/root/.m2
-      - ./data/uploads/img:/uploads
+      - ./data/uploads:/uploads
     networks:
       - app-network
     healthcheck:
@@ -69,15 +69,14 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile-local
-    ports:
-      - "3000:3000"
     environment:
       - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./frontend:/usr/app
       - frontend_node_modules:/usr/app/node_modules
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - app-network
     healthcheck:

@@ -8,8 +8,8 @@ readonly DB_SERVICE="bookamore-db"
 readonly DB_NAME="bookamore-db"
 readonly DB_USER="postgres"
 readonly BACKUP_FILE="backup.sql"
-# Відповідає bind-mount nginx та backend: ./data/uploads/img → /uploads (backend) та /usr/share/nginx/html/uploads (nginx)
-readonly UPLOADS_IMG_DIR="./data/uploads/img"
+# Відповідає bind-mount nginx та backend: ./data/uploads → /uploads (backend) та /usr/share/nginx/html/uploads (nginx)
+readonly UPLOADS_DIR="./data/uploads"
 readonly DB_WAIT_INTERVAL=3
 
 # Налаштування синхронізації з VPS
@@ -51,12 +51,12 @@ if [[ "$sync_choice" =~ ^[Yy]$ ]]; then
   rsync -avzP "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/backup.sql" "./$BACKUP_FILE"
 
   info "Синхронізуємо фото..."
-  mkdir -p "$UPLOADS_IMG_DIR"
-  rsync -avzP --delete "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/uploads/" "$UPLOADS_IMG_DIR/"
+  mkdir -p "$UPLOADS_DIR"
+  rsync -avzP --delete "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/uploads/" "$UPLOADS_DIR/"
 
   info "Встановлюємо права читання для Nginx..."
-  find "$UPLOADS_IMG_DIR" -type f -exec chmod o+r {} +
-  find "$UPLOADS_IMG_DIR" -type d -exec chmod o+rx {} +
+  find "$UPLOADS_DIR" -type f -exec chmod o+r {} +
+  find "$UPLOADS_DIR" -type d -exec chmod o+rx {} +
 
   # Коли є backup — Spring Boot не повинен перестворювати схему або запускати seed
   DDL_AUTO="none"
@@ -64,6 +64,28 @@ if [[ "$sync_choice" =~ ^[Yy]$ ]]; then
   info "Синхронізацію завершено."
 else
   info "Синхронізацію пропущено — використовується seed з data-local.sql."
+fi
+
+# Нормалізація структури після старих запусків
+# 1. Кейс img/img/... — rsync у попередніх версіях скрипта писав у data/uploads/img/
+if [ -d "$UPLOADS_DIR/img/img" ]; then
+  warn "Знайдено вкладену структуру img/img — вирівнюємо до img/..."
+  rsync -a --remove-source-files "$UPLOADS_DIR/img/img/" "$UPLOADS_DIR/img/"
+  find "$UPLOADS_DIR/img/img" -type d -empty -delete
+  rmdir "$UPLOADS_DIR/img/img" 2>/dev/null || true
+fi
+# 2. Кейс img/books/ та img/offers/ — VPS зберігає у book/ та offer/
+if [ -d "$UPLOADS_DIR/img/books" ] && [ -n "$(ls -A "$UPLOADS_DIR/img/books" 2>/dev/null)" ]; then
+  warn "Знайдено img/books/ з файлами — переміщаємо до img/book/..."
+  mkdir -p "$UPLOADS_DIR/img/book"
+  rsync -a --remove-source-files "$UPLOADS_DIR/img/books/" "$UPLOADS_DIR/img/book/"
+  find "$UPLOADS_DIR/img/books" -type d -empty -delete 2>/dev/null || true
+fi
+if [ -d "$UPLOADS_DIR/img/offers" ] && [ -n "$(ls -A "$UPLOADS_DIR/img/offers" 2>/dev/null)" ]; then
+  warn "Знайдено img/offers/ з файлами — переміщаємо до img/offer/..."
+  mkdir -p "$UPLOADS_DIR/img/offer"
+  rsync -a --remove-source-files "$UPLOADS_DIR/img/offers/" "$UPLOADS_DIR/img/offer/"
+  find "$UPLOADS_DIR/img/offers" -type d -empty -delete 2>/dev/null || true
 fi
 
 # ─── 2/5 Зупинка старих контейнерів ──────────────────────────────────────────
@@ -88,6 +110,83 @@ if [ -f "$BACKUP_FILE" ]; then
     -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
   docker compose -f "$COMPOSE_FILE" exec -T "$DB_SERVICE" \
     psql -U "$DB_USER" -d "$DB_NAME" < "$BACKUP_FILE"
+
+  info "Нормалізуємо шляхи до зображень у локальній БД..."
+  docker compose -f "$COMPOSE_FILE" exec -T "$DB_SERVICE" \
+    psql -U "$DB_USER" -d "$DB_NAME" <<'SQL'
+UPDATE books_images
+SET path = regexp_replace(path, '^https?://[^/]+', '', 'i')
+WHERE path IS NOT NULL AND path <> '';
+
+UPDATE books_images
+SET path = regexp_replace(path, '^.*/uploads/(img/)?', '/img/', 'i')
+WHERE path IS NOT NULL AND path <> '' AND path !~ '^/img/';
+
+UPDATE books_images
+SET path = regexp_replace(path, '^/(images|uploads)/(img/)?', '/img/', 'i')
+WHERE path IS NOT NULL AND path <> '';
+
+UPDATE books_images
+SET path = regexp_replace(path, '^img/', '/img/', 'i')
+WHERE path IS NOT NULL AND path <> '';
+
+UPDATE books_images
+SET path = REPLACE(path, '/img/books/', '/img/book/')
+WHERE path LIKE '/img/books/%';
+
+UPDATE books_images
+SET path = REPLACE(path, '/img/offers/', '/img/offer/')
+WHERE path LIKE '/img/offers/%';
+
+UPDATE images
+SET path = regexp_replace(path, '^https?://[^/]+', '', 'i')
+WHERE path IS NOT NULL AND path <> '';
+
+UPDATE images
+SET path = regexp_replace(path, '^.*/uploads/(img/)?', '/img/', 'i')
+WHERE path IS NOT NULL AND path <> '' AND path !~ '^/img/';
+
+UPDATE images
+SET path = regexp_replace(path, '^/(images|uploads)/(img/)?', '/img/', 'i')
+WHERE path IS NOT NULL AND path <> '';
+
+UPDATE images
+SET path = regexp_replace(path, '^img/', '/img/', 'i')
+WHERE path IS NOT NULL AND path <> '';
+
+UPDATE images
+SET path = REPLACE(path, '/img/books/', '/img/book/')
+WHERE path LIKE '/img/books/%';
+
+UPDATE images
+SET path = REPLACE(path, '/img/offers/', '/img/offer/')
+WHERE path LIKE '/img/offers/%';
+
+UPDATE offers
+SET preview_image = regexp_replace(preview_image, '^https?://[^/]+', '', 'i')
+WHERE preview_image IS NOT NULL AND preview_image <> '';
+
+UPDATE offers
+SET preview_image = regexp_replace(preview_image, '^.*/uploads/(img/)?', '/img/', 'i')
+WHERE preview_image IS NOT NULL AND preview_image <> '' AND preview_image !~ '^/img/';
+
+UPDATE offers
+SET preview_image = regexp_replace(preview_image, '^/(images|uploads)/(img/)?', '/img/', 'i')
+WHERE preview_image IS NOT NULL AND preview_image <> '';
+
+UPDATE offers
+SET preview_image = regexp_replace(preview_image, '^img/', '/img/', 'i')
+WHERE preview_image IS NOT NULL AND preview_image <> '';
+
+UPDATE offers
+SET preview_image = REPLACE(preview_image, '/img/books/', '/img/book/')
+WHERE preview_image LIKE '/img/books/%';
+
+UPDATE offers
+SET preview_image = REPLACE(preview_image, '/img/offers/', '/img/offer/')
+WHERE preview_image LIKE '/img/offers/%';
+SQL
+
   info "Імпорт завершено."
 fi
 
