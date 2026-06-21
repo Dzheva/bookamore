@@ -34,5 +34,6 @@ certs
 .claude/
 backup.sql
 uploads/
-uploads/
-uploads/
+pgdata/
+data/
+
