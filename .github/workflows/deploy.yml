@@ -62,8 +62,11 @@ jobs:
 
             cd "$TARGET_DIR"
             git fetch --all --prune
+            # Примусово скидаємо зміни та видаляємо все зайве, що блокувало деплой
             git reset --hard HEAD
             git clean -ffdx -e '.env' -e 'uploads/' -e 'pgdata/' -e 'data/'
+            
+            # Перемикаємося на актуальну гілку та примусово оновлюємося
             git checkout -f -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
             git reset --hard "origin/${{ github.ref_name }}"
 
@@ -73,6 +76,7 @@ jobs:
               exit 1
             fi
 
+            # Keep env-specific values in sync without storing app secrets in GitHub Actions.
             sed -i "s/^APP_NAME=.*/APP_NAME=$APP_NAME/" .env
             sed -i "s/^FE_PORT=.*/FE_PORT=$FE_PORT/" .env
             sed -i "s/^BE_PORT=.*/BE_PORT=$BE_PORT/" .env

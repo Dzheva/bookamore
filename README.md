@@ -159,6 +159,14 @@ docker-compose -f ./docker-compose-local.yaml up --build -d
 ```bash
 docker-compose -f ./docker-compose-local.yaml down -v
 ```
+
+* **Apply configuration changes and restart the local stack**
+```bash
+docker-compose -f ./docker-compose-local.yaml down
+docker-compose -f ./docker-compose-local.yaml up -d --build
+```
+
+Use this sequence after changes to `nginx-local.conf` or service dependencies so Docker Compose recreates the containers with the updated startup order and Nginx runtime DNS settings.
 ---
 
 ## Required Local Files
