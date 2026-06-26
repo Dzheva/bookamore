@@ -8,7 +8,6 @@ readonly DB_SERVICE="bookamore-db"
 readonly DB_NAME="bookamore-db"
 readonly DB_USER="postgres"
 readonly BACKUP_FILE="backup.sql"
-# Відповідає bind-mount nginx та backend: ./data/uploads → /uploads (backend) та /usr/share/nginx/html/uploads (nginx)
 readonly UPLOADS_DIR="./data/uploads"
 readonly DB_WAIT_INTERVAL=3
 
@@ -28,7 +27,6 @@ die()   { echo -e "${RED}[✗] ПОМИЛКА:${NC} $*" >&2; exit 1; }
 cleanup() { [ -f "$BACKUP_FILE" ] && rm -f "$BACKUP_FILE"; }
 trap cleanup EXIT
 
-# Режим Spring Boot за замовчуванням: fresh schema + seed з data-local.sql
 DDL_AUTO="create"
 SQL_INIT_MODE="always"
 
@@ -52,40 +50,24 @@ if [[ "$sync_choice" =~ ^[Yy]$ ]]; then
 
   info "Синхронізуємо фото..."
   mkdir -p "$UPLOADS_DIR"
-  rsync -avzP --delete "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/uploads/" "$UPLOADS_DIR/"
+  rsync -avzP --no-perms --no-group --no-owner --delete "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/uploads/" "$UPLOADS_DIR/"
 
   info "Встановлюємо права читання для Nginx..."
   find "$UPLOADS_DIR" -type f -exec chmod o+r {} +
   find "$UPLOADS_DIR" -type d -exec chmod o+rx {} +
 
-  # Коли є backup — Spring Boot не повинен перестворювати схему або запускати seed
   DDL_AUTO="none"
   SQL_INIT_MODE="never"
   info "Синхронізацію завершено."
 else
-  info "Синхронізацію пропущено — використовується seed з data-local.sql."
+  info "Синхронізацію пропущено."
 fi
 
-# Нормалізація структури після старих запусків
-# 1. Кейс img/img/... — rsync у попередніх версіях скрипта писав у data/uploads/img/
+# Нормалізація структури папок
 if [ -d "$UPLOADS_DIR/img/img" ]; then
-  warn "Знайдено вкладену структуру img/img — вирівнюємо до img/..."
   rsync -a --remove-source-files "$UPLOADS_DIR/img/img/" "$UPLOADS_DIR/img/"
   find "$UPLOADS_DIR/img/img" -type d -empty -delete
   rmdir "$UPLOADS_DIR/img/img" 2>/dev/null || true
-fi
-# 2. Кейс img/books/ та img/offers/ — VPS зберігає у book/ та offer/
-if [ -d "$UPLOADS_DIR/img/books" ] && [ -n "$(ls -A "$UPLOADS_DIR/img/books" 2>/dev/null)" ]; then
-  warn "Знайдено img/books/ з файлами — переміщаємо до img/book/..."
-  mkdir -p "$UPLOADS_DIR/img/book"
-  rsync -a --remove-source-files "$UPLOADS_DIR/img/books/" "$UPLOADS_DIR/img/book/"
-  find "$UPLOADS_DIR/img/books" -type d -empty -delete 2>/dev/null || true
-fi
-if [ -d "$UPLOADS_DIR/img/offers" ] && [ -n "$(ls -A "$UPLOADS_DIR/img/offers" 2>/dev/null)" ]; then
-  warn "Знайдено img/offers/ з файлами — переміщаємо до img/offer/..."
-  mkdir -p "$UPLOADS_DIR/img/offer"
-  rsync -a --remove-source-files "$UPLOADS_DIR/img/offers/" "$UPLOADS_DIR/img/offer/"
-  find "$UPLOADS_DIR/img/offers" -type d -empty -delete 2>/dev/null || true
 fi
 
 # ─── 2/5 Зупинка старих контейнерів ──────────────────────────────────────────
@@ -104,108 +86,43 @@ done
 info "PostgreSQL готовий."
 
 if [ -f "$BACKUP_FILE" ]; then
-  info "Очищаємо схему та імпортуємо дамп з VPS..."
+  info "Очищаємо схему та імпортуємо дамп..."
   docker compose -f "$COMPOSE_FILE" exec -T "$DB_SERVICE" \
     psql -U "$DB_USER" -d "$DB_NAME" \
     -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
   docker compose -f "$COMPOSE_FILE" exec -T "$DB_SERVICE" \
     psql -U "$DB_USER" -d "$DB_NAME" < "$BACKUP_FILE"
 
-  info "Нормалізуємо шляхи до зображень у локальній БД..."
+  info "Нормалізуємо шляхи до зображень..."
   docker compose -f "$COMPOSE_FILE" exec -T "$DB_SERVICE" \
     psql -U "$DB_USER" -d "$DB_NAME" <<'SQL'
-UPDATE books_images
-SET path = regexp_replace(path, '^https?://[^/]+', '', 'i')
-WHERE path IS NOT NULL AND path <> '';
-
-UPDATE books_images
-SET path = regexp_replace(path, '^.*/uploads/(img/)?', '/img/', 'i')
-WHERE path IS NOT NULL AND path <> '' AND path !~ '^/img/';
-
-UPDATE books_images
-SET path = regexp_replace(path, '^/(images|uploads)/(img/)?', '/img/', 'i')
-WHERE path IS NOT NULL AND path <> '';
-
-UPDATE books_images
-SET path = regexp_replace(path, '^img/', '/img/', 'i')
-WHERE path IS NOT NULL AND path <> '';
-
-UPDATE books_images
-SET path = REPLACE(path, '/img/books/', '/img/book/')
-WHERE path LIKE '/img/books/%';
-
-UPDATE books_images
-SET path = REPLACE(path, '/img/offers/', '/img/offer/')
-WHERE path LIKE '/img/offers/%';
-
-UPDATE images
-SET path = regexp_replace(path, '^https?://[^/]+', '', 'i')
-WHERE path IS NOT NULL AND path <> '';
-
-UPDATE images
-SET path = regexp_replace(path, '^.*/uploads/(img/)?', '/img/', 'i')
-WHERE path IS NOT NULL AND path <> '' AND path !~ '^/img/';
-
-UPDATE images
-SET path = regexp_replace(path, '^/(images|uploads)/(img/)?', '/img/', 'i')
-WHERE path IS NOT NULL AND path <> '';
-
-UPDATE images
-SET path = regexp_replace(path, '^img/', '/img/', 'i')
-WHERE path IS NOT NULL AND path <> '';
-
-UPDATE images
-SET path = REPLACE(path, '/img/books/', '/img/book/')
-WHERE path LIKE '/img/books/%';
-
-UPDATE images
-SET path = REPLACE(path, '/img/offers/', '/img/offer/')
-WHERE path LIKE '/img/offers/%';
-
-UPDATE offers
-SET preview_image = regexp_replace(preview_image, '^https?://[^/]+', '', 'i')
-WHERE preview_image IS NOT NULL AND preview_image <> '';
-
-UPDATE offers
-SET preview_image = regexp_replace(preview_image, '^.*/uploads/(img/)?', '/img/', 'i')
-WHERE preview_image IS NOT NULL AND preview_image <> '' AND preview_image !~ '^/img/';
-
-UPDATE offers
-SET preview_image = regexp_replace(preview_image, '^/(images|uploads)/(img/)?', '/img/', 'i')
-WHERE preview_image IS NOT NULL AND preview_image <> '';
-
-UPDATE offers
-SET preview_image = regexp_replace(preview_image, '^img/', '/img/', 'i')
-WHERE preview_image IS NOT NULL AND preview_image <> '';
-
-UPDATE offers
-SET preview_image = REPLACE(preview_image, '/img/books/', '/img/book/')
-WHERE preview_image LIKE '/img/books/%';
-
-UPDATE offers
-SET preview_image = REPLACE(preview_image, '/img/offers/', '/img/offer/')
-WHERE preview_image LIKE '/img/offers/%';
+UPDATE books_images SET path = regexp_replace(path, '^https?://[^/]+', '', 'i') WHERE path IS NOT NULL AND path <> '';
+UPDATE books_images SET path = regexp_replace(path, '^.*/uploads/(img/)?', '/img/', 'i') WHERE path IS NOT NULL AND path <> '' AND path !~ '^/img/';
+UPDATE books_images SET path = REPLACE(path, '/img/books/', '/img/book/');
+UPDATE books_images SET path = REPLACE(path, '/img/offers/', '/img/offer/');
+UPDATE images SET path = regexp_replace(path, '^https?://[^/]+', '', 'i') WHERE path IS NOT NULL AND path <> '';
+UPDATE images SET path = regexp_replace(path, '^.*/uploads/(img/)?', '/img/', 'i') WHERE path IS NOT NULL AND path <> '' AND path !~ '^/img/';
+UPDATE images SET path = REPLACE(path, '/img/books/', '/img/book/');
+UPDATE images SET path = REPLACE(path, '/img/offers/', '/img/offer/');
+DO $$
+BEGIN
+  IF EXISTS (SELECT FROM information_schema.columns WHERE table_name='offers' AND column_name='preview_image') THEN
+    UPDATE offers SET preview_image = regexp_replace(preview_image, '^https?://[^/]+', '', 'i') WHERE preview_image IS NOT NULL AND preview_image <> '';
+    UPDATE offers SET preview_image = REPLACE(preview_image, '/img/books/', '/img/book/');
+    UPDATE offers SET preview_image = REPLACE(preview_image, '/img/offers/', '/img/offer/');
+  END IF;
+END $$;
 SQL
-
   info "Імпорт завершено."
 fi
 
 # ─── 4/5 Збірка та запуск контейнерів ────────────────────────────────────────
 step "4/5  Збірка та запуск контейнерів"
-export SPRING_JPA_HIBERNATE_DDL_AUTO="$DDL_AUTO"
-export SPRING_SQL_INIT_MODE="$SQL_INIT_MODE"
+SPRING_JPA_HIBERNATE_DDL_AUTO=$DDL_AUTO \
+SPRING_SQL_INIT_MODE=$SQL_INIT_MODE \
 docker compose -f "$COMPOSE_FILE" up -d --build
-unset SPRING_JPA_HIBERNATE_DDL_AUTO SPRING_SQL_INIT_MODE
-info "Контейнери запущено (ddl-auto=$DDL_AUTO, sql.init=$SQL_INIT_MODE)."
+info "Контейнери запущено."
 
 # ─── 5/5 Підсумок ─────────────────────────────────────────────────────────────
 step "5/5  Підсумок"
-echo ""
-echo -e "${GREEN}${BOLD}╔══════════════════════════════════════════╗${NC}"
-echo -e "${GREEN}${BOLD}║   Локальне середовище готове!  ✓         ║${NC}"
-echo -e "${GREEN}${BOLD}╚══════════════════════════════════════════╝${NC}"
-echo ""
-echo -e "  Сайт:       ${BOLD}http://localhost${NC}"
-echo -e "  Swagger UI: ${BOLD}http://localhost/swagger-ui/index.html${NC}"
-echo -e "  БД:         ${BOLD}localhost:5432${NC}  (user: postgres / pw: postgres)"
-echo ""
+echo -e "${GREEN}${BOLD}Локальне середовище готове! ✓${NC}"
