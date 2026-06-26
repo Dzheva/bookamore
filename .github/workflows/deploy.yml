@@ -62,13 +62,12 @@ jobs:
 
             cd "$TARGET_DIR"
             git fetch --all --prune
-            
             # Примусово скидаємо зміни та видаляємо все зайве, що блокувало деплой
             git reset --hard HEAD
-            git clean -fd
+            git clean -ffdx -e '.env' -e 'uploads/' -e 'pgdata/' -e 'data/'
             
             # Перемикаємося на актуальну гілку та примусово оновлюємося
-            git checkout -B "${{ github.ref_name }}"
+            git checkout -f -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
             git reset --hard "origin/${{ github.ref_name }}"
 
             if [ ! -f .env ]; then
