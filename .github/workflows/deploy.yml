@@ -53,28 +53,30 @@ jobs:
             fi
 
             mkdir -p "$TARGET_DIR"
-            cd "$TARGET_DIR"
 
-            # 1. Ініціалізація репозиторію, якщо він ще не клонований
-            if [ ! -d ".git" ]; then
-              git clone https://github.com/Dzheva/bookamore.git .
-            fi
-
-            # 2. Оновлення стану
-            git fetch --all --prune
-            
-            # 3. Перемикання на гілку та очистка
-            git checkout -f "${{ github.ref_name }}"
-            git reset --hard "origin/${{ github.ref_name }}"
-            git clean -ffdx -e '.env' -e 'uploads/' -e 'pgdata/' -e 'data/'
-
-            # 4. Перевірка наявності .env
-            if [ ! -f .env ]; then
-              echo "Missing $TARGET_DIR/.env"
+            if [ ! -d "$TARGET_DIR/.git" ]; then
+              echo "Repository is not initialized in $TARGET_DIR"
+              echo "Run first-time bootstrap clone manually, then rerun the workflow"
               exit 1
             fi
 
-            # 5. Синхронізація налаштувань
+            cd "$TARGET_DIR"
+            git fetch --all --prune
+            # Примусово скидаємо зміни та видаляємо все зайве, що блокувало деплой
+            git reset --hard HEAD
+            git clean -ffdx -e '.env' -e 'uploads/' -e 'pgdata/' -e 'data/' -e 'certs/'
+            
+            # Перемикаємося на актуальну гілку та примусово оновлюємося
+            git checkout -f -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
+            git reset --hard "origin/${{ github.ref_name }}"
+
+            if [ ! -f .env ]; then
+              echo "Missing $TARGET_DIR/.env"
+              echo "Create it from .env.example during VPS bootstrap"
+              exit 1
+            fi
+
+            # Keep env-specific values in sync without storing app secrets in GitHub Actions.
             sed -i "s/^APP_NAME=.*/APP_NAME=$APP_NAME/" .env
             sed -i "s/^FE_PORT=.*/FE_PORT=$FE_PORT/" .env
             sed -i "s/^BE_PORT=.*/BE_PORT=$BE_PORT/" .env
@@ -84,5 +86,4 @@ jobs:
             sed -i "s|^UPLOADS_DIR=.*|UPLOADS_DIR=$UPLOADS_DIR|" .env
             sed -i "s|^CLIENT_URL=.*|CLIENT_URL=$CLIENT_URL|" .env
 
-            # 6. Запуск сервісів
             docker compose -f "$COMPOSE_FILE" --env-file .env up -d --build
