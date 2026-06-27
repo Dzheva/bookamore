@@ -15,7 +15,9 @@ readonly DB_WAIT_INTERVAL=3
 readonly REMOTE_USER="devuser"
 readonly REMOTE_HOST="185.143.145.151"
 readonly REMOTE_DIR="/home/devuser/www/prod"
-readonly REMOTE_DB_CONTAINER="bookamore_prod-bookamore-db-1"
+# container_name прибрано з compose → Docker генерує ім'я як <project>-<service>-<N>
+readonly REMOTE_DB_CONTAINER="bookamore_prod-db-1"
+readonly REMOTE_DB_NAME="bookamore_prod"
 
 # ─── Утиліти виводу ───────────────────────────────────────────────────────────
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; BOLD='\033[1m'; NC='\033[0m'
@@ -37,13 +39,21 @@ for cmd in docker rsync ssh; do
 done
 info "Всі залежності присутні."
 
+# Гарантуємо, що теки завантажень існують і належать поточному користувачу.
+# Інакше Docker bind-mount створить $UPLOADS_DIR як root → rsync і бекенд впадуть
+# з "Permission denied" / "Root upload directory is invalid or missing".
+mkdir -p "$UPLOADS_DIR/img"
+if [ ! -w "$UPLOADS_DIR" ]; then
+  die "'$UPLOADS_DIR' належить root (ймовірно створено Docker). Виконайте: sudo chown -R \$USER:\$USER ${UPLOADS_DIR#./}"
+fi
+
 # ─── 1/5 Синхронізація з VPS ──────────────────────────────────────────────────
 step "1/5  Синхронізація з продакшн-сервером"
 read -rp "Бажаєте оновити дані (БД + фото) з сервера $REMOTE_HOST? [y/N]: " sync_choice
 if [[ "$sync_choice" =~ ^[Yy]$ ]]; then
   info "Створюємо свіжий дамп БД на сервері..."
   ssh "$REMOTE_USER@$REMOTE_HOST" \
-    "docker exec $REMOTE_DB_CONTAINER pg_dump -U postgres $DB_NAME > $REMOTE_DIR/backup.sql"
+    "docker exec $REMOTE_DB_CONTAINER pg_dump -U postgres $REMOTE_DB_NAME > $REMOTE_DIR/backup.sql"
 
   info "Завантажуємо дамп БД..."
   rsync -avzP "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/backup.sql" "./$BACKUP_FILE"
@@ -155,3 +165,10 @@ info "Контейнери запущено."
 # ─── 5/5 Підсумок ─────────────────────────────────────────────────────────────
 step "5/5  Підсумок"
 echo -e "${GREEN}${BOLD}Локальне середовище готове! ✓${NC}"
+echo
+echo -e "${BOLD}Доступні адреси:${NC}"
+echo -e "  Сайт (через Nginx)   ${GREEN}http://localhost:8080/${NC}"
+echo -e "  Frontend (Vite)      ${GREEN}http://localhost:3000/${NC}"
+echo -e "  Swagger UI           ${GREEN}http://localhost:8080/swagger-ui/index.html${NC}"
+echo -e "  OpenAPI JSON         ${GREEN}http://localhost:8080/v3/api-docs${NC}"
+echo -e "  API base             ${GREEN}http://localhost:8080/api/v1/${NC}"
