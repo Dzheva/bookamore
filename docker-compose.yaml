@@ -45,7 +45,7 @@ services:
     ports:
       - "127.0.0.1:${BE_PORT}:8080"
     volumes:
-      - uploads:/app/uploads
+      - ${UPLOADS_DIR}:/app/uploads
     networks:
       - app-network
 
@@ -61,7 +61,7 @@ services:
     ports:
       - "127.0.0.1:${FE_PORT}:80"
     volumes:
-      - uploads:/usr/share/nginx/html/uploads:ro
+      - ${UPLOADS_DIR}:/usr/share/nginx/html/uploads:ro
     networks:
       - app-network
 
@@ -73,9 +73,3 @@ networks:
 volumes:
   db_data:
     name: bookamore_prod_db_data
-  uploads:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${UPLOADS_DIR}
-      o: bind
