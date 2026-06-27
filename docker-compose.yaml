@@ -1,7 +1,6 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: bookamore_prod_db
     restart: unless-stopped
     mem_limit: 512m
     environment:
@@ -24,7 +23,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: bookamore_prod_backend
     restart: unless-stopped
     mem_limit: 512m
     depends_on:
@@ -53,7 +51,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: bookamore_prod_frontend
     restart: unless-stopped
     mem_limit: 512m
     depends_on:
