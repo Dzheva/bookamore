@@ -113,6 +113,35 @@ BEGIN
   END IF;
 END $$;
 SQL
+
+  info "Видаляємо записи зображень, файлів яких немає на диску..."
+  # Перевірку робимо з хоста: контейнер БД не має доступу до $UPLOADS_DIR.
+  # Шлях у БД має вигляд /img/book/<hash>.jpg → nginx /img/ alias віддає
+  # його з $UPLOADS_DIR/img/... Також пробуємо застарілий розклад без під-теки img/.
+  missing=()
+  for tbl in images books_images; do
+    while IFS= read -r p; do
+      [ -z "$p" ] && continue
+      if [ ! -f "${UPLOADS_DIR}${p}" ] && [ ! -f "${UPLOADS_DIR}${p#/img}" ]; then
+        missing+=("$p")
+      fi
+    done < <(docker compose -f "$COMPOSE_FILE" exec -T "$DB_SERVICE" \
+      psql -U "$DB_USER" -d "$DB_NAME" -t -A \
+      -c "SELECT path FROM $tbl WHERE path IS NOT NULL AND path <> '';")
+  done
+
+  if [ "${#missing[@]}" -gt 0 ]; then
+    # унікальні шляхи + екранування одинарних лапок → SQL IN-список
+    in_list=$(printf '%s\n' "${missing[@]}" | sort -u \
+      | sed "s/'/''/g; s/.*/'&'/" | paste -sd, -)
+    docker compose -f "$COMPOSE_FILE" exec -T "$DB_SERVICE" \
+      psql -U "$DB_USER" -d "$DB_NAME" \
+      -c "DELETE FROM books_images WHERE path IN ($in_list); DELETE FROM images WHERE path IN ($in_list);"
+    info "Видалено битих записів зображень: $(printf '%s\n' "${missing[@]}" | sort -u | wc -l)."
+  else
+    info "Битих записів зображень не знайдено."
+  fi
+
   info "Імпорт завершено."
 fi
 
