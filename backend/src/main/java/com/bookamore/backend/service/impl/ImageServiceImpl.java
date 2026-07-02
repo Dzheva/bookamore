@@ -333,7 +333,16 @@ public class ImageServiceImpl implements ImageService {
         //    can never roll back the transaction and leave orphaned images/books_images rows.
         // spike for bookImage
         if (image.getEntityType().equals(EntityType.BOOK)) {
-            bookService.removeImage(image.getEntityId(), path);
+            // The parent book may already be gone (orphaned image whose entity_id points to a
+            // deleted book). Guard with existsById instead of catching the exception: letting
+            // ResourceNotFoundException cross removeImage()'s @Transactional boundary would mark
+            // the shared transaction rollback-only and abort the whole delete (UnexpectedRollback).
+            if (bookRepository.existsById(image.getEntityId())) {
+                bookService.removeImage(image.getEntityId(), path);
+            } else {
+                log.warn("Parent book {} no longer exists for image {}; skipping association cleanup, "
+                        + "deleting image record only.", image.getEntityId(), imageId);
+            }
         }
         imageRepository.delete(image);
 
