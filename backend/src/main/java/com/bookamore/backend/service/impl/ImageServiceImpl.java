@@ -351,6 +351,12 @@ public class ImageServiceImpl implements ImageService {
             log.error("Failed to delete image: {}", e.toString());
             throw new RuntimeException("Failed to delete image!");
         }
+
+        // spike for bookImage
+        if (image.getEntityType().equals(EntityType.BOOK)) {
+            bookService.removeImage(image.getEntityId(), path);
+        }
+
         imageRepository.delete(image);
     }
 }

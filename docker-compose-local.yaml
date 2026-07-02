@@ -5,7 +5,7 @@ services:
       - "8080:80"   # змінено з 80:80 — уникаємо конфлікту з системним Nginx
     volumes:
       - ./nginx-local.conf:/etc/nginx/nginx.conf
-      - uploads_data:/usr/share/nginx/html/uploads:ro   # читає з того ж volume, куди пише backend
+      - ./data/uploads:/usr/share/nginx/html/uploads:ro   # bind-mount: фото з ./data/uploads віддаються через /img/
     depends_on:
       - backend
       - frontend
@@ -24,23 +24,24 @@ services:
       - "8080"
     environment:
       - SPRING_PROFILES_ACTIVE=local
+      # Керовані змінні: setup-dev.sh виставляє mode=never при синку з прод,
+      # щоб демо-сід data-local.sql НЕ заливався поверх реальних даних.
+      # Без явного проброшування сюди docker compose ігнорує host-env.
+      - SPRING_SQL_INIT_MODE=${SPRING_SQL_INIT_MODE:-always}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=${SPRING_JPA_HIBERNATE_DDL_AUTO:-none}
       - SPRING_DATASOURCE_URL=jdbc:postgresql://bookamore-db:5432/bookamore-db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - FILE_UPLOAD_DIR=/app/uploads
+      - FILE_UPLOAD_DIR=/app/uploads/img
       - CLIENT_URL=http://localhost:8080
     volumes:
       - ./backend:/app
       - ~/.m2:/root/.m2
-      - uploads_data:/app/uploads   # named volume — backend пише сюди, nginx читає звідси
+      - ./data/uploads:/app/uploads   # bind-mount: спільна тека з nginx; нові завантаження → data/uploads/img
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+    # healthcheck прибрано: /actuator/health недоступний (spring-boot-starter-actuator
+    # відсутній у pom.xml), тому перевірка завжди давала хибний 'unhealthy'.
 
   bookamore-db:
     image: postgres:16-alpine   # фіксована версія замість latest
@@ -77,16 +78,12 @@ services:
       - backend
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
+    # healthcheck прибрано: Vite dev-образ не містить curl, тому перевірка
+    # давала хибний 'unhealthy' попри робочий сервер на :3000.
 
 volumes:
   pgdata:       # дані PostgreSQL
-  uploads_data: # завантажені файли — shared між backend і nginx
+  # uploads більше не named volume — використовуємо bind-mount ./data/uploads (див. nginx/backend)
 
 networks:
   app-network:
