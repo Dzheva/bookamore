@@ -62,13 +62,12 @@ jobs:
 
             cd "$TARGET_DIR"
             git fetch --all --prune
-            
             # Примусово скидаємо зміни та видаляємо все зайве, що блокувало деплой
             git reset --hard HEAD
-            git clean -fd
+            git clean -ffdx -e '.env' -e 'uploads/' -e 'pgdata/' -e 'data/' -e 'certs/'
             
             # Перемикаємося на актуальну гілку та примусово оновлюємося
-            git checkout -B "${{ github.ref_name }}"
+            git checkout -f -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
             git reset --hard "origin/${{ github.ref_name }}"
 
             if [ ! -f .env ]; then
@@ -87,4 +86,4 @@ jobs:
             sed -i "s|^UPLOADS_DIR=.*|UPLOADS_DIR=$UPLOADS_DIR|" .env
             sed -i "s|^CLIENT_URL=.*|CLIENT_URL=$CLIENT_URL|" .env
 
-            docker compose -f "$COMPOSE_FILE" --env-file .env up -d --build
+            docker compose -f "$COMPOSE_FILE" --env-file .env -p "$APP_NAME" up -d --build --remove-orphans

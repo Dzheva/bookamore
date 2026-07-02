@@ -116,6 +116,13 @@ public class BookServiceImpl implements BookService {
         return bookRepository.save(book);
     }
 
+    @Transactional
+    public void removeImage(UUID bookId, String imagePath) {
+        Book book = getBookEntityById(bookId);
+        book.getImages().removeIf(bookImage -> bookImage.getPath().equals(imagePath));
+        bookRepository.save(book);
+    }
+
     private void resolveReferences(Book book) {
 
         book.setAuthors(resolveAuthors(book));
