@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 @Slf4j
@@ -39,15 +38,19 @@ public class ImageLocalStorageRepositoryImpl implements ImageStorageRepository {
         return Files.exists(location);
     }
 
-    public void deleteImage(String fileName, String subDir) throws IOException {
+    public boolean deleteImage(String fileName, String subDir) throws IOException {
         Path targetLocation = uploadDir.resolve(subDir).normalize().resolve(fileName).normalize();
 
         try {
-            Files.delete(targetLocation);
-            log.info("File '{}' deleted successfully.", targetLocation.toAbsolutePath());
-        } catch (NoSuchFileException e) {
-            log.error("Failed to delete file: the path '{}' does not exist!", targetLocation.toAbsolutePath());
-            throw e;
+            // deleteIfExists() returns false instead of throwing NoSuchFileException
+            // when the file is already gone, so a missing file is not treated as an error.
+            boolean deleted = Files.deleteIfExists(targetLocation);
+            if (deleted) {
+                log.info("File '{}' deleted successfully.", targetLocation.toAbsolutePath());
+            } else {
+                log.warn("File '{}' does not exist; nothing to delete.", targetLocation.toAbsolutePath());
+            }
+            return deleted;
         } catch (IOException e) {
             log.error("Failed to delete file: '{}' due to I/O error.", targetLocation.toAbsolutePath(), e);
             throw e;
