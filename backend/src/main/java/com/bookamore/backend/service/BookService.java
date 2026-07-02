@@ -20,4 +20,6 @@ public interface BookService {
     BookResponse update(UUID bookId, BookUpdateRequest bookRequest);
 
     Book addImage(UUID bookId, String imagePath);
+
+    void removeImage(UUID bookId, String imagePath);
 }
