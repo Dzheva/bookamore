@@ -32,7 +32,7 @@ jobs:
               BE_PORT="3000"
               DB_PORT="5432"
               DB_NAME="bookamore_prod"
-              APP_NAME="bookamore_prod"
+              APP_NAME="bookamore-prod"
               SPRING_PROFILES_ACTIVE="prod"
               UPLOADS_DIR="$TARGET_DIR/uploads"
               CLIENT_URL="https://bookamore.alt-web.biz.ua"
