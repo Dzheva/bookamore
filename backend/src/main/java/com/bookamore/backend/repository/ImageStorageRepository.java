@@ -11,5 +11,5 @@ public interface ImageStorageRepository {
 
     boolean isExists(String fileName, String subDir);
 
-    void deleteImage(String fileName, String subDir) throws IOException;
+    boolean deleteImage(String fileName, String subDir) throws IOException;
 }

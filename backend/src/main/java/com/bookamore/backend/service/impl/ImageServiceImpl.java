@@ -100,7 +100,15 @@ public class ImageServiceImpl implements ImageService {
 
         String path = saveImageToLocalStorage(imageFile, entityType);
 
-        return imageRepository.save(imageMapper.toEntity(imageRequest, path));
+        // If persisting the DB record fails, the transaction rolls back but the file
+        // already written to disk would leak. Remove it to keep file <-> DB atomic.
+        try {
+            return imageRepository.save(imageMapper.toEntity(imageRequest, path));
+        } catch (RuntimeException e) {
+            log.error("Failed to persist image record for path='{}'. Cleaning up orphaned file.", path, e);
+            deletePhysicalFile(path);
+            throw e;
+        }
     }
 
     @Transactional
@@ -321,42 +329,59 @@ public class ImageServiceImpl implements ImageService {
 
         String path = image.getPath();
 
-        String subdir = Pattern.compile(IMAGE_SUBDIR_REGEXP)
-                .matcher(path)
-                .results()
-                .map(m -> m.group(1))
-                .findFirst()
-                .orElseThrow(
-                        () -> {
-                            log.warn("Failed to extract subdirectory from string='{}', imageId='{}'", path, imageId);
-                            return new RuntimeException("Failed to extract subdirectory from path!");
-                        }
-                );
-
-        String fileName = Pattern.compile(IMAGE_FILENAME_REGEXP)
-                .matcher(path)
-                .results()
-                .map(m -> m.group(1))
-                .findFirst()
-                .orElseThrow(
-                        () -> {
-                            log.warn("Failed to extract file name from string='{}', imageId='{}'", path, imageId);
-                            return new RuntimeException("Failed to extract file name from path!");
-                        }
-                );
-
-        try {
-            imageLocalStorageRepository.deleteImage(fileName, subdir);
-        } catch (IOException e) {
-            log.error("Failed to delete image: {}", e.toString());
-            throw new RuntimeException("Failed to delete image!");
-        }
-
+        // 1. Remove DB state first. This way a missing (or already-deleted) physical file
+        //    can never roll back the transaction and leave orphaned images/books_images rows.
         // spike for bookImage
         if (image.getEntityType().equals(EntityType.BOOK)) {
-            bookService.removeImage(image.getEntityId(), path);
+            // The parent book may already be gone (orphaned image whose entity_id points to a
+            // deleted book). Guard with existsById instead of catching the exception: letting
+            // ResourceNotFoundException cross removeImage()'s @Transactional boundary would mark
+            // the shared transaction rollback-only and abort the whole delete (UnexpectedRollback).
+            if (bookRepository.existsById(image.getEntityId())) {
+                bookService.removeImage(image.getEntityId(), path);
+            } else {
+                log.warn("Parent book {} no longer exists for image {}; skipping association cleanup, "
+                        + "deleting image record only.", image.getEntityId(), imageId);
+            }
         }
-
         imageRepository.delete(image);
+
+        // 2. Best-effort physical file removal. The DB is already consistent at this point,
+        //    so a missing file or an I/O error here must not fail the whole operation.
+        deletePhysicalFile(path);
+    }
+
+    /**
+     * Deletes the physical file backing the given image path on a best-effort basis.
+     * A missing file or an I/O error is logged as a warning and swallowed: callers rely
+     * on the DB being the source of truth, so file-system state must not break deletion.
+     */
+    private void deletePhysicalFile(String path) {
+        String subdir = extractPathPart(path, IMAGE_SUBDIR_REGEXP, "subdirectory");
+        String fileName = extractPathPart(path, IMAGE_FILENAME_REGEXP, "file name");
+
+        try {
+            boolean deleted = imageLocalStorageRepository.deleteImage(fileName, subdir);
+            if (!deleted) {
+                log.warn("Physical file already absent for path='{}'. DB state is authoritative.", path);
+            }
+        } catch (IOException e) {
+            log.warn("Failed to delete physical file for path='{}': {}. DB state already consistent.",
+                    path, e.toString());
+        }
+    }
+
+    private String extractPathPart(String path, String regexp, String partName) {
+        return Pattern.compile(regexp)
+                .matcher(path)
+                .results()
+                .map(m -> m.group(1))
+                .findFirst()
+                .orElseThrow(
+                        () -> {
+                            log.warn("Failed to extract {} from string='{}'", partName, path);
+                            return new RuntimeException("Failed to extract " + partName + " from path!");
+                        }
+                );
     }
 }
