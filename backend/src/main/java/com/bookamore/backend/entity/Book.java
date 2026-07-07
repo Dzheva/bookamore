@@ -62,9 +62,11 @@ public class Book extends BaseEntity {
     @BatchSize(size = 10)
     private List<BookGenre> genres = new ArrayList<>();
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "entity_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @org.hibernate.annotations.Where(clause = "entity_type = 'BOOK'")
     @BatchSize(size = 10)
-    private List<BookImage> images = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
 
     @ToString.Include(name = "offerId")
     private String bookIdToString() {

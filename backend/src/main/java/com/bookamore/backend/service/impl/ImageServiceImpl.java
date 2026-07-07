@@ -114,12 +114,6 @@ public class ImageServiceImpl implements ImageService {
     @Transactional
     public ImageResponse save(ImageRequest imageRequest) {
         Image image = saveImage(imageRequest);
-
-        // spike for bookImage
-        if (imageRequest.getEntityType().equals(EntityType.BOOK)) {
-            bookService.addImage(imageRequest.getEntityId(), image.getPath());
-        }
-
         return imageMapper.toResponse(
                 image
         );
