@@ -6,7 +6,6 @@ import com.bookamore.backend.dto.book.BookUpdateRequest;
 import com.bookamore.backend.entity.Book;
 import com.bookamore.backend.entity.BookAuthor;
 import com.bookamore.backend.entity.BookGenre;
-import com.bookamore.backend.entity.BookImage;
 import com.bookamore.backend.entity.enums.BookCondition;
 import com.bookamore.backend.exception.ResourceNotFoundException;
 import com.bookamore.backend.mapper.book.BookMapper;
@@ -14,14 +13,10 @@ import com.bookamore.backend.repository.BookAuthorRepository;
 import com.bookamore.backend.repository.BookGenreRepository;
 import com.bookamore.backend.repository.BookRepository;
 import com.bookamore.backend.service.BookService;
-import com.bookamore.backend.service.ImageService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -94,35 +89,9 @@ public class BookServiceImpl implements BookService {
         return managedGenres;
     }
 
-    private List<BookImage> resolveImages(Book book) {
-        List<BookImage> managedImages = new ArrayList<>();
-        for (BookImage image : book.getImages()) {
-            String path = image.getPath();
-            BookImage newImage = new BookImage();
-            newImage.setPath(path);
-            newImage.setBook(book);
-            managedImages.add(newImage);
-        }
-        return managedImages;
-    }
-
-    // my new method -> hot fix for bookImage
-    public Book addImage(UUID bookId, String imagePath) {
-        Book book = getBookEntityById(bookId);
-        BookImage bookImage = new BookImage();
-        bookImage.setPath(imagePath);
-        bookImage.setBook(book);
-        book.getImages().add(bookImage);
-        return bookRepository.save(book);
-    }
-
     private void resolveReferences(Book book) {
-
         book.setAuthors(resolveAuthors(book));
-
         book.setGenres(resolveGenres(book));
-
-        book.setImages(resolveImages(book));
     }
 
     public Book getBookEntityById(UUID bookId) {

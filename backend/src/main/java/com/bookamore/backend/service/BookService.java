@@ -18,6 +18,4 @@ public interface BookService {
     BookResponse getById(UUID bookId);
 
     BookResponse update(UUID bookId, BookUpdateRequest bookRequest);
-
-    Book addImage(UUID bookId, String imagePath);
 }

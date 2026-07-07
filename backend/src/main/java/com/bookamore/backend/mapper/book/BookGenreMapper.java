@@ -14,7 +14,7 @@ public interface BookGenreMapper {
         return genre;
     }
 
-    default String toName(BookGenre genre){
+    default String toName(BookGenre genre) {
         return genre.getName();
     }
 

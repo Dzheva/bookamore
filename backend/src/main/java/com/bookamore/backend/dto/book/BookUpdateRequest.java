@@ -25,7 +25,7 @@ public class BookUpdateRequest {
     @Schema(example = "A Handbook of Agile Software Craftsmanship.", description = "Book description")
     private String description;
 
-    //TODO Validation
+    //TODO: Validation
     @Schema(example = "9783161484100", description = "ISBN number of the book")
     private String isbn;
 
@@ -37,7 +37,4 @@ public class BookUpdateRequest {
 
     @Schema(example = "[\"Classic\", \"Novel\"]", description = "List of genres")
     private List<String> genres;
-
-    @Schema(example = "[\"image1.jpg\", \"image2.jpg\"]", description = "List of image file names")
-    private List<String> images;
 }
