@@ -1,5 +1,6 @@
 {
   "common": {
+    "exchange": "Обмін",
     "exchangeOnly": "Тільки обмін",
     "searchBarPlaceholder": "Пошук: ім'я, автор, продавець",
     "apply": "Застосувати",
@@ -147,6 +148,7 @@
   "bookDetails": {
     "title": "Деталі книги",
     "description": "Про книгу",
+    "dateAdded": "Дата додавання:",
     "seller": "Власник",
     "similarBooks": "Схожі книги"
   },

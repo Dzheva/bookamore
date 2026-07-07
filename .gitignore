@@ -31,3 +31,9 @@ frontend/.env.development
 .dockerignore
 
 certs
+.claude/
+backup.sql
+uploads/
+pgdata/
+data/
+

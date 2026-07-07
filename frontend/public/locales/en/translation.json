@@ -1,5 +1,6 @@
 {
   "common": {
+    "exchange": "Exchange",
     "exchangeOnly": "Exchange only",
     "searchBarPlaceholder": "Search: name, author, seller",
     "apply": "Apply",
@@ -147,6 +148,7 @@
   "bookDetails": {
     "title": "Book Details",
     "description": "About the book",
+    "dateAdded": "Date added:",
     "seller": "The Owner",
     "similarBooks": "Similar Books"
   },

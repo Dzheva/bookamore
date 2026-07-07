@@ -13,7 +13,7 @@ spring:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
   datasource:
-    url: jdbc:postgresql://localhost:5432/bookamore
+    url: jdbc:postgresql://bookamore-db:5432/bookamore-db  # hostname = сервіс у docker-compose
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -28,7 +28,7 @@ spring:
         format_sql: true
   sql:
     init:
-      mode: never
+      mode: always
       data-locations: classpath:data-local.sql
 
 file:

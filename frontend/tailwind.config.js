@@ -74,6 +74,11 @@ export default {
           200: '#B4E7FF',
           500: '#33A2A7',
         },
+        powder: {
+          50: '#FFF8EB',
+          300: '#FDBD4C',
+          600: '#DB5B04',
+        },
       },
       accentColor: {
         'gray-600': '#4B5563',
