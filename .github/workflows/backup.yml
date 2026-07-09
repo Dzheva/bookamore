@@ -44,8 +44,6 @@ jobs:
           mv /tmp/letsencrypt_backup.tar.gz "$STAGE/letsencrypt.tar.gz"
 
           tar --exclude='.git' --exclude='node_modules' --exclude='target' --exclude='dist' \
-              -czf "$STAGE/devuser_www.tar.gz" -C /home/devuser www
-          tar --exclude='.git' --exclude='node_modules' --exclude='target' --exclude='dist' \
               -czf "$STAGE/deploy_www.tar.gz" -C /home/deploy www
 
           tar -czf "/tmp/full_vps_backup_$DATE.tar.gz" -C /tmp "vps_backup_$DATE"
