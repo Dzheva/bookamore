@@ -15,7 +15,8 @@ services:
       - DB_URL=jdbc:postgresql://db:5432/${DB_NAME}
       - DB_USERNAME=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      # Schema is managed by Liquibase; Hibernate must never alter it.
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRATION=${JWT_EXPIRATION}
       - CLIENT_URL=${CLIENT_URL}
