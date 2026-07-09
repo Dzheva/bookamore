@@ -22,8 +22,8 @@ jobs:
           script: |
             set -euo pipefail
 
-            TARGET_DIR_PROD="/home/devuser/www/prod"
-            TARGET_DIR_DEV="/home/devuser/www/dev"
+            TARGET_DIR_PROD="/home/deploy/www/prod"
+            TARGET_DIR_DEV="/home/deploy/www/dev"
 
             if [ "${{ github.ref_name }}" = "main" ]; then
               TARGET_DIR="$TARGET_DIR_PROD"

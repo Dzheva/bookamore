@@ -25,8 +25,7 @@ services:
       - FACEBOOK_CLIENT_SECRET=${FACEBOOK_CLIENT_SECRET}
     volumes:
       - ./.env:/app/.env
-      # Використовуємо абсолютний шлях для монтування папки з фото
-      - /home/devuser/www/dev/uploads:/app/uploads
+      - ${UPLOADS_DIR}:/app/uploads
     depends_on:
       - db
 
@@ -39,8 +38,7 @@ services:
     ports:
       - "127.0.0.1:${FE_PORT}:80"
     volumes:
-      # Монтуємо ту саму папку, щоб Nginx бачив завантажені фото
-      - /home/devuser/www/dev/uploads:/usr/share/nginx/html/uploads:ro
+      - ${UPLOADS_DIR}:/usr/share/nginx/html/uploads:ro
     depends_on:
       - backend
 

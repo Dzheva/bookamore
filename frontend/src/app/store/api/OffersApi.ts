@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { convertObjectToSearchParams } from '@app/store/helpers/convertToSearchParams.ts';
+import { extractImagePaths } from '@shared/helpers/extractImagePaths';
 
 import type { ListResponse } from '@/types/entities/ListResponse';
 import type {
@@ -13,6 +14,17 @@ import type {
 } from '@/types/entities/OfferWithBook';
 import type { QueryParams } from '@/types/entities/QueryParams';
 import type { RootState } from '../store';
+
+type RawOfferWithBook = Omit<OfferWithBook, 'book'> & {
+  book: Omit<OfferWithBook['book'], 'images'> & {
+    images: Parameters<typeof extractImagePaths>[0];
+  };
+};
+
+const normalizeOfferWithBook = (offer: RawOfferWithBook): OfferWithBook => ({
+  ...offer,
+  book: { ...offer.book, images: extractImagePaths(offer.book.images) },
+});
 
 export const OffersApi = createApi({
   reducerPath: 'offerApi',
@@ -45,9 +57,14 @@ export const OffersApi = createApi({
       query: (params) => {
         return `/with-book?${params ? convertObjectToSearchParams(params) : ''}`;
       },
+      transformResponse: (response: ListResponse<RawOfferWithBook>) => ({
+        ...response,
+        content: response.content.map(normalizeOfferWithBook),
+      }),
     }),
     getOfferWithBookById: build.query<OfferWithBook, string>({
       query: (id) => `/with-book/${id}`,
+      transformResponse: normalizeOfferWithBook,
     }),
     addOfferWithBook: build.mutation<OfferWithBook, OfferWithBookRequest>({
       query: (newOffer) => ({
@@ -55,6 +72,7 @@ export const OffersApi = createApi({
         method: 'POST',
         body: newOffer,
       }),
+      transformResponse: normalizeOfferWithBook,
     }),
     addOffer: build.mutation<Offer, OfferRequest>({
       query: (newOffer) => ({
