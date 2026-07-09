@@ -40,6 +40,9 @@ jobs:
 
           cp /etc/nginx/nginx.conf "$STAGE/nginx/nginx.conf"
 
+          sudo -n /usr/local/sbin/backup-letsencrypt.sh
+          mv /tmp/letsencrypt_backup.tar.gz "$STAGE/letsencrypt.tar.gz"
+
           tar --exclude='.git' --exclude='node_modules' --exclude='target' --exclude='dist' \
               -czf "$STAGE/devuser_www.tar.gz" -C /home/devuser www
           tar --exclude='.git' --exclude='node_modules' --exclude='target' --exclude='dist' \
