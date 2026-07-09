@@ -1,5 +1,6 @@
 package com.bookamore.backend.dto.book;
 
+import com.bookamore.backend.dto.image.ImageShortResponse;
 import com.bookamore.backend.entity.enums.BookCondition;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,5 +21,5 @@ public class BookResponse {
     private BookCondition condition;
     private List<String> authors;
     private List<String> genres;
-    private List<String> images;
+    private List<ImageShortResponse> images;
 }

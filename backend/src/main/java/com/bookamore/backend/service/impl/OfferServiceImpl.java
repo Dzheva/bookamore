@@ -156,7 +156,6 @@ public class OfferServiceImpl implements OfferService {
 
         if (sortBy.equals("authorName")) {
             Specification<Offer> sortSpec = OfferSpecification.sortByBookAuthorName(direction);
-            // Безпечно комбінуємо: якщо фільтр порожній (spec == null), залишається тільки сортування
             spec = (spec == null) ? sortSpec : spec.and(sortSpec);
 
             return offerRepository.findAll(spec, PageRequest.of(page, size));
