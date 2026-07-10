@@ -50,14 +50,16 @@ export function BottomNav() {
   const linkStyle = (isActive: boolean) =>
     clsx(
       'flex flex-wrap items-center justify-center rounded-[16px] w-[56px] h-[32px]',
-      isActive ? 'bg-[#E9EADB] text-[#28666E]' : 'bg-[#28666E] text-[#E9EADB]'
+      isActive
+        ? 'bg-sand-100 text-aquamarine-700'
+        : 'bg-aquamarine-700 text-sand-100'
     );
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-51">
       <nav
         className="
-          bg-[#28666E]
+          bg-aquamarine-700
           min-w-[375px] h-[65px]
           pt-[6px]
           flex justify-around
@@ -78,7 +80,7 @@ export function BottomNav() {
             <div className="pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]">
               <Icon />
             </div>
-            <p className="text-[#E9EADB] font-kyiv">{label}</p>
+            <p className="text-sand-100 font-kyiv">{label}</p>
           </NavLink>
         ))}
       </nav>

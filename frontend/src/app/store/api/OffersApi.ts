@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { convertObjectToSearchParams } from '@app/store/helpers/convertToSearchParams.ts';
-import { extractImagePaths } from '@shared/helpers/extractImagePaths';
 
 import type { ListResponse } from '@/types/entities/ListResponse';
 import type {
@@ -15,19 +14,9 @@ import type {
 import type { QueryParams } from '@/types/entities/QueryParams';
 import type { RootState } from '../store';
 
-type RawOfferWithBook = Omit<OfferWithBook, 'book'> & {
-  book: Omit<OfferWithBook['book'], 'images'> & {
-    images: Parameters<typeof extractImagePaths>[0];
-  };
-};
-
-const normalizeOfferWithBook = (offer: RawOfferWithBook): OfferWithBook => ({
-  ...offer,
-  book: { ...offer.book, images: extractImagePaths(offer.book.images) },
-});
-
 export const OffersApi = createApi({
   reducerPath: 'offerApi',
+  tagTypes: ['Offer'],
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_BASE_API_URL}/offers`,
     prepareHeaders: (headers, { getState }) => {
@@ -46,9 +35,11 @@ export const OffersApi = createApi({
       query: (params) => {
         return params ? `?${convertObjectToSearchParams(params)}` : '';
       },
+      providesTags: () => [{ type: 'Offer', id: 'LIST' }],
     }),
     getOfferById: build.query<Offer, string>({
       query: (id) => `/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Offer', id }],
     }),
     getAllOffersWithBooks: build.query<
       ListResponse<OfferWithBook>,
@@ -57,14 +48,11 @@ export const OffersApi = createApi({
       query: (params) => {
         return `/with-book?${params ? convertObjectToSearchParams(params) : ''}`;
       },
-      transformResponse: (response: ListResponse<RawOfferWithBook>) => ({
-        ...response,
-        content: response.content.map(normalizeOfferWithBook),
-      }),
+      providesTags: () => [{ type: 'Offer', id: 'LIST' }],
     }),
     getOfferWithBookById: build.query<OfferWithBook, string>({
       query: (id) => `/with-book/${id}`,
-      transformResponse: normalizeOfferWithBook,
+      providesTags: (_result, _error, id) => [{ type: 'Offer', id }],
     }),
     addOfferWithBook: build.mutation<OfferWithBook, OfferWithBookRequest>({
       query: (newOffer) => ({
@@ -72,7 +60,6 @@ export const OffersApi = createApi({
         method: 'POST',
         body: newOffer,
       }),
-      transformResponse: normalizeOfferWithBook,
     }),
     addOffer: build.mutation<Offer, OfferRequest>({
       query: (newOffer) => ({
@@ -87,6 +74,10 @@ export const OffersApi = createApi({
         method: 'PATCH',
         body: offerPatchRequest.offer,
       }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Offer', id },
+        { type: 'Offer', id: 'LIST' },
+      ],
     }),
     deleteOfferById: build.mutation<void, string>({
       query: (id) => ({

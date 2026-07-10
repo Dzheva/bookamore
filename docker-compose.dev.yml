@@ -15,8 +15,7 @@ services:
       - DB_URL=jdbc:postgresql://db:5432/${DB_NAME}
       - DB_USERNAME=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      # Schema is managed by Liquibase; Hibernate must never alter it.
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRATION=${JWT_EXPIRATION}
       - CLIENT_URL=${CLIENT_URL}
@@ -26,7 +25,8 @@ services:
       - FACEBOOK_CLIENT_SECRET=${FACEBOOK_CLIENT_SECRET}
     volumes:
       - ./.env:/app/.env
-      - ${UPLOADS_DIR}:/app/uploads
+      # Використовуємо абсолютний шлях для монтування папки з фото
+      - /home/devuser/www/dev/uploads:/app/uploads
     depends_on:
       - db
 
@@ -39,7 +39,8 @@ services:
     ports:
       - "127.0.0.1:${FE_PORT}:80"
     volumes:
-      - ${UPLOADS_DIR}:/usr/share/nginx/html/uploads:ro
+      # Монтуємо ту саму папку, щоб Nginx бачив завантажені фото
+      - /home/devuser/www/dev/uploads:/usr/share/nginx/html/uploads:ro
     depends_on:
       - backend
 

@@ -1,8 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { extractImagePaths } from '@shared/helpers/extractImagePaths';
 import type { Book, BookPatchRequest } from '@/types/entities/Book';
-
-type RawBook = Omit<Book, 'images'> & { images: Parameters<typeof extractImagePaths>[0] };
 
 export const BooksApi = createApi({
   reducerPath: 'booksApi',
@@ -12,10 +9,6 @@ export const BooksApi = createApi({
   endpoints: (build) => ({
     getBookById: build.query<Book, number | string>({
       query: (id) => `/${id}`,
-      transformResponse: (response: RawBook): Book => ({
-        ...response,
-        images: extractImagePaths(response.images),
-      }),
     }),
     updateBookById: build.mutation<Book, BookPatchRequest>({
       query: (bookPatchRequest) => ({

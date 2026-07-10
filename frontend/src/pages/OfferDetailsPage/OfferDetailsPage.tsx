@@ -41,7 +41,7 @@ const OfferDetailsPage: React.FC = () => {
 
   const similarBooksQuery = useGetAllOffersWithBooksQuery(
     offer?.book?.genres?.length
-      ? { genre: offer.book.genres[0] as Category, size: 10 }
+      ? { genres: offer.book.genres[0] as Category, size: 10 }
       : undefined,
     { skip: !offer?.book?.genres?.length }
   );

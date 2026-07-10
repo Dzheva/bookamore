@@ -33,9 +33,9 @@ export function BookCard({ offer, onContact, onFavorite }: BookCardProps) {
         className="flex justify-center w-16 sm:w-20 h-20 sm:h-28 rounded flex-shrink-0
                       lg:w-full lg:h-48 xl:h-56 lg:rounded-t-lg lg:rounded-b-none"
       >
-        {book.images?.[0] ? (
+        {book.images?.[0]?.path ? (
           <img
-            src={book.images[0]}
+            src={book.images[0].path}
             alt={book.title}
             className="w-full h-full object-cover rounded lg:rounded-t-lg lg:rounded-b-none"
           />

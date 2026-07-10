@@ -1,3 +1,8 @@
+export type image = {
+  id: string;
+  path: string;
+};
+
 export type Book = {
   id: string;
   title: string;
@@ -7,7 +12,7 @@ export type Book = {
   condition: BookCondition;
   authors: string[];
   genres: string[];
-  images: string[];
+  images: image[];
 };
 
 export enum BookCondition {

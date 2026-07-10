@@ -85,7 +85,7 @@ const GenreResultsPage: React.FC = () => {
 
   const apiResult = useGetAllOffersWithBooksQuery(
     {
-      genre: genre,
+      genres: genre,
       condition: filters.condition,
     },
     { skip: USE_MOCKS } // Skip API call when using mocks
