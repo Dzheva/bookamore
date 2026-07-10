@@ -107,7 +107,7 @@ const MyAnnouncementsPage = () => {
         )}
 
         {availableBooks.length > 0 && (
-          <section className="px-4 sm:px-6 lg:px-8 xl:px-12">
+          <section className="space-y-5 px-4 sm:px-6 lg:px-8 xl:px-12">
             <h2 className="text-2xl font-bold text-slate-800">
               {t('myAnnouncements.available')}
             </h2>
