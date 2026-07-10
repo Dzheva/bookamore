@@ -1,34 +1,49 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
 import { useGetCurrentUserQuery } from '@/app/store/api/UsersApi.ts';
 import {
   useGetAllOffersWithBooksQuery,
   useUpdateOfferByIdMutation,
 } from '@/app/store/api/OffersApi.ts';
+
 import { BottomNav } from '@/shared/ui/BottomNav';
-import { OfferStatus } from '@/types/entities/Offer';
 import { Button } from '@/shared/ui/Button/Button.tsx';
 import HeaderTitle from '@/shared/ui/HeaderTitle.tsx';
+
 import {
   AnnouncementCard,
   type Announcement,
 } from '@/pages/MyAnnouncementsPage/AnnouncementCard/AnnouncementCard.tsx';
-import { useTranslation } from 'react-i18next';
+
+import { OfferStatus } from '@/types/entities/Offer';
 
 const MyAnnouncementsPage = () => {
   const navigate = useNavigate();
-  const { data: currentUser } = useGetCurrentUserQuery();
-  const [updateOfferById] = useUpdateOfferByIdMutation();
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const { t } = useTranslation();
 
-  const { data: offersWithBooks } = useGetAllOffersWithBooksQuery(
-    currentUser?.id ? { sellerId: currentUser.id, size: 10 } : undefined,
-    { skip: !currentUser?.id }
+  const { data: currentUser } = useGetCurrentUserQuery();
+  const [updateOfferById] = useUpdateOfferByIdMutation();
+
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+
+  const { data: offersWithBooks, isSuccess } = useGetAllOffersWithBooksQuery(
+    currentUser?.id
+      ? {
+          sellerId: currentUser.id,
+          size: 10,
+        }
+      : undefined,
+    {
+      skip: !currentUser?.id,
+    }
   );
 
   useEffect(() => {
-    setAnnouncements(offersWithBooks?.content ?? []);
+    if (offersWithBooks?.content) {
+      setAnnouncements(offersWithBooks.content);
+    }
   }, [offersWithBooks]);
 
   const handleStatusToggle = async (
@@ -49,7 +64,9 @@ const MyAnnouncementsPage = () => {
     try {
       await updateOfferById({
         id: offerId,
-        offer: { status: nextStatus },
+        offer: {
+          status: nextStatus,
+        },
       }).unwrap();
     } catch {
       setAnnouncements((prev) =>
@@ -60,42 +77,43 @@ const MyAnnouncementsPage = () => {
     }
   };
 
-  const availableBooks =
-    announcements.filter((offer) => offer.status === OfferStatus.OPEN) || [];
+  const availableBooks = announcements.filter(
+    (offer) => offer.status === OfferStatus.OPEN
+  );
 
-  const unavailableBooks =
-    announcements.filter((offer) => offer.status !== OfferStatus.OPEN) || [];
+  const unavailableBooks = announcements.filter(
+    (offer) => offer.status !== OfferStatus.OPEN
+  );
+
+  const hasAnnouncements = (offersWithBooks?.content?.length ?? 0) > 0;
 
   return (
     <>
-      {/* Header */}
       <HeaderTitle title={t('myAnnouncements.title')} className="mb-4" />
-      <main className="w-full mx-auto lg:max-w-6xl xl:max-w-7xl mb-[80px] space-y-5">
-        {/* Кнопка додавання нової книги */}
+
+      <main className="mx-auto mb-[80px] w-full space-y-5 lg:max-w-6xl xl:max-w-7xl">
         <section className="px-4 sm:px-6 lg:px-8 xl:px-12">
-          <Button
-            onClick={() => navigate('/offers/new')}
-            // className="px-4 sm:px-6 lg:px-8 xl:px-12 mb-4"
-          >
+          <Button onClick={() => navigate('/offers/new')}>
             {t('myAnnouncements.add')}
           </Button>
         </section>
 
-        {announcements.length === 0 && (
-          <section className="px-4 sm:px-6 lg:px-8 xl:px-12 space-y-5">
-            <h2 className="text-h3m md:text-xl xl:text-2xl font-bold text-slate-800 text-center">
+        {isSuccess && !hasAnnouncements && (
+          <section className="space-y-5 px-4 sm:px-6 lg:px-8 xl:px-12">
+            <h2 className="text-center text-h3m font-bold text-slate-800 md:text-xl xl:text-2xl">
               {t('myAnnouncements.noAnnouncements')}
             </h2>
           </section>
         )}
-        {/* Секція Available */}
+
         {availableBooks.length > 0 && (
           <section className="px-4 sm:px-6 lg:px-8 xl:px-12">
             <h2 className="text-2xl font-bold text-slate-800">
               {t('myAnnouncements.available')}
             </h2>
+
             <div className="space-y-5">
-              {availableBooks?.map((offer) => (
+              {availableBooks.map((offer) => (
                 <AnnouncementCard
                   key={offer.id}
                   offer={offer}
@@ -106,14 +124,14 @@ const MyAnnouncementsPage = () => {
           </section>
         )}
 
-        {/* Секція Unavailable */}
         {unavailableBooks.length > 0 && (
-          <section className="px-4 sm:px-6 lg:px-8 xl:px-12 space-y-5">
+          <section className="space-y-5 px-4 sm:px-6 lg:px-8 xl:px-12">
             <h2 className="text-2xl font-bold text-slate-800">
               {t('myAnnouncements.unavailable')}
             </h2>
+
             <div className="space-y-5">
-              {unavailableBooks?.map((offer) => (
+              {unavailableBooks.map((offer) => (
                 <AnnouncementCard
                   key={offer.id}
                   offer={offer}
@@ -124,6 +142,7 @@ const MyAnnouncementsPage = () => {
           </section>
         )}
       </main>
+
       <BottomNav />
     </>
   );
