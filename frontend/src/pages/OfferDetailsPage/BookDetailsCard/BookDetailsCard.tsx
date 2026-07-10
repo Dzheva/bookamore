@@ -5,7 +5,7 @@ import { BookTitle } from './parts/BookTitle';
 import { PriceBlock } from './parts/PriceBlock';
 
 import type { OfferWithBook } from '@/types/entities/OfferWithBook';
-import type { Book } from '@/types/entities/Book';
+import type { Book, image } from '@/types/entities/Book';
 
 export const BookDetailsCard = ({
   offer,
@@ -16,7 +16,7 @@ export const BookDetailsCard = ({
 }: {
   offer: OfferWithBook;
   book: Book;
-  images: string[];
+  images: image[];
   imgIndex: number;
   setImgIndex: React.Dispatch<React.SetStateAction<number>>;
 }) => {

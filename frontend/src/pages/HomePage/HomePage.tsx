@@ -31,7 +31,7 @@ const HomePage: React.FC = () => {
       title: t('categories.sci-fi'),
       destination: '/genres/sci-fi',
       queryResult: useGetAllOffersWithBooksQuery({
-        genre: 'sci-fi',
+        genres: 'sci-fi',
         size: SECTION_SIZE,
       }),
     },

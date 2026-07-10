@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight } from '@/shared/ui/icons/Arrows';
 import { Badge } from '@/shared/ui/icons/Badge';
 import { useCallback } from 'react';
+import type { image } from '@/types/entities/Book';
 
 import noImages from '@/assest/images/noImage.jpg';
 
@@ -13,7 +14,7 @@ export const BookImageGallery = ({
   title,
   condition,
 }: {
-  images: string[];
+  images: image[];
   index: number;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   title: string;
@@ -40,7 +41,7 @@ export const BookImageGallery = ({
       <div className="relative w-[164px] h-[230px] md:w-[214px] md:h-[300px] lg:w-[264px] lg:h-[370px] xl:w-[314px] xl:h-[440px] rounded-xl overflow-hidden">
         {images[index] ? (
           <img
-            src={`${IMAGE_HOST}${images[index]}`}
+            src={`${IMAGE_HOST}${images[index].path}`}
             alt={title}
             className="w-full h-full object-cover"
           />
