@@ -81,9 +81,16 @@ const MyAnnouncementsPage = () => {
           </Button>
         </section>
 
+        {announcements.length === 0 && (
+          <section className="px-4 sm:px-6 lg:px-8 xl:px-12 space-y-5">
+            <h2 className="text-h3m md:text-xl xl:text-2xl font-bold text-slate-800 text-center">
+              {t('myAnnouncements.noAnnouncements')}
+            </h2>
+          </section>
+        )}
         {/* Секція Available */}
         {availableBooks.length > 0 && (
-          <section className="px-4 sm:px-6 lg:px-8 xl:px-12 space-y-5">
+          <section className="px-4 sm:px-6 lg:px-8 xl:px-12">
             <h2 className="text-2xl font-bold text-slate-800">
               {t('myAnnouncements.available')}
             </h2>

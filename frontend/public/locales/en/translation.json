@@ -183,6 +183,7 @@
     "availableBook": "Available",
     "unavailableBook": "Unavailable",
     "delete": "Delete",
-    "change": "Change Card"
+    "change": "Change Card",
+    "noAnnouncements": "You don't have any announcements yet. Click the button above to add your first book."
   }
 }
