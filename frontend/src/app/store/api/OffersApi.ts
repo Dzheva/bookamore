@@ -16,6 +16,7 @@ import type { RootState } from '../store';
 
 export const OffersApi = createApi({
   reducerPath: 'offerApi',
+  tagTypes: ['Offer'],
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_BASE_API_URL}/offers`,
     prepareHeaders: (headers, { getState }) => {
@@ -34,9 +35,11 @@ export const OffersApi = createApi({
       query: (params) => {
         return params ? `?${convertObjectToSearchParams(params)}` : '';
       },
+      providesTags: () => [{ type: 'Offer', id: 'LIST' }],
     }),
     getOfferById: build.query<Offer, string>({
       query: (id) => `/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Offer', id }],
     }),
     getAllOffersWithBooks: build.query<
       ListResponse<OfferWithBook>,
@@ -45,9 +48,11 @@ export const OffersApi = createApi({
       query: (params) => {
         return `/with-book?${params ? convertObjectToSearchParams(params) : ''}`;
       },
+      providesTags: () => [{ type: 'Offer', id: 'LIST' }],
     }),
     getOfferWithBookById: build.query<OfferWithBook, string>({
       query: (id) => `/with-book/${id}`,
+      providesTags: (_result, _error, id) => [{ type: 'Offer', id }],
     }),
     addOfferWithBook: build.mutation<OfferWithBook, OfferWithBookRequest>({
       query: (newOffer) => ({
@@ -69,6 +74,10 @@ export const OffersApi = createApi({
         method: 'PATCH',
         body: offerPatchRequest.offer,
       }),
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: 'Offer', id },
+        { type: 'Offer', id: 'LIST' },
+      ],
     }),
     deleteOfferById: build.mutation<void, string>({
       query: (id) => ({

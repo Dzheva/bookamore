@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     allowedHosts: true,
-    host: '0.0.0.0', // Приймати з'єднання з будь-якого IP
+    host: '0.0.0.0',
     port: 3000,
     hmr: {
       port: 3000,
@@ -16,8 +16,16 @@ export default defineConfig({
     },
     proxy: {
       '/api/v1': {
-        target: 'http://localhost:8080',
+        target: 'https://bookamore-dev.alt-web.biz.ua',
         changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            proxyReq.setHeader(
+              'Origin',
+              'https://bookamore-dev.alt-web.biz.ua'
+            );
+          });
+        },
       },
     },
   },
