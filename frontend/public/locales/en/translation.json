@@ -130,7 +130,13 @@
     "description": "Add description",
     "descriptionPlaceholder": "Used, in good condition.",
     "publish": "Publish",
-    "publishing": "Publishing..."
+    "publishing": "Publishing...",
+    "update": "Update",
+    "updating": "Updating..."
+  },
+
+  "editBook": {
+    "title": "Edit offer"
   },
 
   "chats": {
@@ -157,7 +163,7 @@
     "title": "Settings",
     "lng": "Language",
     "en": "English",
-    "ua": "Ukrainian",
+    "uk": "Ukrainian",
     "notifications": "Notifications",
     "myProfile": "My Profile",
     "privacyPolicy": "Privacy & Policy"
@@ -167,5 +173,16 @@
     "label": "Language switcher",
     "english": "Switch language to English",
     "ukrainian": "Switch language to Ukrainian"
+  },
+
+  "myAnnouncements": {
+    "title": "My Announcements",
+    "add": "Add a new book",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "availableBook": "Available",
+    "unavailableBook": "Unavailable",
+    "delete": "Delete",
+    "change": "Change Card"
   }
 }

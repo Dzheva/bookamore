@@ -63,21 +63,21 @@ const SettingsPage = () => {
                 <input
                   type="radio"
                   name="language"
-                  checked={currentLng === 'ua'}
-                  onChange={() => changeLanguage('ua')}
+                  checked={currentLng === 'uk'}
+                  onChange={() => changeLanguage('uk')}
                   className="sr-only"
                 />
                 <div
                   className={`w-5 h-5 rounded-full border-2 transition-all ${
-                    currentLng === 'ua' ? 'border-[#004261]' : 'border-gray-300'
+                    currentLng === 'uk' ? 'border-[#004261]' : 'border-gray-300'
                   }`}
                 />
-                {currentLng === 'ua' && (
+                {currentLng === 'uk' && (
                   <div className="absolute w-2.5 h-2.5 bg-[#004261] rounded-full" />
                 )}
               </div>
               <span className="text-slate-600 font-medium">
-                {t('settings.ua')}
+                {t('settings.uk')}
               </span>
             </label>
           </div>

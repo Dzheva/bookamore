@@ -9,7 +9,7 @@ const LANGUAGES = [
     lang: 'en',
   },
   {
-    code: 'ua',
+    code: 'uk',
     label: 'Ua',
     ariaKey: 'languageSwitcher.ukrainian',
     lang: 'uk',
