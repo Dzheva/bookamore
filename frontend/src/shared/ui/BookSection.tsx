@@ -29,7 +29,7 @@ function BookCard({ condition, offer }: BookCardProps) {
   }
 
   // Extract and validate data with defensive checks
-  const bookImage = offer.book.images?.[0];
+  const bookImage = offer.book.images?.[0]?.path;
   const bookTitle = offer.book?.title || 'Unknown Title';
   const authorName = getAuthorName(offer.book?.authors);
   const bookPrice = offer.price?.toFixed(2) || '0.00';
@@ -134,11 +134,15 @@ export function BookSection({
                     ? 'new'
                     : 'used';
                 return (
-                  <BookCard
-                    key={offer.id}
-                    offer={offer}
-                    condition={condition as 'new' | 'used'}
-                  />
+                  <>
+                    {offer.status === 'OPEN' && (
+                      <BookCard
+                        key={offer.id}
+                        offer={offer}
+                        condition={condition as 'new' | 'used'}
+                      />
+                    )}
+                  </>
                 );
               })}
             </div>

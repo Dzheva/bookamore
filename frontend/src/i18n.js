@@ -4,15 +4,15 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 import ICU from 'i18next-icu';
 
-i18n
+export default i18n
   .use(Backend)
   .use(LanguageDetector)
   .use(ICU)
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
-    debug: true,
-
+    supportedLngs: ['en', 'uk'],
+    debug: false,
     interpolation: {
       escapeValue: false,
     },
@@ -21,5 +21,3 @@ i18n
       loadPath: '/locales/{{lng}}/translation.json',
     },
   });
-
-export default i18n;

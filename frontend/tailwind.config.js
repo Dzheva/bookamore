@@ -68,11 +68,15 @@ export default {
           200: '#BFD0C4',
           500: '#577561',
         },
+        sand: {
+          100: '#E9EADB',
+        },
         aquamarine: {
           50: '#F0FBFB',
           100: '#DDF3FF',
           200: '#B4E7FF',
           500: '#33A2A7',
+          700: '#28666E',
         },
         powder: {
           50: '#FFF8EB',
