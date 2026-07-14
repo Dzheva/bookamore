@@ -4,13 +4,16 @@ import { useTranslation } from 'react-i18next';
 
 import { useGetCurrentUserQuery } from '@/app/store/api/UsersApi.ts';
 import {
+  useDeleteOfferByIdMutation,
   useGetAllOffersWithBooksQuery,
   useUpdateOfferByIdMutation,
 } from '@/app/store/api/OffersApi.ts';
+import { useDeleteImageByIdMutation } from '@/app/store/api/ImagesApi';
 
 import { BottomNav } from '@/shared/ui/BottomNav';
 import { Button } from '@/shared/ui/Button/Button.tsx';
 import HeaderTitle from '@/shared/ui/HeaderTitle.tsx';
+import { DeleteModal } from '@/pages/MyAnnouncementsPage/DeleteModal/DeleteModal';
 
 import {
   AnnouncementCard,
@@ -27,6 +30,12 @@ const MyAnnouncementsPage = () => {
   const [updateOfferById] = useUpdateOfferByIdMutation();
 
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [selectedOfferIdToDelete, setSelectedOfferIdToDelete] = useState<
+    string | null
+  >(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteImageById] = useDeleteImageByIdMutation();
+  const [deleteOfferById] = useDeleteOfferByIdMutation();
 
   const { data: offersWithBooks, isSuccess } = useGetAllOffersWithBooksQuery(
     currentUser?.id
@@ -45,6 +54,77 @@ const MyAnnouncementsPage = () => {
       setAnnouncements(offersWithBooks.content);
     }
   }, [offersWithBooks]);
+
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight;
+
+    if (selectedOfferIdToDelete !== null) {
+      const scrollBarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+
+      document.body.style.overflow = 'hidden';
+      if (scrollBarWidth > 0) {
+        document.body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
+    }
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
+    };
+  }, [selectedOfferIdToDelete]);
+
+  const handleDelete = (offerId: string) => {
+    setAnnouncements((prev) => prev.filter((offer) => offer.id !== offerId));
+  };
+
+  const handleDeleteRequest = (offerId: string) => {
+    setSelectedOfferIdToDelete(offerId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedOfferIdToDelete) {
+      return;
+    }
+
+    const offerToDelete = announcements.find(
+      (offer) => offer.id === selectedOfferIdToDelete
+    );
+
+    if (!offerToDelete) {
+      setSelectedOfferIdToDelete(null);
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      const imageIds =
+        offerToDelete.book.images?.map((image) => image.id) ?? [];
+
+      if (imageIds.length > 0) {
+        await Promise.all(
+          imageIds.map((imageId) => deleteImageById(imageId).unwrap())
+        );
+      }
+
+      await deleteOfferById(selectedOfferIdToDelete).unwrap();
+      handleDelete(selectedOfferIdToDelete);
+    } catch (error) {
+      console.error('Failed to delete offer', error);
+    } finally {
+      setIsDeleting(false);
+      setSelectedOfferIdToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setSelectedOfferIdToDelete(null);
+  };
 
   const handleStatusToggle = async (
     offerId: string,
@@ -118,6 +198,7 @@ const MyAnnouncementsPage = () => {
                   key={offer.id}
                   offer={offer}
                   onToggleStatus={handleStatusToggle}
+                  onDeleteRequest={handleDeleteRequest}
                 />
               ))}
             </div>
@@ -136,12 +217,20 @@ const MyAnnouncementsPage = () => {
                   key={offer.id}
                   offer={offer}
                   onToggleStatus={handleStatusToggle}
+                  onDeleteRequest={handleDeleteRequest}
                 />
               ))}
             </div>
           </section>
         )}
       </main>
+
+      <DeleteModal
+        isOpen={selectedOfferIdToDelete !== null}
+        isLoading={isDeleting}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+      />
 
       <BottomNav />
     </>

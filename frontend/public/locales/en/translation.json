@@ -185,5 +185,12 @@
     "delete": "Delete",
     "change": "Change Card",
     "noAnnouncements": "You don't have any announcements yet. Click the button above to add your first book."
+  },
+
+  "deleteModal": {
+    "warning": "Warning!",
+    "confirmation": "Are you sure you want to delete this announcement? This action cannot be undone.",
+    "confirmButton": "Yes, delete",
+    "cancelButton": "No, cancel"
   }
 }

@@ -127,24 +127,19 @@ export function BookSection({
 
           {!isLoading && !error && offers.length > 0 && (
             <div className="flex gap-5 overflow-x-auto scrollbar-custom pb-3">
-              {offers.map((offer) => {
-                // Validate book condition exists before accessing
-                const condition =
-                  offer.book?.condition?.toLowerCase() === 'new'
-                    ? 'new'
-                    : 'used';
-                return (
-                  <>
-                    {offer.status === 'OPEN' && (
-                      <BookCard
-                        key={offer.id}
-                        offer={offer}
-                        condition={condition as 'new' | 'used'}
-                      />
-                    )}
-                  </>
-                );
-              })}
+              {offers
+                .filter((offer) => offer.status === 'OPEN')
+                .map((offer) => (
+                  <BookCard
+                    key={offer.id}
+                    offer={offer}
+                    condition={
+                      offer.book?.condition?.toLowerCase() === 'new'
+                        ? 'new'
+                        : 'used'
+                    }
+                  />
+                ))}
             </div>
           )}
         </div>
