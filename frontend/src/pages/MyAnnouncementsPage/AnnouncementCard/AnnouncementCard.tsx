@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
-import { FaTrashAlt, FaEdit } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
 import { OfferStatus, type OfferType } from '@/types/entities/Offer';
 import type { Book } from '@/types/entities/Book';
-import { StatusSwitch } from '@/pages/MyAnnouncementsPage/StatusSwitch/StatusSwitch.tsx';
+import { StatusSwitch } from '@/pages/MyAnnouncementsPage/AnnouncementCard/StatusSwitch/StatusSwitch';
+import { DeleteOfferButton } from '@/pages/MyAnnouncementsPage/AnnouncementCard/DeleteOfferButton/DeleteOfferButton';
 import noImages from '@/assest/images/noImage.jpg';
 import { SynchronizeArrows } from '@/shared/ui/icons/Arrows';
 import { useTranslation } from 'react-i18next';
@@ -21,11 +22,13 @@ export interface Announcement {
 interface AnnouncementCardProps {
   offer: Announcement;
   onToggleStatus: (offerId: string, currentStatus: OfferStatus) => void;
+  onDeleteRequest: (offerId: string) => void;
 }
 
 export const AnnouncementCard = ({
   offer,
   onToggleStatus,
+  onDeleteRequest,
 }: AnnouncementCardProps) => {
   const [localStatus, setLocalStatus] = useState<OfferStatus>(offer.status);
   const [entered, setEntered] = useState(false);
@@ -92,10 +95,7 @@ export const AnnouncementCard = ({
     <div className={`flex flex-col ${animationClasses}`}>
       {/* Кнопки над карткою */}
       <div className="flex mb-[-1px]">
-        <button className="flex items-center gap-2 px-6 py-2 border border-red-200 border-b-white rounded-t-xl text-red-500 text-sm font-medium bg-white">
-          <FaTrashAlt size={14} />
-          {t('myAnnouncements.delete')}
-        </button>
+        <DeleteOfferButton offer={offer} onDeleteRequest={onDeleteRequest} />
         <button
           className={`flex items-center gap-2 px-6 py-2 border ${btnBorderColor} border-b-white rounded-t-xl ${accentColor} text-sm font-medium bg-white`}
         >
