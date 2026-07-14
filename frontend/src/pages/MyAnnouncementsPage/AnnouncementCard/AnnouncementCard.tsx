@@ -125,7 +125,7 @@ export const AnnouncementCard = ({
           {/* Перемикач статусу */}
           <StatusSwitch status={localStatus} onToggle={handleToggle} />
 
-          <h3 className="text-xl font-bold text-text-black tracaking-tight line-clamp-1">
+          <h3 className="text-xl font-bold text-text-black tracking-tight line-clamp-1">
             {offer.book.title}
           </h3>
           <p className="text-sm text-text-black italic">
