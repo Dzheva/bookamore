@@ -21,6 +21,7 @@ import {
 } from '@/pages/MyAnnouncementsPage/AnnouncementCard/AnnouncementCard.tsx';
 
 import { OfferStatus } from '@/types/entities/Offer';
+import { BookSection } from './BookSection/BookSection';
 
 const MyAnnouncementsPage = () => {
   const navigate = useNavigate();
@@ -187,41 +188,29 @@ const MyAnnouncementsPage = () => {
         )}
 
         {availableBooks.length > 0 && (
-          <section className="space-y-5 px-4 sm:px-6 lg:px-8 xl:px-12">
-            <h2 className="text-2xl font-bold text-slate-800">
-              {t('myAnnouncements.available')}
-            </h2>
-
-            <div className="space-y-5">
-              {availableBooks.map((offer) => (
-                <AnnouncementCard
-                  key={offer.id}
-                  offer={offer}
-                  onToggleStatus={handleStatusToggle}
-                  onDeleteRequest={handleDeleteRequest}
-                />
-              ))}
-            </div>
-          </section>
+          <BookSection title={t('myAnnouncements.available')}>
+            {availableBooks.map((offer) => (
+              <AnnouncementCard
+                key={offer.id}
+                offer={offer}
+                onToggleStatus={handleStatusToggle}
+                onDeleteRequest={handleDeleteRequest}
+              />
+            ))}
+          </BookSection>
         )}
 
         {unavailableBooks.length > 0 && (
-          <section className="space-y-5 px-4 sm:px-6 lg:px-8 xl:px-12">
-            <h2 className="text-2xl font-bold text-slate-800">
-              {t('myAnnouncements.unavailable')}
-            </h2>
-
-            <div className="space-y-5">
-              {unavailableBooks.map((offer) => (
-                <AnnouncementCard
-                  key={offer.id}
-                  offer={offer}
-                  onToggleStatus={handleStatusToggle}
-                  onDeleteRequest={handleDeleteRequest}
-                />
-              ))}
-            </div>
-          </section>
+          <BookSection title={t('myAnnouncements.unavailable')}>
+            {unavailableBooks.map((offer) => (
+              <AnnouncementCard
+                key={offer.id}
+                offer={offer}
+                onToggleStatus={handleStatusToggle}
+                onDeleteRequest={handleDeleteRequest}
+              />
+            ))}
+          </BookSection>
         )}
       </main>
 
