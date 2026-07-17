@@ -39,7 +39,7 @@ function BookCard({ condition, offer }: BookCardProps) {
       to={`/offers/${offer.id}`}
       className="relative flex flex-col w-[108px] sm:w-[140px] lg:w-[160px] flex-shrink-0 focus-visible:border-grass-500 focus-visible:border-2 outline-0 rounded-lg overflow-hidden"
     >
-      <div className="relative aspect-[3/4] overflow-hidden rounded-lg">
+      <div className="relative aspect-[3/5] overflow-hidden rounded-lg">
         <img
           src={bookImage ? `${IMAGE_HOST}${bookImage}` : noImages}
           alt={bookTitle}

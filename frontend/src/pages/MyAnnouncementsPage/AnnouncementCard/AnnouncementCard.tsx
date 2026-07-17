@@ -108,7 +108,7 @@ export const AnnouncementCard = ({
         className={`flex gap-4 p-4 border-2 ${cardColor} rounded-r-2xl rounded-bl-2xl shadow-sm`}
       >
         {/* Обкладинка */}
-        <div className="w-28 h-40 shrink-0 shadow-md overflow-hidden rounded-md border border-gray-200">
+        <div className="w-28 h-43 shrink-0 shadow-md overflow-hidden rounded-md border border-gray-200">
           <img
             src={
               offer.book.images?.[0]?.path
