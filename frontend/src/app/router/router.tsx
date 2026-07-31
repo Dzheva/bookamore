@@ -16,6 +16,7 @@ import ProfilePage from '@/pages/ProfilePage/ProfilePage';
 import MyAnnouncementsPage from '@/pages/MyAnnouncementsPage/MyAnnouncementsPage';
 import OrdersPage from '@/pages/OrdersPage/OrdersPage';
 import SettingsPage from '@/pages/SettingsPage/SettingsPage';
+import { ProtectedRoute } from '@shared/components/ProtectedRoute.tsx';
 
 export const router = createBrowserRouter([
   {
@@ -23,12 +24,24 @@ export const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
+    path: '/offers/:offerId/edit',
+    element: (
+      <ProtectedRoute>
+        <NewOfferPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/offers/:offerId',
     element: <OfferDetailsPage />,
   },
   {
     path: '/offers/new',
-    element: <NewOfferPage />,
+    element: (
+      <ProtectedRoute>
+        <NewOfferPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/favorites',
@@ -64,26 +77,50 @@ export const router = createBrowserRouter([
   },
   {
     path: '/chats',
-    element: <AllChatsPage />,
+    element: (
+      <ProtectedRoute>
+        <AllChatsPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/chats/:chatId',
-    element: <ChatPage />,
+    element: (
+      <ProtectedRoute>
+        <ChatPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/profile',
-    element: <ProfilePage />,
+    element: (
+      <ProtectedRoute>
+        <ProfilePage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/my-announcements',
-    element: <MyAnnouncementsPage />,
+    element: (
+      <ProtectedRoute>
+        <MyAnnouncementsPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/orders',
-    element: <OrdersPage />,
+    element: (
+      <ProtectedRoute>
+        <OrdersPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/settings',
-    element: <SettingsPage />,
+    element: (
+      <ProtectedRoute>
+        <SettingsPage />
+      </ProtectedRoute>
+    ),
   },
 ]);

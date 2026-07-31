@@ -15,8 +15,10 @@ const HomePage: React.FC = () => {
       title: t('categories.new'),
       destination: '/search?condition=new',
       queryResult: useGetAllOffersWithBooksQuery({
-        condition: 'new',
+        page: 0,
         size: SECTION_SIZE,
+        sortBy: 'createdDate',
+        sortDir: 'desc',
       }),
     },
     {

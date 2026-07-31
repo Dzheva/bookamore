@@ -121,22 +121,25 @@
   },
 
   "sellBook": {
-    "title": "Sell book",
+    "create": {
+      "title": "Sell book",
+      "submit": "Publish",
+      "loading": "Publishing..."
+    },
+
+    "edit": {
+      "title": "Edit book",
+      "submit": "Update",
+      "loading": "Updating..."
+    },
+
     "bookTitle": "Book title",
     "author": "Author",
     "genres": "Genres",
     "genresPlaceholder": "Add genres",
     "uploadPhoto": "Upload photo",
     "description": "Add description",
-    "descriptionPlaceholder": "Used, in good condition.",
-    "publish": "Publish",
-    "publishing": "Publishing...",
-    "update": "Update",
-    "updating": "Updating..."
-  },
-
-  "editBook": {
-    "title": "Edit offer"
+    "descriptionPlaceholder": "Used, in good condition."
   },
 
   "chats": {
