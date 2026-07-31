@@ -5,10 +5,18 @@ export function convertObjectToSearchParams<T extends object>(
 
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      if (typeof value === 'number') {
-        value = value.toString();
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          if (item !== undefined && item !== null) {
+            searchParams.append(key, String(item));
+          }
+        });
+      } else {
+        if (typeof value === 'number') {
+          value = value.toString();
+        }
+        searchParams.append(key, String(value));
       }
-      searchParams.append(key, String(value));
     }
   });
 

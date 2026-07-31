@@ -62,7 +62,9 @@ export const AnnouncementCard = ({
       ? 'border-[#A1D9D6] bg-[#F2FBFB]'
       : 'border-[#FFD9A1] bg-[#FFF9F2]';
   const accentColor =
-    localStatus === 'OPEN' ? 'text-[#008080]' : 'text-[#E68A00]';
+    localStatus === 'OPEN'
+      ? 'text-[#008080] hover:bg-aquamarine-50'
+      : 'text-[#E68A00] hover:bg-orange-50';
   const btnBorderColor =
     localStatus === 'OPEN' ? 'border-[#A1D9D6]' : 'border-[#FFD9A1]';
 
@@ -96,11 +98,13 @@ export const AnnouncementCard = ({
       {/* Кнопки над карткою */}
       <div className="flex mb-[-1px]">
         <DeleteOfferButton offer={offer} onDeleteRequest={onDeleteRequest} />
-        <button
-          className={`flex items-center gap-2 px-6 py-2 border ${btnBorderColor} border-b-white rounded-t-xl ${accentColor} text-sm font-medium bg-white`}
-        >
-          <FaEdit size={14} /> {t('myAnnouncements.change')}
-        </button>
+        <a href={`/offers/${offer.id}/edit`}>
+          <div
+            className={`flex items-center gap-2 px-6 py-2 border ${btnBorderColor} border-b-white rounded-t-xl ${accentColor} text-sm font-medium bg-white`}
+          >
+            <FaEdit size={14} /> {t('myAnnouncements.change')}
+          </div>
+        </a>
       </div>
 
       {/* Основне тіло картки */}
