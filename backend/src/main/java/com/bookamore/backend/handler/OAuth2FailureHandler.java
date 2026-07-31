@@ -16,14 +16,16 @@ import java.io.IOException;
 @Component
 public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    @Value("${CLIENT_URL}")
+    // CLIENT_URL may hold a comma-separated list (used as-is for CORS) — redirects use the
+    // first origin, trailing slashes stripped so the callback path is not doubled up
+    @Value("#{'${CLIENT_URL}'.split(',')[0].trim().replaceAll('/+$', '')}")
     private String clientUrl;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.info("OAuth2 login failed: {}", exception.getMessage());
+        log.warn("OAuth2 login failed: {}", exception.getMessage());
 
-        String redirectUrl = UriComponentsBuilder.fromUriString(clientUrl + "/login")
+        String redirectUrl = UriComponentsBuilder.fromUriString(clientUrl + OAuth2SuccessHandler.OAUTH2_CALLBACK_PATH)
                 .queryParam("error", "oauth2_login_failed")
                 .build().toUriString();
 

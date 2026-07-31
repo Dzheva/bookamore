@@ -9,6 +9,7 @@ import { FormField } from '@/shared/ui/FormField';
 import { AuthHeader } from '@/shared/ui/AuthHeader';
 import { validators } from '@/shared/helpers/validators';
 import { SocialAuthButton } from '@/shared/ui/SocialAuthButton';
+import { startOAuth2Login } from '@/shared/helpers/oauth2';
 import { useTranslation } from 'react-i18next';
 
 interface ValidationError {
@@ -212,7 +213,7 @@ const SignUpPage: React.FC = () => {
           <div className="flex flex-col max-w-fit mx-auto">
             <SocialAuthButton
               provider="google"
-              onClick={() => console.log('Google auth')}
+              onClick={() => startOAuth2Login('google')}
             />
 
             <SocialAuthButton

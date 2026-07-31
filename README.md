@@ -192,6 +192,30 @@ nano backend/src/main/resources/.env
 
 ---
 
+## Google OAuth2 Setup
+
+`GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` come from a Google Cloud Console OAuth 2.0 Client
+(type *Web application*). Two things must be registered there, per environment:
+
+**Authorized redirect URIs** — the Spring callback, `{origin}/login/oauth2/code/google`:
+
+| Environment | URI |
+|---|---|
+| Local Docker | `http://localhost:8080/login/oauth2/code/google` |
+| Dev | `https://bookamore-dev.alt-web.biz.ua/login/oauth2/code/google` |
+| Prod | `https://bookamore.alt-web.biz.ua/login/oauth2/code/google` |
+
+**Authorized JavaScript origins** — the same origins without a path.
+
+`CLIENT_URL` must point at the origin the browser uses. When it holds a comma-separated list
+(it doubles as the CORS allow-list), OAuth2 redirects use the **first** entry, so keep the
+environment's own origin first.
+
+The flow only works behind Nginx, since Google will not redirect to the bare Vite dev server:
+use `docker-compose-local.yaml` rather than `npm run dev` to exercise social login locally.
+
+---
+
 ### File Naming Conventions
 
 Some configuration files are not committed to the repository.  

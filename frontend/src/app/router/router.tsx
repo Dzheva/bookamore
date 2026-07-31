@@ -5,6 +5,7 @@ import { FavoritesPage } from '@pages/FavoritesPage/FavoritesPage.tsx';
 import { SearchResultsPage } from '@pages/SearchResultsPage/SearchResultsPage.tsx';
 import { SignInPage } from '@pages/SignInPage/SignInPage.tsx';
 import { SignUpPage } from '@pages/SignUpPage/SignUpPage.tsx';
+import { OAuth2CallbackPage } from '@pages/OAuth2CallbackPage/OAuth2CallbackPage.tsx';
 import { RestorePasswordPage } from '@pages/RestorePasswordPage/RestorePasswordPage.tsx';
 import { VerificationCodePage } from '@/pages/VerificationCodePage/VerificationCodePage';
 import { UpdatePasswordPage } from '@pages/UpdatePasswordPage/UpdatePasswordPage.tsx';
@@ -61,6 +62,10 @@ export const router = createBrowserRouter([
   {
     path: '/sign-up',
     element: <SignUpPage />,
+  },
+  {
+    path: '/oauth2/callback',
+    element: <OAuth2CallbackPage />,
   },
   {
     path: '/chats',

@@ -93,7 +93,8 @@
     "passwordsDoNotMatch": "Passwords do not match",
     "authError": "Invalid email or password",
     "emailInUse": "Email is already in use",
-    "RegisterError": "Registration failed. Please try again"
+    "RegisterError": "Registration failed. Please try again",
+    "oauthError": "Social login failed. Please try again"
   },
 
   "passwordValidator": {

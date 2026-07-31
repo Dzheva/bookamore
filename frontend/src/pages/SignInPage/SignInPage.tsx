@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router';
 import { useLoginMutation } from '@app/store/api/AuthApi';
 import { useDispatch } from 'react-redux';
@@ -11,6 +11,7 @@ import { FormField } from '@/shared/ui/FormField';
 import { AuthHeader } from '@/shared/ui/AuthHeader';
 import { validators } from '@/shared/helpers/validators';
 import { SocialAuthButton } from '@/shared/ui/SocialAuthButton';
+import { startOAuth2Login } from '@/shared/helpers/oauth2';
 import { useTranslation } from 'react-i18next';
 
 interface ValidationError {
@@ -40,6 +41,13 @@ const SignInPage: React.FC = () => {
 
   const [login, { isLoading }] = useLoginMutation();
   const [getCurrentUser] = useLazyGetCurrentUserQuery();
+
+  // OAuth2CallbackPage sends the user back here when the social login did not go through
+  useEffect(() => {
+    if (location.state?.oauthError) {
+      setErrors({ form: 'validation.oauthError' });
+    }
+  }, [location.state]);
 
   const clearFieldError = (field: keyof SignInFormData) => {
     setErrors((prev) => ({
@@ -182,7 +190,7 @@ const SignInPage: React.FC = () => {
           <div className="flex flex-col max-w-fit mx-auto">
             <SocialAuthButton
               provider="google"
-              onClick={() => console.log('Google auth')}
+              onClick={() => startOAuth2Login('google')}
             />
 
             <SocialAuthButton
