@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<title>TFB-010 — Google OAuth2.0: блок-схема флоу розробки</title>
+<style>
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+         margin: 32px auto; max-width: 1600px; color: #212121; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  h2 { font-size: 18px; margin-top: 36px; border-top: 1px solid #E0E0E0; padding-top: 16px; }
+  .meta { color: #616161; font-size: 14px; margin-bottom: 20px; }
+  .legend { display: flex; gap: 24px; align-items: center; font-size: 14px; margin: 12px 0 24px; }
+  .swatch { display: inline-block; width: 18px; height: 18px; border-radius: 3px;
+            vertical-align: -4px; margin-right: 6px; }
+  .done { background: #BBDEFB; border: 2px solid #1976D2; }
+  .todo { background: #FFFFFF; border: 1px solid #9E9E9E; }
+  .sync { background: #FFF3E0; border: 2px solid #EF6C00; }
+  .note { background: #FAFAFA; border-left: 3px solid #1976D2; padding: 10px 14px;
+          font-size: 14px; margin: 16px 0; }
+  a { color: #1565C0; }
+</style>
+</head>
+<body>
+
+<h1>TFB-010 — Google OAuth2.0: блок-схема флоу розробки</h1>
+<div class="meta">
+  Гілка <code>TFB-010-oauth2-callback-and-nginx</code> · коміт <code>cc1f029</code> · 02.08.2026 ·
+  таблиці блоків — у <a href="TFB-010-oauth2-flow.md">TFB-010-oauth2-flow.md</a>
+</div>
+
+<div class="legend">
+  <span><span class="swatch done"></span>реалізовано в коді</span>
+  <span><span class="swatch todo"></span>ще треба зробити</span>
+  <span><span class="swatch sync"></span>точка взаємодії доріжок</span>
+</div>
+
+<h2>1. Три доріжки розробки та точки їх взаємодії</h2>
+
+<pre class="mermaid">
+flowchart TD
+    classDef done fill:#BBDEFB,stroke:#1976D2,stroke-width:2px,color:#0D2B45
+    classDef todo fill:#FFFFFF,stroke:#9E9E9E,stroke-width:1px,color:#212121
+    classDef sync fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#3E2723
+
+    subgraph BE["БЕКЕНД · Spring Boot"]
+        direction TB
+        BE1["BE-1 · SecurityConfig: oauth2Login у фільтр-ланцюгу"]
+        BE2["BE-2 · CustomOidcUserService: обмін code, профіль Google"]
+        BE3["BE-3 · OAuth2ServiceImpl: find-or-create User, лінк AuthProvider по email"]
+        BE4["BE-4 · Entity AuthProvider + Liquibase, unique provider+provider_user_id"]
+        BE5["BE-5 · OAuth2SuccessHandler: видача JWT, редирект на CLIENT_URL/oauth2/callback?token="]
+        BE6["BE-6 · OAuth2FailureHandler: редирект з ?error=oauth2_login_failed"]
+        BE7["BE-7 · Нормалізація CLIENT_URL через SpEL: перше значення, без хвостових слешів"]
+        BE8["BE-8 · application-local/dev/prod.yaml читають ключі GOOGLE"]
+        BE9["BE-9 · Юніт-тести OAuth2ServiceImpl: create, link, відмова без email"]
+        BE10["BE-10 · Чистка логів: прибрати WORKING та System.out.println CORS"]
+        BE1 --> BE2 --> BE3 --> BE4 --> BE5 --> BE6 --> BE7 --> BE8 --> BE9 --> BE10
+    end
+
+    subgraph FE["ФРОНТЕНД · React SPA"]
+        direction TB
+        FE1["FE-1 · SocialAuthButton на SignIn та SignUp"]
+        FE2["FE-2 · shared/helpers/oauth2.ts: startOAuth2Login через window.location.href"]
+        FE3["FE-3 · Підключення хендлерів замість console.log на обох сторінках"]
+        FE4["FE-4 · Маршрут /oauth2/callback у router.tsx"]
+        FE5["FE-5 · OAuth2CallbackPage: читає ?token=, setCredentials, getCurrentUser, navigate replace"]
+        FE6["FE-6 · Гард useRef проти подвійного монтування у StrictMode"]
+        FE7["FE-7 · Банер помилки та ключ validation.oauthError у локалях en та uk"]
+        FE8["FE-8 · Ручний чеклист з 10 пунктів на docker-compose-local"]
+        FE9["FE-9 · Захист приватних маршрутів та повернення на сторінку через sessionStorage"]
+        FE10["FE-10 · Аватар: не додавати VITE_IMAGE_HOST, якщо URL уже абсолютний"]
+        FE11["FE-11 · RTL-тести колбека: token, error, порожній query, подвійний маунт"]
+        FE12["FE-12 · Кнопка Facebook після провіженгу ключів FACEBOOK"]
+        FE1 --> FE2 --> FE3 --> FE4 --> FE5 --> FE6 --> FE7 --> FE8 --> FE9 --> FE10 --> FE11 --> FE12
+    end
+
+    subgraph OPS["DEVOPS · Nginx, GCP, VPS"]
+        direction TB
+        OPS1["OPS-1 · nginx-local.conf: вузька локація oauth2/authorization та login/oauth2/code"]
+        OPS2["OPS-2 · frontend/nginx.conf: та сама локація для контейнера"]
+        OPS3["OPS-3 · frontend/nginx-prod.conf: та сама локація"]
+        OPS4["OPS-4 · deploy/nginx.conf: OAuth2-локації у prod та dev блоках"]
+        OPS5["OPS-5 · X-Forwarded-Proto у dev-блоці для /api/ та OAuth2"]
+        OPS6["OPS-6 · compose передає ключі GOOGLE у бекенд"]
+        OPS7["OPS-7 · GCP Console: OAuth client, JavaScript origin та redirect URI для local, dev, prod"]
+        OPS8["OPS-8 · Consent screen: додати тестерів або опублікувати застосунок"]
+        OPS9["OPS-9 · Перевірити .env на VPS до мержу: інакше не стартує Spring"]
+        OPS10["OPS-10 · PR у dev, автодеплой через deploy.yml"]
+        OPS11["OPS-11 · Хостовий nginx на VPS вручну: бекап, локації, nginx -t, reload"]
+        OPS12["OPS-12 · Верифікація curl: 302 на Google, https у redirect_uri, 200 html на колбеку"]
+        OPS13["OPS-13 · Реальний логін у браузері та перевірка рядка в auth_providers"]
+        OPS14["OPS-14 · Повторити GCP, nginx та curl для прода після зеленого dev"]
+        OPS15["OPS-15 · Виключити /oauth2/callback з access_log, щоб JWT не осідав у логах"]
+        OPS1 --> OPS2 --> OPS3 --> OPS4 --> OPS5 --> OPS6 --> OPS7 --> OPS8 --> OPS9 --> OPS10 --> OPS11 --> OPS12 --> OPS13 --> OPS14 --> OPS15
+    end
+
+    S1{{"СИНХРО-1 · Контракт редиректу: бекенд шле на /oauth2/callback, SPA володіє цим маршрутом"}}
+    S2{{"СИНХРО-2 · Контракт маршрутизації: authorization та code у бекенд, callback у SPA"}}
+    S3{{"СИНХРО-3 · Контракт середовища: CLIENT_URL, ключі GOOGLE, redirect URI у GCP збігаються з origin"}}
+    S4{{"СИНХРО-4 · Наскрізна приймальна перевірка на dev, потім на прод"}}
+
+    BE5 -.-> S1
+    BE6 -.-> S1
+    S1 -.-> FE4
+    S1 -.-> FE5
+
+    FE4 -.-> S2
+    OPS4 -.-> S2
+    S2 -.-> OPS11
+
+    BE7 -.-> S3
+    BE8 -.-> S3
+    OPS7 -.-> S3
+    OPS9 -.-> S3
+
+    FE8 -.-> S4
+    OPS12 -.-> S4
+    OPS13 -.-> S4
+    BE9 -.-> S4
+
+    class BE1,BE2,BE3,BE4,BE5,BE6,BE7,BE8 done
+    class BE9,BE10 todo
+    class FE1,FE2,FE3,FE4,FE5,FE6,FE7 done
+    class FE8,FE9,FE10,FE11,FE12 todo
+    class OPS1,OPS2,OPS3,OPS4,OPS5,OPS6 done
+    class OPS7,OPS8,OPS9,OPS10,OPS11,OPS12,OPS13,OPS14,OPS15 todo
+    class S1,S2,S3,S4 sync
+</pre>
+
+<h2>2. Рантайм-флоу логіну</h2>
+
+<div class="note">
+  Увесь ланцюг уже написаний. Не працює він лише там, де ще не виконані кроки DevOps-доріжки (OPS-7…OPS-14).
+</div>
+
+<pre class="mermaid">
+flowchart LR
+    classDef done fill:#BBDEFB,stroke:#1976D2,stroke-width:2px,color:#0D2B45
+    classDef ext fill:#F5F5F5,stroke:#616161,stroke-width:1px,color:#212121
+
+    R1["1 · Браузер: клік Continue with Google, повний перехід на /oauth2/authorization/google"]
+    R2["2 · Nginx: локація збігається, проксі у бекенд, а не у SPA"]
+    R3["3 · Spring: редирект на consent screen, redirect_uri = origin + /login/oauth2/code/google"]
+    R4["4 · Google: автентифікація та згода користувача"]
+    R5["5 · Бекенд: обмін code на профіль, пошук або створення User та AuthProvider"]
+    R6["6 · SuccessHandler: видає власний JWT, редирект на CLIENT_URL/oauth2/callback?token="]
+    R7["7 · SPA: колбек кладе токен у store та localStorage, тягне current-user, веде на головну"]
+
+    R1 --> R2 --> R3 --> R4 --> R5 --> R6 --> R7
+
+    class R1,R2,R3,R5,R6,R7 done
+    class R4 ext
+</pre>
+
+<div class="note">
+  Токен приїжджає <b>query-параметром після повного перезавантаження сторінки</b>, а не JSON-відповіддю.
+  Redux-стан на цей момент порожній, навігацію переживає лише <code>localStorage</code> —
+  тому колбек-сторінка першою дією робить <code>setCredentials</code>.
+</div>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'base', flowchart: { htmlLabels: true, useMaxWidth: true } });
+</script>
+
+</body>
+</html>

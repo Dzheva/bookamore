@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="1310" viewBox="0 0 1560 1310" font-family="DejaVu Sans, Segoe UI, Roboto, sans-serif">
+<rect width="1560" height="1310" fill="#FFFFFF"/>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1976D2"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#607D8B"/></marker></defs>
+<text x="48" y="62" font-size="30" font-weight="700" fill="#1A237E">Google OAuth2.0 у Bookamore — як працює вхід</text>
+<text x="48" y="94" font-size="17" fill="#546E7A">Браузер ніколи не говорить з Google від імені застосунку — до Google ходить бекенд. SPA лише йде за редиректами.</text>
+<text x="48" y="118" font-size="15" fill="#546E7A">TFB-010 · гілка TFB-010-oauth2-callback-and-nginx · коміт cc1f029</text>
+<rect x="30" y="150" width="320" height="64" rx="10" fill="#BBDEFB" stroke="#1976D2" stroke-width="2"/>
+<text x="190" y="177" font-size="17" font-weight="700" fill="#0D2B45" text-anchor="middle">Браузер · React SPA</text>
+<text x="190" y="199" font-size="13" fill="#0D2B45" opacity="0.75" text-anchor="middle">bookamore.alt-web.biz.ua</text>
+<line x1="190" y1="214" x2="190" y2="1232" stroke="#1976D2" stroke-width="2" stroke-dasharray="6 7" opacity="0.55"/>
+<rect x="430" y="150" width="320" height="64" rx="10" fill="#BBDEFB" stroke="#1976D2" stroke-width="2"/>
+<text x="590" y="177" font-size="17" font-weight="700" fill="#0D2B45" text-anchor="middle">Nginx</text>
+<text x="590" y="199" font-size="13" fill="#0D2B45" opacity="0.75" text-anchor="middle">хостовий + у контейнері</text>
+<line x1="590" y1="214" x2="590" y2="1232" stroke="#1976D2" stroke-width="2" stroke-dasharray="6 7" opacity="0.55"/>
+<rect x="830" y="150" width="320" height="64" rx="10" fill="#BBDEFB" stroke="#1976D2" stroke-width="2"/>
+<text x="990" y="177" font-size="17" font-weight="700" fill="#0D2B45" text-anchor="middle">Backend · Spring Boot</text>
+<text x="990" y="199" font-size="13" fill="#0D2B45" opacity="0.75" text-anchor="middle">Spring Security oauth2Login</text>
+<line x1="990" y1="214" x2="990" y2="1232" stroke="#1976D2" stroke-width="2" stroke-dasharray="6 7" opacity="0.55"/>
+<rect x="1230" y="150" width="320" height="64" rx="10" fill="#ECEFF1" stroke="#607D8B" stroke-width="2"/>
+<text x="1390" y="177" font-size="17" font-weight="700" fill="#263238" text-anchor="middle">Google</text>
+<text x="1390" y="199" font-size="13" fill="#263238" opacity="0.75" text-anchor="middle">accounts.google.com</text>
+<line x1="1390" y1="214" x2="1390" y2="1232" stroke="#607D8B" stroke-width="2" stroke-dasharray="6 7" opacity="0.55"/>
+<line x1="204" y1="300" x2="576" y2="300" stroke="#1976D2" stroke-width="2.6" marker-end="url(#ah)"/>
+<text x="390" y="285" font-size="15" font-weight="600" fill="#1A237E" text-anchor="middle">Клік «Continue with Google»</text>
+<text x="390" y="326" font-size="13.5" fill="#546E7A" text-anchor="middle">GET /oauth2/authorization/google — повна навігація сторінки, не fetch</text>
+<circle cx="200" cy="300" r="15" fill="#1A237E"/>
+<text x="200" y="305" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">1</text>
+<line x1="604" y1="388" x2="976" y2="388" stroke="#1976D2" stroke-width="2.6" marker-end="url(#ah)"/>
+<text x="790" y="373" font-size="15" font-weight="600" fill="#1A237E" text-anchor="middle">proxy_pass до backend:8080</text>
+<text x="790" y="414" font-size="13.5" fill="#546E7A" text-anchor="middle">location ~ ^/(oauth2/authorization|login/oauth2/code)/  +  X-Forwarded-Proto $scheme</text>
+<circle cx="600" cy="388" r="15" fill="#1A237E"/>
+<text x="600" y="393" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">2</text>
+<line x1="976" y1="476" x2="204" y2="476" stroke="#1976D2" stroke-width="2.6" marker-end="url(#ah)"/>
+<text x="590" y="461" font-size="15" font-weight="600" fill="#1A237E" text-anchor="middle">302 Location: accounts.google.com/o/oauth2/v2/auth</text>
+<text x="590" y="502" font-size="13.5" fill="#546E7A" text-anchor="middle">redirect_uri = {origin}/login/oauth2/code/google — будується з X-Forwarded-* заголовків</text>
+<circle cx="980" cy="476" r="15" fill="#1A237E"/>
+<text x="980" y="481" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">3</text>
+<line x1="204" y1="564" x2="1376" y2="564" stroke="#607D8B" stroke-width="2.6" marker-end="url(#ahg)"/>
+<text x="790" y="549" font-size="15" font-weight="600" fill="#1A237E" text-anchor="middle">Екран згоди: автентифікація користувача</text>
+<text x="790" y="590" font-size="13.5" fill="#546E7A" text-anchor="middle">scopes: openid, profile, email</text>
+<circle cx="200" cy="564" r="15" fill="#1A237E"/>
+<text x="200" y="569" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">4</text>
+<line x1="1376" y1="652" x2="204" y2="652" stroke="#607D8B" stroke-width="2.6" marker-end="url(#ahg)"/>
+<text x="790" y="637" font-size="15" font-weight="600" fill="#1A237E" text-anchor="middle">302 назад на застосунок з authorization code</text>
+<text x="790" y="678" font-size="13.5" fill="#546E7A" text-anchor="middle">/login/oauth2/code/google?code=…</text>
+<circle cx="1380" cy="652" r="15" fill="#1A237E"/>
+<text x="1380" y="657" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">5</text>
+<line x1="204" y1="740" x2="976" y2="740" stroke="#1976D2" stroke-width="2.6" marker-end="url(#ah)"/>
+<text x="590" y="725" font-size="15" font-weight="600" fill="#1A237E" text-anchor="middle">Колбек з code — через ту саму локацію Nginx</text>
+<text x="590" y="766" font-size="13.5" fill="#546E7A" text-anchor="middle">SPA цей URL не бачить: він іде у бекенд, а не в React Router</text>
+<circle cx="200" cy="740" r="15" fill="#1A237E"/>
+<text x="200" y="745" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">6</text>
+<line x1="1004" y1="828" x2="1376" y2="828" stroke="#607D8B" stroke-width="2.6" marker-end="url(#ahg)" marker-start="url(#ahg)"/>
+<text x="1190" y="813" font-size="15" font-weight="600" fill="#1A237E" text-anchor="middle">Server-to-server: обмін code на токени та профіль</text>
+<text x="1190" y="854" font-size="13.5" fill="#546E7A" text-anchor="middle">CustomOidcUserService — браузер у цьому обміні не бере участі</text>
+<circle cx="1000" cy="828" r="15" fill="#1A237E"/>
+<text x="1000" y="833" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">7</text>
+<rect x="354" y="885" width="610" height="62" rx="8" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+<text x="372" y="910" font-size="15" font-weight="600" fill="#1A237E">OAuth2ServiceImpl: find-or-create User, лінк AuthProvider по email</text>
+<text x="372" y="933" font-size="13.5" fill="#546E7A">OAuth2SuccessHandler видає власний JWT застосунку</text>
+<circle cx="990" cy="916" r="15" fill="#1A237E"/>
+<text x="990" y="921" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">8</text>
+<line x1="976" y1="1004" x2="204" y2="1004" stroke="#1976D2" stroke-width="2.6" marker-end="url(#ah)"/>
+<text x="590" y="989" font-size="15" font-weight="600" fill="#1A237E" text-anchor="middle">302 на {CLIENT_URL}/oauth2/callback?token=&lt;JWT&gt;</text>
+<text x="590" y="1030" font-size="13.5" fill="#546E7A" text-anchor="middle">при невдачі — /oauth2/callback?error=oauth2_login_failed</text>
+<circle cx="980" cy="1004" r="15" fill="#1A237E"/>
+<text x="980" y="1009" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">9</text>
+<rect x="216" y="1061" width="610" height="62" rx="8" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
+<text x="234" y="1086" font-size="15" font-weight="600" fill="#1A237E">OAuth2CallbackPage: setCredentials → localStorage</text>
+<text x="234" y="1109" font-size="13.5" fill="#546E7A">GET /api/v1/user/current-user → navigate(&#x27;/&#x27;, replace: true)</text>
+<circle cx="190" cy="1092" r="15" fill="#1A237E"/>
+<text x="190" y="1097" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">10</text>
+<rect x="48" y="1234" width="1464" height="58" rx="8" fill="#F5F7FA" stroke="#CFD8DC"/>
+<text x="70" y="1256" font-size="14" fill="#1A237E">Токен приїжджає query-параметром після повного перезавантаження сторінки, а не JSON-відповіддю: Redux-стан на цей момент порожній.</text>
+<text x="70" y="1279" font-size="14" fill="#546E7A">Навігацію переживає лише localStorage — тому колбек-сторінка першою дією робить setCredentials, а перехід іде з replace: true, щоб токен не лишився в історії.</text>
+</svg>
