@@ -1,0 +1,165 @@
+# Bookamore PROD на GCP e2-micro (Always Free): 1 GB RAM, 2 shared vCPU, 30 GB standard PD.
+#
+# Чим відрізняється від docker-compose.yaml (звичайний VPS):
+#   * образи ТЯГНУТЬСЯ з GHCR, а не збираються тут — Maven/npm build не влазить у 1 GB;
+#   * жодного порту не опубліковано на хості: єдиний вхід — Cloudflare Tunnel,
+#     який ходить до frontend по внутрішній docker-мережі за іменем сервісу;
+#   * mem_limit підібрані так, щоб сума (≈730 MB) лишила ядру й docker-демону запас;
+#   * логи обмежені по розміру, бо диск теж у безкоштовному ліміті.
+#
+# Запуск на VM:
+#   docker compose -f docker-compose.gcp.yaml --env-file .env up -d
+name: bookamore-prod
+
+# Кільцевий буфер логів: без цього json-file росте, доки не забʼє 30 GB диска.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    mem_limit: 192m
+    logging: *default-logging
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      # Дефолтний initdb рахує checksums і чекає fsync — на shared vCPU це довго.
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    # Тюнінг під 1 GB RAM. Дефолтні shared_buffers=128MB самі зʼїли б чверть машини,
+    # а паралельні воркери на 2 shared vCPU дають більше накладних витрат, ніж користі.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=48MB
+      - -c
+      - effective_cache_size=192MB
+      - -c
+      - work_mem=2MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - max_connections=25
+      - -c
+      - max_parallel_workers_per_gather=0
+      - -c
+      - max_parallel_workers=0
+      - -c
+      - wal_buffers=2MB
+      - -c
+      - min_wal_size=128MB
+      - -c
+      - max_wal_size=512MB
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - app-network
+
+  backend:
+    # Образ збирає CI і публікує в GHCR — див. .github/workflows/deploy.yml
+    image: ${BACKEND_IMAGE}
+    pull_policy: always
+    restart: unless-stopped
+    mem_limit: 460m
+    logging: *default-logging
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # JVM під контейнер на 460 MB. -Xss256k навмисно агресивний (вимога задачі):
+      # якщо в логах зʼявиться StackOverflowError на глибоких Hibernate/Spring-проксі —
+      # підняти до 512k, це перша річ, яку варто послабити.
+      # UseSerialGC + TieredStopAtLevel=1 знімають з JVM і памʼять, і CPU на shared vCPU.
+      # ExitOnOutOfMemoryError потрібен, щоб контейнер помер і рестартнувся, а не завис.
+      JAVA_TOOL_OPTIONS: >-
+        -Xms128m
+        -Xmx256m
+        -Xss256k
+        -XX:MaxMetaspaceSize=160m
+        -XX:ReservedCodeCacheSize=48m
+        -XX:MaxDirectMemorySize=32m
+        -XX:+UseSerialGC
+        -XX:TieredStopAtLevel=1
+        -XX:+ExitOnOutOfMemoryError
+        -Dfile.encoding=UTF-8
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      # Пул на 5 зʼєднань: кожен backend-конекшн коштує памʼяті і в JVM, і в Postgres.
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 5
+      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: 1
+      # Менше потоків Tomcat — менше стеків і менше одночасних запитів до пулу.
+      SERVER_TOMCAT_THREADS_MAX: 20
+      SERVER_TOMCAT_THREADS_MIN_SPARE: 2
+      SERVER_TOMCAT_ACCEPT_COUNT: 50
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      CLIENT_URL: ${CLIENT_URL}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      FACEBOOK_CLIENT_ID: ${FACEBOOK_CLIENT_ID}
+      FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_FACEBOOK_CLIENT_ID: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_FACEBOOK_CLIENT_ID}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_FACEBOOK_CLIENT_SECRET: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_FACEBOOK_CLIENT_SECRET}
+      SWAGGER_SERVER_URL: ${SWAGGER_SERVER_URL}
+    volumes:
+      - uploads:/app/uploads
+    networks:
+      - app-network
+
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    pull_policy: always
+    restart: unless-stopped
+    mem_limit: 32m
+    logging: *default-logging
+    depends_on:
+      - backend
+    volumes:
+      # Той самий том, що й у backend: nginx роздає з нього /img/, backend туди пише.
+      - uploads:/usr/share/nginx/html/uploads:ro
+    networks:
+      - app-network
+
+  cloudflared:
+    # :latest тримаємо свідомо — тунель має лишатись сумісним з edge Cloudflare.
+    # Автооновлення всередині контейнера вимкнене; версію піднімає docker compose pull.
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    mem_limit: 48m
+    logging: *default-logging
+    depends_on:
+      - frontend
+    # Токен передаємо через TUNNEL_TOKEN, а не аргументом команди:
+    # інакше він світився б у `docker ps` і в `ps aux` на хості.
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    command: tunnel --no-autoupdate --metrics 0.0.0.0:2000 run
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    name: bookamore_prod_network
+    driver: bridge
+
+volumes:
+  # Іменовані томи, а не bind-mount: переживають `docker compose down` і перестворення
+  # контейнерів, і не залежать від шляхів на конкретній VM.
+  db_data:
+    name: bookamore_prod_db_data
+  uploads:
+    name: bookamore_prod_uploads

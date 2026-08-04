@@ -1,4 +1,4 @@
-name: Deploy to VPS
+name: Deploy
 
 on:
   push:
@@ -6,11 +6,125 @@ on:
       - main
       - dev
 
+# Два деплої одночасно в те саме середовище ламають docker compose на місці.
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: bookamore
+
 jobs:
-  deploy:
+  # PROD їде на GCP e2-micro (1 GB RAM), де збірка Maven/npm гарантовано впаде по OOM.
+  # Тому образи збираються тут, у CI, а на VM лише `docker compose pull`.
+  build-images:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - component: backend
+            context: ./backend
+          - component: frontend
+            context: ./frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute lowercase image name
+        id: image
+        run: echo "name=${REGISTRY}/${GITHUB_REPOSITORY_OWNER,,}/${IMAGE_PREFIX}-${{ matrix.component }}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.component }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.context }}/Dockerfile
+          push: true
+          # :latest — щоб .env на VM не треба було чіпати руками,
+          # :<sha> — щоб завжди можна було відкотитись на конкретний коміт.
+          tags: |
+            ${{ steps.image.outputs.name }}:latest
+            ${{ steps.image.outputs.name }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.component }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.component }}
+
+  deploy-prod-gcp:
+    if: github.ref_name == 'main'
+    needs: build-images
     runs-on: ubuntu-latest
     permissions: {}
+    steps:
+      - name: Compute image refs
+        id: image
+        run: |
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "backend=${REGISTRY}/${OWNER}/${IMAGE_PREFIX}-backend:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          echo "frontend=${REGISTRY}/${OWNER}/${IMAGE_PREFIX}-frontend:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
 
+      - name: Deploy on GCP e2-micro via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          BACKEND_IMAGE: ${{ steps.image.outputs.backend }}
+          FRONTEND_IMAGE: ${{ steps.image.outputs.frontend }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GHCR_PULL_TOKEN }}
+        with:
+          host: ${{ secrets.GCP_VM_HOST }}
+          username: ${{ secrets.GCP_VM_USER }}
+          key: ${{ secrets.GCP_SSH_KEY }}
+          script_stop: true
+          envs: BACKEND_IMAGE,FRONTEND_IMAGE,GHCR_USER,GHCR_TOKEN
+          script: |
+            set -euo pipefail
+
+            TARGET_DIR="/opt/bookamore"
+            COMPOSE_FILE="docker-compose.gcp.yaml"
+
+            cd "$TARGET_DIR"
+
+            if [ ! -f .env ]; then
+              echo "Missing $TARGET_DIR/.env — create it during VM bootstrap (deploy/gcp/README.md)"
+              exit 1
+            fi
+
+            # Тягнемо лише compose-файл і конфіги; збірки тут не буде.
+            git fetch --all --prune
+            git reset --hard origin/main
+            git clean -ffdx -e '.env'
+
+            # Приватний пакет у GHCR вимагає логіну. Якщо пакет публічний —
+            # секрет GHCR_PULL_TOKEN можна не заводити, крок просто пропуститься.
+            if [ -n "${GHCR_TOKEN:-}" ]; then
+              echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            fi
+
+            # Пінимо конкретні образи цього коміта — деплой стає відтворюваним.
+            sed -i "s|^BACKEND_IMAGE=.*|BACKEND_IMAGE=$BACKEND_IMAGE|" .env
+            sed -i "s|^FRONTEND_IMAGE=.*|FRONTEND_IMAGE=$FRONTEND_IMAGE|" .env
+
+            docker compose -f "$COMPOSE_FILE" --env-file .env pull
+            docker compose -f "$COMPOSE_FILE" --env-file .env up -d --remove-orphans
+
+            # 30 GB диска у безкоштовному ліміті: старі шари накопичуються швидко.
+            docker image prune -f
+
+  # DEV лишається на старому VPS зі збіркою на місці — там вистачає RAM.
+  deploy-dev-vps:
+    if: github.ref_name == 'dev'
+    runs-on: ubuntu-latest
+    permissions: {}
     steps:
       - name: Deploy on VPS via SSH
         uses: appleboy/ssh-action@v1.2.0
@@ -22,35 +136,16 @@ jobs:
           script: |
             set -euo pipefail
 
-            TARGET_DIR_PROD="/home/deploy/www/prod"
-            TARGET_DIR_DEV="/home/deploy/www/dev"
-
-            if [ "${{ github.ref_name }}" = "main" ]; then
-              TARGET_DIR="$TARGET_DIR_PROD"
-              COMPOSE_FILE="docker-compose.yaml"
-              FE_PORT="3432"
-              BE_PORT="3000"
-              DB_PORT="5432"
-              DB_NAME="bookamore_prod"
-              APP_NAME="bookamore-prod"
-              SPRING_PROFILES_ACTIVE="prod"
-              UPLOADS_DIR="$TARGET_DIR/uploads"
-              CLIENT_URL="https://bookamore.alt-web.biz.ua"
-            elif [ "${{ github.ref_name }}" = "dev" ]; then
-              TARGET_DIR="$TARGET_DIR_DEV"
-              COMPOSE_FILE="docker-compose.dev.yml"
-              FE_PORT="3433"
-              BE_PORT="3001"
-              DB_PORT="5433"
-              DB_NAME="bookamore_dev"
-              APP_NAME="bookamore_dev"
-              SPRING_PROFILES_ACTIVE="dev"
-              UPLOADS_DIR="$TARGET_DIR/uploads"
-              CLIENT_URL="https://bookamore-dev.alt-web.biz.ua"
-            else
-              echo "Unsupported branch: ${{ github.ref_name }}"
-              exit 1
-            fi
+            TARGET_DIR="/home/deploy/www/dev"
+            COMPOSE_FILE="docker-compose.dev.yml"
+            FE_PORT="3433"
+            BE_PORT="3001"
+            DB_PORT="5433"
+            DB_NAME="bookamore_dev"
+            APP_NAME="bookamore_dev"
+            SPRING_PROFILES_ACTIVE="dev"
+            UPLOADS_DIR="$TARGET_DIR/uploads"
+            CLIENT_URL="https://bookamore-dev.alt-web.biz.ua"
 
             mkdir -p "$TARGET_DIR"
 
@@ -65,10 +160,10 @@ jobs:
             # Примусово скидаємо зміни та видаляємо все зайве, що блокувало деплой
             git reset --hard HEAD
             git clean -ffdx -e '.env' -e 'uploads/' -e 'pgdata/' -e 'data/' -e 'certs/'
-            
+
             # Перемикаємося на актуальну гілку та примусово оновлюємося
-            git checkout -f -B "${{ github.ref_name }}" "origin/${{ github.ref_name }}"
-            git reset --hard "origin/${{ github.ref_name }}"
+            git checkout -f -B dev origin/dev
+            git reset --hard origin/dev
 
             if [ ! -f .env ]; then
               echo "Missing $TARGET_DIR/.env"
