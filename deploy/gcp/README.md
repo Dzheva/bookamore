@@ -89,11 +89,11 @@ e2-micro — це 1024 MB, з яких ядру та системі лишаєт
 ### 3.1 Команда створення
 
 ```bash
-PROJECT_ID="<ваш-проєкт>"
+PROJECT_ID="bookamore-prod"
 
 gcloud compute instances create bookamore-prod \
   --project="$PROJECT_ID" \
-  --zone=us-central1-a \
+  --zone=us-east1-b \
   --machine-type=e2-micro \
   --image-family=ubuntu-2404-lts-amd64 \
   --image-project=ubuntu-os-cloud \
@@ -115,12 +115,26 @@ gcloud compute instances create bookamore-prod \
 `docker pull` з GHCR і сам тунель до Cloudflare. Альтернатива `--no-address`
 вимагає Cloud NAT, а він платний.
 
+> **`ZONE_RESOURCE_POOL_EXHAUSTED`.** e2-micro — дефіцитний тип, і зона регулярно
+> відмовляє: під час цієї міграції поспіль відпали `us-central1-a`, `-b`, `-c`, `-f`,
+> машина піднялась аж у `us-east1-b`. Це тимчасова відсутність заліза, а не помилка
+> конфігурації — просто перебирати зони трьох Always Free регіонів, поки одна не дасть
+> інстанс. **Зону не міняти на іншу за межами `us-west1` / `us-central1` / `us-east1`:
+> там машина стане платною.** Фактична зона потім потрібна для `gcloud compute ssh`
+> і `add-metadata`; у `deploy.yml` вона не фігурує — CI ходить по IP із `GCP_VM_HOST`.
+
 ### 3.2 Фаєрвол: закрити прямий доступ по IP
 
 Тунель не потребує жодного відкритого вхідного порту, тож типові правила прибираємо:
 
+> У свіжій мережі `default` правил `default-allow-http` / `default-allow-https` **може не бути
+> взагалі** — вони зʼявляються лише коли VM створюють через веб-консоль із галочками
+> «Allow HTTP/HTTPS traffic», що вішають теги `http-server` / `https-server`. Команда з
+> розділу 3.1 цих тегів не ставить, тож видаляти нічого і крок пропускається (інакше
+> `delete` впаде з `was not found`). Перевірити — `gcloud compute firewall-rules list`.
+
 ```bash
-# HTTP/HTTPS ззовні більше не потрібні — весь вхід іде через тунель
+# HTTP/HTTPS ззовні більше не потрібні — весь вхід іде через тунель (якщо правила існують)
 gcloud compute firewall-rules delete default-allow-http default-allow-https --quiet
 
 # SSH — не на весь інтернет, а лише через IAP TCP forwarding
@@ -139,7 +153,7 @@ gcloud compute firewall-rules create allow-ssh-from-iap \
 ## 4. Базове налаштування VM
 
 ```bash
-gcloud compute ssh bookamore-prod --zone=us-central1-a
+gcloud compute ssh bookamore-prod --zone=us-east1-b
 ```
 
 ### 4.1 Swap 1 GB
@@ -293,7 +307,7 @@ docker compose -f docker-compose.gcp.yaml --env-file .env start backend
 Публічний ключ на VM:
 
 ```bash
-gcloud compute instances add-metadata bookamore-prod --zone=us-central1-a \
+gcloud compute instances add-metadata bookamore-prod --zone=us-east1-b \
   --metadata-from-file ssh-keys=<(echo "deploy:$(cat ~/.ssh/bookamore_gcp.pub)")
 ```
 
