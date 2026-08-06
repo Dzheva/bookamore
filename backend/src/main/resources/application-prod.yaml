@@ -26,3 +26,11 @@ file:
   hash-algorithm: SHA-256
   upload-dir: /app/uploads
   sub-dirs-perms: 775 # Octal POSIX permissions for upload subdirectories
+
+# application.yaml вмикає DEBUG для Spring Security — на e2-micro це зайвий I/O
+# і роздутий json-file лог. Глушимо тільки в prod, local/dev лишаються як були.
+logging:
+  level:
+    root: INFO
+    org.springframework.security: WARN
+    org.hibernate: WARN

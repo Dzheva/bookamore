@@ -1,5 +1,9 @@
 # Bookamore — VPS Deployment Guide
 
+> ⚠️ **PROD переїхав на GCP e2-micro за Cloudflare Tunnel** — див. [`gcp/README.md`](gcp/README.md).
+> Цей документ описує старий VPS `185.143.145.151`, на якому лишається тільки **dev**.
+> PROD-розділи (порт `3432`, host nginx, certbot) збережені як довідка на час міграції.
+
 > Dual-environment setup on `185.143.145.151`  
 > **Prod**: `bookamore.alt-web.biz.ua` → port `3432`  
 > **Dev**: `bookamore-dev.alt-web.biz.ua` → port `3433`
