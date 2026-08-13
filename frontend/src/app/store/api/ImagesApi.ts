@@ -48,7 +48,13 @@ export const ImagesApi = createApi({
         };
       },
     }),
+    deleteImageById: build.mutation<void, string>({
+      query: (id) => ({
+        url: `/${id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
-export const { useUploadImageMutation } = ImagesApi;
+export const { useUploadImageMutation, useDeleteImageByIdMutation } = ImagesApi;

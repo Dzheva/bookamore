@@ -30,6 +30,10 @@ frontend/.env.development
 # Docker
 .dockerignore
 
+# Похідні артефакти документації (генеруються скриптами docs/_build_*.py)
+docs/*.png
+docs/*.docx
+
 certs
 .claude/
 backup.sql

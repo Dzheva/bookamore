@@ -60,6 +60,7 @@ export const OffersApi = createApi({
         method: 'POST',
         body: newOffer,
       }),
+      invalidatesTags: () => [{ type: 'Offer', id: 'LIST' }],
     }),
     addOffer: build.mutation<Offer, OfferRequest>({
       query: (newOffer) => ({
@@ -67,6 +68,7 @@ export const OffersApi = createApi({
         method: 'POST',
         body: newOffer,
       }),
+      invalidatesTags: () => [{ type: 'Offer', id: 'LIST' }],
     }),
     updateOfferById: build.mutation<Offer, OfferPatchRequest>({
       query: (offerPatchRequest) => ({
@@ -84,6 +86,10 @@ export const OffersApi = createApi({
         url: `/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: (_result, _error, id) => [
+        { type: 'Offer', id },
+        { type: 'Offer', id: 'LIST' },
+      ],
     }),
   }),
 });

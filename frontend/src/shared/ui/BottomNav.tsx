@@ -1,12 +1,10 @@
-import { NavLink, useNavigate } from 'react-router';
+import { NavLink } from 'react-router';
 import clsx from 'clsx';
-import { useSelector } from 'react-redux';
 import { HomeSvg } from './bottomNavImg/HomeSvg';
 import { FavoritesSvg } from './bottomNavImg/FavoritesSvg';
 import { SellSvg } from './bottomNavImg/SellSvg';
 import { ChatsSvg } from './bottomNavImg/ChatsSvg';
 import { FaceSvg } from './bottomNavImg/FaceSvg';
-import { selectIsAuthenticated } from '@/app/store/slices/authSlice';
 import { useTranslation } from 'react-i18next';
 
 export function BottomNav() {
@@ -28,24 +26,18 @@ export function BottomNav() {
       to: '/offers/new',
       label: t('sell'),
       Icon: SellSvg,
-      protected: true,
     },
     {
       to: '/chats',
       label: t('chats'),
       Icon: ChatsSvg,
-      protected: true,
     },
     {
       to: '/profile',
       label: t('profile'),
       Icon: FaceSvg,
-      protected: true,
     },
   ];
-
-  const navigate = useNavigate();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   const linkStyle = (isActive: boolean) =>
     clsx(
@@ -65,17 +57,11 @@ export function BottomNav() {
           flex justify-around
         "
       >
-        {navItems.map(({ to, label, Icon, protected: isProtected }) => (
+        {navItems.map(({ to, label, Icon }) => (
           <NavLink
             key={label}
             to={to}
             className={({ isActive }) => linkStyle(isActive)}
-            onClick={(e) => {
-              if (isProtected && !isAuthenticated) {
-                e.preventDefault();
-                navigate('/sign-in');
-              }
-            }}
           >
             <div className="pt-[6px] pr-[9.5px] pb-[4px] pl-[9.5px]">
               <Icon />

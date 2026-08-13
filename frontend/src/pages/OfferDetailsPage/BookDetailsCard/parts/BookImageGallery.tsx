@@ -33,12 +33,12 @@ export const BookImageGallery = ({
   return (
     <div className="flex items-center gap-2">
       {hasMultiple && (
-        <button onClick={prev} className="p-4">
+        <button onClick={prev} className="p-4 cursor-pointer">
           <ArrowLeft />
         </button>
       )}
 
-      <div className="relative w-[164px] h-[230px] md:w-[214px] md:h-[300px] lg:w-[264px] lg:h-[370px] xl:w-[314px] xl:h-[440px] rounded-xl overflow-hidden">
+      <div className="relative w-[164px] h-[264px] md:w-[214px] md:h-[345px] lg:w-[264px] lg:h-[404px] xl:w-[314px] xl:h-[484px] rounded-xl overflow-hidden">
         {images[index] ? (
           <img
             src={`${IMAGE_HOST}${images[index].path}`}
@@ -61,7 +61,7 @@ export const BookImageGallery = ({
       </div>
 
       {hasMultiple && (
-        <button onClick={next} className="p-4">
+        <button onClick={next} className="p-4 cursor-pointer">
           <ArrowRight />
         </button>
       )}

@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
-import { FaTrashAlt, FaEdit } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
 import { OfferStatus, type OfferType } from '@/types/entities/Offer';
 import type { Book } from '@/types/entities/Book';
-import { StatusSwitch } from '@/pages/MyAnnouncementsPage/StatusSwitch/StatusSwitch.tsx';
+import { StatusSwitch } from '@/pages/MyAnnouncementsPage/AnnouncementCard/StatusSwitch/StatusSwitch';
+import { DeleteOfferButton } from '@/pages/MyAnnouncementsPage/AnnouncementCard/DeleteOfferButton/DeleteOfferButton';
 import noImages from '@/assest/images/noImage.jpg';
 import { SynchronizeArrows } from '@/shared/ui/icons/Arrows';
 import { useTranslation } from 'react-i18next';
@@ -21,11 +22,13 @@ export interface Announcement {
 interface AnnouncementCardProps {
   offer: Announcement;
   onToggleStatus: (offerId: string, currentStatus: OfferStatus) => void;
+  onDeleteRequest: (offerId: string) => void;
 }
 
 export const AnnouncementCard = ({
   offer,
   onToggleStatus,
+  onDeleteRequest,
 }: AnnouncementCardProps) => {
   const [localStatus, setLocalStatus] = useState<OfferStatus>(offer.status);
   const [entered, setEntered] = useState(false);
@@ -59,7 +62,9 @@ export const AnnouncementCard = ({
       ? 'border-[#A1D9D6] bg-[#F2FBFB]'
       : 'border-[#FFD9A1] bg-[#FFF9F2]';
   const accentColor =
-    localStatus === 'OPEN' ? 'text-[#008080]' : 'text-[#E68A00]';
+    localStatus === 'OPEN'
+      ? 'text-[#008080] hover:bg-aquamarine-50'
+      : 'text-[#E68A00] hover:bg-orange-50';
   const btnBorderColor =
     localStatus === 'OPEN' ? 'border-[#A1D9D6]' : 'border-[#FFD9A1]';
 
@@ -92,15 +97,14 @@ export const AnnouncementCard = ({
     <div className={`flex flex-col ${animationClasses}`}>
       {/* Кнопки над карткою */}
       <div className="flex mb-[-1px]">
-        <button className="flex items-center gap-2 px-6 py-2 border border-red-200 border-b-white rounded-t-xl text-red-500 text-sm font-medium bg-white">
-          <FaTrashAlt size={14} />
-          {t('myAnnouncements.delete')}
-        </button>
-        <button
-          className={`flex items-center gap-2 px-6 py-2 border ${btnBorderColor} border-b-white rounded-t-xl ${accentColor} text-sm font-medium bg-white`}
-        >
-          <FaEdit size={14} /> {t('myAnnouncements.change')}
-        </button>
+        <DeleteOfferButton offer={offer} onDeleteRequest={onDeleteRequest} />
+        <a href={`/offers/${offer.id}/edit`}>
+          <div
+            className={`flex items-center gap-2 px-6 py-2 border ${btnBorderColor} border-b-white rounded-t-xl ${accentColor} text-sm font-medium bg-white`}
+          >
+            <FaEdit size={14} /> {t('myAnnouncements.change')}
+          </div>
+        </a>
       </div>
 
       {/* Основне тіло картки */}
@@ -108,7 +112,7 @@ export const AnnouncementCard = ({
         className={`flex gap-4 p-4 border-2 ${cardColor} rounded-r-2xl rounded-bl-2xl shadow-sm`}
       >
         {/* Обкладинка */}
-        <div className="w-28 h-40 shrink-0 shadow-md overflow-hidden rounded-md border border-gray-200">
+        <div className="w-28 h-43 shrink-0 shadow-md overflow-hidden rounded-md border border-gray-200">
           <img
             src={
               offer.book.images?.[0]?.path
@@ -125,7 +129,7 @@ export const AnnouncementCard = ({
           {/* Перемикач статусу */}
           <StatusSwitch status={localStatus} onToggle={handleToggle} />
 
-          <h3 className="text-xl font-bold text-text-black">
+          <h3 className="text-xl font-bold text-text-black tracking-tight line-clamp-1">
             {offer.book.title}
           </h3>
           <p className="text-sm text-text-black italic">
