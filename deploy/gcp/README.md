@@ -299,17 +299,21 @@ docker compose -f docker-compose.gcp.yaml --env-file .env start backend
 | Секрет | Призначення |
 |---|---|
 | `GCP_VM_HOST` | Зовнішній IP e2-micro |
-| `GCP_VM_USER` | Користувач на VM (той, що володіє `/opt/bookamore`) |
+| `GCP_VM_USER` | Користувач на VM (той, що володіє `/opt/bookamore`) — фактично `mrx` |
 | `GCP_SSH_KEY` | Приватний ключ; публічний — у метаданих інстансу |
 | `GHCR_PULL_TOKEN` | *Необовʼязково.* PAT з `read:packages`, якщо пакети приватні |
 | `VPS_HOST`, `VPS_SSH_KEY` | Лишаються — ними деплоїться DEV |
 
-Публічний ключ на VM:
+Публічний ключ на VM. Імʼя перед двокрапкою — це логін, під яким CI зайде по SSH,
+тож воно має збігатися з `GCP_VM_USER` і з власником `/opt/bookamore`:
 
 ```bash
 gcloud compute instances add-metadata bookamore-prod --zone=us-east1-b \
-  --metadata-from-file ssh-keys=<(echo "deploy:$(cat ~/.ssh/bookamore_gcp.pub)")
+  --metadata-from-file ssh-keys=<(echo "mrx:$(cat ~/.ssh/bookamore_gcp.pub)")
 ```
+
+Ключ кладеться в метадані **інстансу**, а не проєкту: project-wide ключ від
+`gcloud compute ssh` лишається чинним, бо `block-project-ssh-keys` не виставлений.
 
 Якщо зробити пакети GHCR публічними (**Package → Package settings → Change visibility**),
 `GHCR_PULL_TOKEN` не потрібен — крок логіну в workflow сам пропуститься.
@@ -335,13 +339,17 @@ free -h
 # Тунель піднявся і зареєстрував коннектори
 docker compose -f docker-compose.gcp.yaml logs cloudflared | grep -i "registered tunnel"
 
-# Origin відповідає всередині мережі
-docker compose -f docker-compose.gcp.yaml exec cloudflared \
-  wget -qO- http://frontend:80/ | head -5
+# Origin відповідає всередині мережі. Через `exec cloudflared` не вийде —
+# образ cloudflared distroless, там немає ні wget, ні curl. Тому одноразовий контейнер
+# у тій самій мережі: він бачить `frontend` за тим самим іменем, що й тунель.
+docker run --rm --network bookamore_prod_network curlimages/curl:8.10.1 \
+  -s -i --max-time 20 http://frontend:80/ | head -5
 
 # Ззовні
 curl -I https://bookamore.alt-web.biz.ua
-curl -s https://bookamore.alt-web.biz.ua/api/v1/books | head -c 200
+# Колекційний ендпойнт — саме /offers. GET /api/v1/books у API немає
+# (лише /api/v1/books/{bookId}), тож він віддає 500 "No static resource" і на PROD, і на DEV.
+curl -s https://bookamore.alt-web.biz.ua/api/v1/offers | head -c 200
 
 # Прямий доступ по IP має бути закритий
 curl -m 5 -I "http://$(curl -s ifconfig.me)" || echo "OK: прямий вхід закрито"
