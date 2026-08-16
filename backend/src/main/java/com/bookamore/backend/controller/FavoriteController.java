@@ -1,7 +1,14 @@
 package com.bookamore.backend.controller;
 
+import com.bookamore.backend.annotation.No404Swgr;
+import com.bookamore.backend.annotation.No409Swgr;
 import com.bookamore.backend.dto.offer.OfferResponse;
 import com.bookamore.backend.service.FavoriteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -22,22 +29,50 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
+    @Operation(summary = "Add offer to favorites",
+            description = "Saves the offer to the authenticated user's favorites.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Offer was added to favorites"),
+            @ApiResponse(responseCode = "404", description = "Offer not found")
+    })
     @PostMapping("/{offerId}")
     public ResponseEntity<Void> addToFavorites(@PathVariable UUID offerId) {
         favoriteService.addToFavorites(offerId);
         return ResponseEntity.ok().build();
     }
 
+    @No404Swgr
+    @No409Swgr
+    @Operation(summary = "Remove offer from favorites",
+            description = "Removes the offer from the authenticated user's favorites.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Offer was removed from favorites")
+    })
     @DeleteMapping("/{offerId}")
     public ResponseEntity<Void> removeFromFavorites(@PathVariable UUID offerId) {
         favoriteService.removeFromFavorites(offerId);
         return ResponseEntity.noContent().build();
     }
 
+    @No404Swgr
+    @No409Swgr
+    @Operation(summary = "Get current user favorites",
+            description = "Returns a page of offers saved by the authenticated user. Same response type as GET /api/v1/offers.")
     @GetMapping
     public Page<OfferResponse> getFavorites(@RequestParam(defaultValue = "0") Integer page,
                                             @RequestParam(defaultValue = "5") Integer size,
+                                            @Parameter(
+                                                    description = "Sort by field",
+                                                    schema = @Schema(
+                                                            allowableValues = {"id", "createdDate",
+                                                                    "lastModifiedDate", "price", "type", "status"}
+                                                    )
+                                            )
                                             @RequestParam(defaultValue = "createdDate") String sortBy,
+                                            @Parameter(
+                                                    description = "Sort direction: `asc` or `desc`",
+                                                    schema = @Schema(allowableValues = {"asc", "desc"})
+                                            )
                                             @RequestParam(defaultValue = "desc") String sortDir) {
         return favoriteService.getFavorites(page, size, sortBy, sortDir);
     }
