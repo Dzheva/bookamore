@@ -12,4 +12,6 @@ public interface FavoriteService {
     void removeFromFavorites(UUID offerId);
 
     Page<OfferResponse> getFavorites(Integer page, Integer size, String sortBy, String sortDir);
+
+    Page<OfferResponse> getFavorites(UUID userId, Integer page, Integer size, String sortBy, String sortDir);
 }

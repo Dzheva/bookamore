@@ -7,6 +7,7 @@ import com.bookamore.backend.jwt.JwtUserDetails;
 import com.bookamore.backend.mapper.offer.OfferMapper;
 import com.bookamore.backend.repository.FavoriteRepository;
 import com.bookamore.backend.repository.OfferRepository;
+import com.bookamore.backend.repository.UserRepository;
 import com.bookamore.backend.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final OfferRepository offerRepository;
+    private final UserRepository userRepository;
     private final OfferMapper offerMapper;
 
     @Override
@@ -48,7 +50,19 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public Page<OfferResponse> getFavorites(Integer page, Integer size, String sortBy, String sortDir) {
-        List<UUID> offerIds = favoriteRepository.findAllByUserId(currentUserId()).stream()
+        return getFavoritesByUserId(currentUserId(), page, size, sortBy, sortDir);
+    }
+
+    @Override
+    public Page<OfferResponse> getFavorites(UUID userId, Integer page, Integer size, String sortBy, String sortDir) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("Not found User with uuid = " + userId);
+        }
+        return getFavoritesByUserId(userId, page, size, sortBy, sortDir);
+    }
+
+    private Page<OfferResponse> getFavoritesByUserId(UUID userId, Integer page, Integer size, String sortBy, String sortDir) {
+        List<UUID> offerIds = favoriteRepository.findAllByUserId(userId).stream()
                 .map(Favorite::getOfferId)
                 .toList();
 

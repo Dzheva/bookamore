@@ -76,4 +76,30 @@ public class FavoriteController {
                                             @RequestParam(defaultValue = "desc") String sortDir) {
         return favoriteService.getFavorites(page, size, sortBy, sortDir);
     }
+
+    @No409Swgr
+    @Operation(summary = "Get favorites by user id",
+            description = "Returns a page of offers saved by the specified user. Same response type as GET /api/v1/offers.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
+    @GetMapping("/{userId}")
+    public Page<OfferResponse> getFavoritesByUserId(@PathVariable UUID userId,
+                                                    @RequestParam(defaultValue = "0") Integer page,
+                                                    @RequestParam(defaultValue = "5") Integer size,
+                                                    @Parameter(
+                                                            description = "Sort by field",
+                                                            schema = @Schema(
+                                                                    allowableValues = {"id", "createdDate",
+                                                                            "lastModifiedDate", "price", "type", "status"}
+                                                            )
+                                                    )
+                                                    @RequestParam(defaultValue = "createdDate") String sortBy,
+                                                    @Parameter(
+                                                            description = "Sort direction: `asc` or `desc`",
+                                                            schema = @Schema(allowableValues = {"asc", "desc"})
+                                                    )
+                                                    @RequestParam(defaultValue = "desc") String sortDir) {
+        return favoriteService.getFavorites(userId, page, size, sortBy, sortDir);
+    }
 }
