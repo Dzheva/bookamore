@@ -8,10 +8,14 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public interface OfferRepository extends JpaRepository<Offer, UUID>, JpaSpecificationExecutor<Offer> {
     @EntityGraph(attributePaths = {"book", "user"})
     @Override
     Page<Offer> findAll(Specification<Offer> spec, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"book", "user"})
+    Page<Offer> findAllByIdIn(Collection<UUID> ids, Pageable pageable);
 }
