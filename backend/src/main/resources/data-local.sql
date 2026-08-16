@@ -1,5 +1,8 @@
+-- Тестове наповнення. Запускати файл цілком (порядок важливий через FK).
+-- Повторний запуск безпечний: існуючі рядки пропускаються.
+
 --################
--- Insert users
+-- Users
 --################
 INSERT INTO users (created_date, id, last_modified_date, email, name, password) VALUES
     (NOW(), '018d4f1a-5b03-71d4-a716-446655440001', NOW(), 'john.doe@example.com', 'John', '$2a$10$jffLzQglZFxgmWZnowGHVOonKz23d98sGmUvb4Mkr1TYjFa54C.Dy'),
@@ -10,7 +13,7 @@ INSERT INTO users (created_date, id, last_modified_date, email, name, password) 
 ON CONFLICT (id) DO NOTHING;
 
 --################
--- Insert authors
+-- Authors (unique name)
 --################
 INSERT INTO authors (created_date, id, last_modified_date, name) VALUES
     (NOW(), '018d4f1a-5b03-71d4-b001-000000000001', NOW(), 'Joshua Bloch'),
@@ -19,7 +22,16 @@ INSERT INTO authors (created_date, id, last_modified_date, name) VALUES
 ON CONFLICT (id) DO NOTHING;
 
 --################
--- Insert books
+-- Genres (unique name)
+--################
+INSERT INTO genres (created_date, id, last_modified_date, name) VALUES
+    (NOW(), '018d4f1a-5b03-71d4-d001-000000000001', NOW(), 'Programming'),
+    (NOW(), '018d4f1a-5b03-71d4-d001-000000000002', NOW(), 'Software'),
+    (NOW(), '018d4f1a-5b03-71d4-d001-000000000003', NOW(), 'Classic')
+ON CONFLICT (id) DO NOTHING;
+
+--################
+-- Books
 --################
 INSERT INTO books (year_of_release, created_date, id, last_modified_date, description, condition, isbn, title) VALUES
     (2018, NOW(), '018d4f1a-5b03-71d4-c001-000000000001', NOW(), 'Best practices for the Java platform.', 'NEW', '9780134685991', 'Effective Java'),
@@ -28,17 +40,64 @@ INSERT INTO books (year_of_release, created_date, id, last_modified_date, descri
 ON CONFLICT (id) DO NOTHING;
 
 --################
--- Relations (Books-Authors)
+-- books_authors (немає PK/unique — ON CONFLICT не спрацює)
 --################
-INSERT INTO books_authors (author_id, book_id) VALUES
-    ('018d4f1a-5b03-71d4-b001-000000000001', '018d4f1a-5b03-71d4-c001-000000000001'),
-    ('018d4f1a-5b03-71d4-b001-000000000002', '018d4f1a-5b03-71d4-c001-000000000002'),
-    ('018d4f1a-5b03-71d4-b001-000000000003', '018d4f1a-5b03-71d4-c001-000000000003')
-ON CONFLICT DO NOTHING;
+INSERT INTO books_authors (author_id, book_id)
+SELECT '018d4f1a-5b03-71d4-b001-000000000001', '018d4f1a-5b03-71d4-c001-000000000001'
+WHERE NOT EXISTS (
+    SELECT 1 FROM books_authors
+    WHERE author_id = '018d4f1a-5b03-71d4-b001-000000000001'
+      AND book_id = '018d4f1a-5b03-71d4-c001-000000000001'
+);
+
+INSERT INTO books_authors (author_id, book_id)
+SELECT '018d4f1a-5b03-71d4-b001-000000000002', '018d4f1a-5b03-71d4-c001-000000000002'
+WHERE NOT EXISTS (
+    SELECT 1 FROM books_authors
+    WHERE author_id = '018d4f1a-5b03-71d4-b001-000000000002'
+      AND book_id = '018d4f1a-5b03-71d4-c001-000000000002'
+);
+
+INSERT INTO books_authors (author_id, book_id)
+SELECT '018d4f1a-5b03-71d4-b001-000000000003', '018d4f1a-5b03-71d4-c001-000000000003'
+WHERE NOT EXISTS (
+    SELECT 1 FROM books_authors
+    WHERE author_id = '018d4f1a-5b03-71d4-b001-000000000003'
+      AND book_id = '018d4f1a-5b03-71d4-c001-000000000003'
+);
 
 --################
--- Insert offers
+-- books_genres
+--################
+INSERT INTO books_genres (book_id, genre_id)
+SELECT '018d4f1a-5b03-71d4-c001-000000000001', '018d4f1a-5b03-71d4-d001-000000000001'
+WHERE NOT EXISTS (
+    SELECT 1 FROM books_genres
+    WHERE book_id = '018d4f1a-5b03-71d4-c001-000000000001'
+      AND genre_id = '018d4f1a-5b03-71d4-d001-000000000001'
+);
+
+INSERT INTO books_genres (book_id, genre_id)
+SELECT '018d4f1a-5b03-71d4-c001-000000000002', '018d4f1a-5b03-71d4-d001-000000000002'
+WHERE NOT EXISTS (
+    SELECT 1 FROM books_genres
+    WHERE book_id = '018d4f1a-5b03-71d4-c001-000000000002'
+      AND genre_id = '018d4f1a-5b03-71d4-d001-000000000002'
+);
+
+INSERT INTO books_genres (book_id, genre_id)
+SELECT '018d4f1a-5b03-71d4-c001-000000000003', '018d4f1a-5b03-71d4-d001-000000000003'
+WHERE NOT EXISTS (
+    SELECT 1 FROM books_genres
+    WHERE book_id = '018d4f1a-5b03-71d4-c001-000000000003'
+      AND genre_id = '018d4f1a-5b03-71d4-d001-000000000003'
+);
+
+--################
+-- Offers (один офер на книгу: unique book_id)
 --################
 INSERT INTO offers (price, book_id, created_date, id, last_modified_date, seller_id, description, status, type) VALUES
-    (45.99, '018d4f1a-5b03-71d4-c001-000000000001', NOW(), '018d4f1a-5b03-71d4-e001-000000000001', NOW(), '018d4f1a-5b03-71d4-a716-446655440001', 'Like new condition', 'OPEN', 'SELL')
+    (45.99, '018d4f1a-5b03-71d4-c001-000000000001', NOW(), '018d4f1a-5b03-71d4-e001-000000000001', NOW(), '018d4f1a-5b03-71d4-a716-446655440001', 'Like new condition', 'OPEN', 'SELL'),
+    (39.50, '018d4f1a-5b03-71d4-c001-000000000002', NOW(), '018d4f1a-5b03-71d4-e001-000000000002', NOW(), '018d4f1a-5b03-71d4-a716-446655440002', 'Spring in Action, almost new', 'OPEN', 'SELL'),
+    (25.00, '018d4f1a-5b03-71d4-c001-000000000003', NOW(), '018d4f1a-5b03-71d4-e001-000000000003', NOW(), '018d4f1a-5b03-71d4-a716-446655440003', 'Clean Code, used', 'OPEN', 'SELL_EXCHANGE')
 ON CONFLICT (id) DO NOTHING;
