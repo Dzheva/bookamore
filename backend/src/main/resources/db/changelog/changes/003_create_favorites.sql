@@ -4,6 +4,7 @@
 CREATE TABLE "favorites" (
     "user_id" UUID NOT NULL,
     "offer_id" UUID NOT NULL,
+    "created_date" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     CONSTRAINT "favorites_pkey" PRIMARY KEY ("user_id", "offer_id")
 );
 

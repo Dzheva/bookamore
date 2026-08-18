@@ -1,7 +1,6 @@
 package com.bookamore.backend.controller;
 
 import com.bookamore.backend.annotation.No404Swgr;
-import com.bookamore.backend.annotation.No409Swgr;
 import com.bookamore.backend.dto.offer.OfferResponse;
 import com.bookamore.backend.service.FavoriteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,17 +32,16 @@ public class FavoriteController {
     @Operation(summary = "Add offer to favorites",
             description = "Saves the offer to the authenticated user's favorites.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Offer was added to favorites"),
+            @ApiResponse(responseCode = "201", description = "Offer was added to favorites"),
             @ApiResponse(responseCode = "404", description = "Offer not found")
     })
     @PostMapping("/{offerId}")
     public ResponseEntity<Void> addToFavorites(@PathVariable UUID offerId) {
         favoriteService.addToFavorites(offerId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @No404Swgr
-    @No409Swgr
     @Operation(summary = "Remove offer from favorites",
             description = "Removes the offer from the authenticated user's favorites.")
     @ApiResponses(value = {
@@ -55,7 +54,6 @@ public class FavoriteController {
     }
 
     @No404Swgr
-    @No409Swgr
     @Operation(summary = "Get current user favorites",
             description = "Returns a page of offers saved by the authenticated user. Same response type as GET /api/v1/offers.")
     @GetMapping
@@ -77,7 +75,6 @@ public class FavoriteController {
         return favoriteService.getFavorites(page, size, sortBy, sortDir);
     }
 
-    @No409Swgr
     @Operation(summary = "Get favorites by user id",
             description = "Returns a page of offers saved by the specified user. Same response type as GET /api/v1/offers.")
     @ApiResponses(value = {
