@@ -37,8 +37,25 @@ INSERT INTO books_authors (author_id, book_id) VALUES
 ON CONFLICT DO NOTHING;
 
 --################
+-- Insert books images
+--################
+-- Файли лежать у data/uploads/img/ і версіонуються разом з репозиторієм, тож ці
+-- шляхи робочі одразу після клону: nginx віддає /img/ з тієї ж теки, яку бекенд
+-- монтує як /app/uploads (див. frontend/README.md, розділ 4).
+-- Навмисно взяті нейтральні знімки, а не обкладинки з прод-даних.
+INSERT INTO books_images (created_date, book_id, id, path) VALUES
+    (NOW(), '018d4f1a-5b03-71d4-c001-000000000001', '018d4f1a-5b03-71d4-f001-000000000001', '/img/offer/bec7852589e981ff70dce1dc273be20186c466000c93c887291199224b52a65e.jpg'),
+    (NOW(), '018d4f1a-5b03-71d4-c001-000000000002', '018d4f1a-5b03-71d4-f001-000000000002', '/img/offer/c75fac464c67de08746dd00aabf6324c699094f7bf3e95a7702e62e6890f078e.jpeg'),
+    (NOW(), '018d4f1a-5b03-71d4-c001-000000000003', '018d4f1a-5b03-71d4-f001-000000000003', '/img/book/50463b0ce8ba467ff75a43197c2aac4220492096b3a5563776fce940d7f0f90f.png')
+ON CONFLICT (id) DO NOTHING;
+
+--################
 -- Insert offers
 --################
+-- По одному оферу на книжку: головна сторінка будується з оферів, тож без них
+-- обкладинки нікуди вивести.
 INSERT INTO offers (price, book_id, created_date, id, last_modified_date, seller_id, description, status, type) VALUES
-    (45.99, '018d4f1a-5b03-71d4-c001-000000000001', NOW(), '018d4f1a-5b03-71d4-e001-000000000001', NOW(), '018d4f1a-5b03-71d4-a716-446655440001', 'Like new condition', 'OPEN', 'SELL')
+    (45.99, '018d4f1a-5b03-71d4-c001-000000000001', NOW(), '018d4f1a-5b03-71d4-e001-000000000001', NOW(), '018d4f1a-5b03-71d4-a716-446655440001', 'Like new condition', 'OPEN', 'SELL'),
+    (39.50, '018d4f1a-5b03-71d4-c001-000000000002', NOW(), '018d4f1a-5b03-71d4-e001-000000000002', NOW(), '018d4f1a-5b03-71d4-a716-446655440002', 'Read once, kept on a shelf', 'OPEN', 'SELL_EXCHANGE'),
+    (27.00, '018d4f1a-5b03-71d4-c001-000000000003', NOW(), '018d4f1a-5b03-71d4-e001-000000000003', NOW(), '018d4f1a-5b03-71d4-a716-446655440003', 'Underlined in places', 'OPEN', 'EXCHANGE')
 ON CONFLICT (id) DO NOTHING;
