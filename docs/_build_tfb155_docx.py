@@ -25,10 +25,13 @@ PNG = DOCS / "TFB-155-gcp-migration.png"
 # (номер, заголовок, [абзаци], артефакт)
 STEPS = [
     ("1", "Створити VM у межах Always Free", [
-        "e2-micro в us-central1 (або us-west1 / us-east1 — це єдині регіони Always Free), "
+        "e2-micro в us-west1, us-central1 або us-east1 — це єдині регіони Always Free, — "
         "завантажувальний диск pd-standard на 30 GB, мережевий tier STANDARD.",
         "Пастка тут в дефолтах веб-консолі: вона пропонує pd-balanced, який у безкоштовний "
         "ліміт не входить, і машина починає тихо списувати кошти.",
+        "Друга пастка — дефіцит самого заліза: чотири зони us-central1 поспіль відповіли "
+        "ZONE_RESOURCE_POOL_EXHAUSTED, інстанс піднявся аж у us-east1-b. Це не помилка "
+        "конфігурації, а привід перебирати зони — але лише в межах трьох безкоштовних регіонів.",
     ], "gcloud compute instances create"),
     ("2", "Підготувати систему під 1 GB", [
         "Swap-файл на 1 GB із vm.swappiness=10: він потрібен не для постійної роботи, а як "
@@ -57,11 +60,14 @@ STEPS = [
     ("5", "Полагодити X-Forwarded-Proto", [
         "Найтонше місце міграції. За тунелем nginx фронтенду слухає звичайний http, тож "
         "$scheme завжди дорівнює \"http\". Spring будував з нього redirect_uri вигляду "
-        "http://bookamore.alt-web.biz.ua/login/oauth2/code/google, а Google такий колбек "
+        "http://www.bookamore.store/login/oauth2/code/google, а Google такий колбек "
         "відхиляє як невідповідний зареєстрованому.",
         "Рішення — директива map, яка бере схему з вхідного заголовка X-Forwarded-Proto "
         "(його виставляє cloudflared) і лише за його відсутності відкочується на $scheme. "
         "Перевірено локально: із заголовком redirect_uri стає https://, без нього — http://.",
+        "Практичного ефекту зараз не видно — соціальний логін не працює ні в одному "
+        "середовищі через заглушки замість креденшелів (див. «Межі рішення»). Але без цього "
+        "фіксу він не запрацював би й після того, як застосунки в консолях зʼявляться.",
     ], "frontend/nginx.conf"),
     ("6", "Підняти Cloudflare Tunnel", [
         "cloudflared працює контейнером у тому ж compose-стеку і ходить до frontend:80 по "
@@ -70,17 +76,25 @@ STEPS = [
         "Наслідок: на хості не публікується жоден порт. Тунель ініціюється зсередини VM, "
         "тому вхідні правила фаєрвола для 80/443 просто не потрібні.",
     ], "cloudflared у docker-compose.gcp.yaml"),
-    ("7", "Перевести DNS і TLS на Cloudflare", [
-        "Домен alt-web.biz.ua має обслуговуватись у Cloudflare, після чого запис "
-        "bookamore.alt-web.biz.ua стає CNAME на <tunnel-uuid>.cfargotunnel.com. Старий "
-        "A-запис на 185.143.145.151 треба зняти вручну, інакше частина трафіку піде повз тунель.",
-        "TLS далі тримає Cloudflare: Universal SSL покриває піддомен першого рівня, "
+    ("7", "Завести власний домен у Cloudflare", [
+        "Початковий план вів alt-web.biz.ua у Cloudflare, щоб bookamore.alt-web.biz.ua став "
+        "CNAME на тунель. Від нього відмовились: та зона несе пошту (MX, SPF, DKIM-селектор "
+        "dkim) і кілька сторонніх сайтів на 185.174.220.11, тож зміна NS ризикувала всім "
+        "доменом заради одного піддомену.",
+        "PROD натомість припаркований на власному bookamore.store — зоні, де до цього була "
+        "сама лише парковка реєстратора, тому blast radius нульовий. Записи тунелю Cloudflare "
+        "створює сам; парковочні A @ 162.255.119.47 і CNAME www на parkingpage треба зняти вручну.",
+        "Канонічний хост — з www, апекс віддає 301 на нього через Dynamic Redirect Rule зі "
+        "збереженням шляху. Два рівноправні хости не годяться: CLIENT_URL у беку — одне "
+        "значення, і OAuth2SuccessHandler підставляє його в redirect цілим рядком.",
+        "TLS далі тримає Cloudflare: Universal SSL покриває і апекс, і *.bookamore.store, "
         "certbot і host nginx на новій машині не потрібні взагалі.",
     ], "Cloudflare Dashboard"),
     ("8", "Перенести дані та закрити периметр", [
         "База переїжджає через pg_dump -Fc / pg_restore --clean, фото — розпакуванням "
         "архіву безпосередньо в named volume.",
-        "Після перевірки: видалити правила default-allow-http і default-allow-https, "
+        "Після перевірки: пересвідчитись, що правил default-allow-http і default-allow-https "
+        "не лишилось (у мережі, створеній без галочок веб-консолі, їх може не бути взагалі), "
         "поставити budget alert на $1 і через добу звірити Billing → Reports.",
     ], "deploy/gcp/README.md, розділи 6 і 9"),
 ]
@@ -104,14 +118,18 @@ FILES = [
                             "кеш /img/ на 30 днів."),
     ("backend/.../application-prod.yaml", "Логування в prod знижено до INFO/WARN замість "
                                           "DEBUG для Spring Security."),
-    ("deploy/gcp/README.md", "Ранбук: створення VM, swap, тунель, DNS, перенесення даних, "
-                             "бекапи, контроль білінгу."),
-    ("deploy/gcp/env.example", "Шаблон .env для GCP: образи, токен тунелю, креденшели."),
+    ("deploy/gcp/README.md", "Ранбук: створення VM, swap, тунель, зона bookamore.store, "
+                             "перенесення даних, бекапи, контроль білінгу, доля старого PROD."),
+    ("deploy/gcp/env.example", "Шаблон .env для GCP: образи, токен тунелю, канонічний "
+                               "CLIENT_URL з www, порожні OAuth-креденшели з поясненням."),
+    ("CLAUDE.md", "Опис деплою приведено до факту: main їде на GCP за www.bookamore.store, "
+                  "dev — на старий VPS, зона alt-web.biz.ua лишається в старого реєстратора."),
 ]
 
 CHECKS = [
     "docker stats — сумарний RSS тримається нижче ~800 MB, swap майже не зайнятий.",
-    "Логін через Google доходить до /oauth2/callback без redirect_uri_mismatch.",
+    "У відповіді www.bookamore.store є server: cloudflare і cf-ray — трафік іде саме тунелем.",
+    "Апекс віддає 301 на www-форму зі збереженим шляхом: /offers не перетворюється на головну.",
     "На /assets/ і /img/ приходить заголовок cf-cache-status: HIT — статику віддає edge, не origin.",
     "Прямий запит на публічний IP машини не відповідає.",
     "Фото і записи БД лишаються на місці після docker compose down і up.",
@@ -121,11 +139,23 @@ CHECKS = [
 LIMITS = [
     ("DEV не переїжджає", "Два JVM у 1 GB не вміщуються, тому на e2-micro живе лише PROD. "
                           "Домен bookamore-dev.alt-web.biz.ua лишається A-записом на старий VPS, "
-                          "і збірка для нього так само відбувається на сервері."),
-    ("Перенесення зони чіпає весь домен", "Переведення alt-web.biz.ua під Cloudflare стосується "
-                                          "не лише піддоменів bookamore. Перед зміною NS слід "
-                                          "звірити MX, SPF і DKIM — забутий MX тихо ламає пошту "
-                                          "на всьому домені."),
+                          "і збірка для нього так само відбувається на сервері. Другої "
+                          "безкоштовної e2-micro не буде: ліміт Always Free рахується на "
+                          "billing account, а не на проєкт."),
+    ("Соціальний логін не працює ніде", "У всіх середовищах стоять заглушки: prod_placeholder "
+                                        "на старому VPS і на GCP, change_me на DEV. Це не наслідок "
+                                        "переїзду — застосунків у Google Cloud Console і Meta for "
+                                        "Developers у проєкту просто немає, тож і redirect URI "
+                                        "додавати нема куди. Перевіряється одним запитом: "
+                                        "curl -sSI /oauth2/authorization/google і погляд на "
+                                        "client_id у Location."),
+    ("Старий PROD лишається як гарячий запас", "bookamore.alt-web.biz.ua і далі віддається зі "
+                                               "старого VPS, але поза CI: main деплоїться тільки "
+                                               "на GCP. Код там відстає з кожним мержем, а БД "
+                                               "власна — перша ж реєстрація на старому домені "
+                                               "створить запис, якого на GCP не буде. Перед "
+                                               "вимкненням звірити totalElements на /api/v1/offers "
+                                               "обох копій."),
     ("-Xss256k лишається агресивним", "Значення взяте з умови задачі й перевірене: застосунок "
                                       "стартує, Liquibase проходить, API відповідає. Якщо колись "
                                       "зʼявиться StackOverflowError — це перший параметр, який "
@@ -165,8 +195,8 @@ title = doc.add_heading("Міграція Bookamore на GCP e2-micro + Cloudfla
 title.runs[0].font.color.rgb = INK
 
 meta = doc.add_paragraph()
-meta_run = meta.add_run("TFB-155 · гілка TFB-155-gcp-e2micro-cloudflare-tunnel · "
-                        "PROD переїжджає на GCP, DEV лишається на старому VPS")
+meta_run = meta.add_run("TFB-155 · PROD на GCP за www.bookamore.store · "
+                        "DEV і старий PROD лишаються на VPS у зоні alt-web.biz.ua")
 meta_run.font.size = Pt(9.5)
 meta_run.font.color.rgb = MUTED
 

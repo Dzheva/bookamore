@@ -204,10 +204,13 @@ chmod 600 /opt/bookamore/.env
 nano /opt/bookamore/.env
 ```
 
-Заповнити `DB_PASSWORD`, `JWT_SECRET`, OAuth-креденшели та `CLOUDFLARE_TUNNEL_TOKEN`
-(токен зʼявиться на кроці 5). `CLIENT_URL` і `SWAGGER_SERVER_URL` вказують на
-`https://bookamore.store` — власний домен PROD, тож **redirect URI в консолях
-Google/Facebook доведеться доповнити** (розділ 5.4).
+Заповнити `DB_PASSWORD`, `JWT_SECRET` та `CLOUDFLARE_TUNNEL_TOKEN` (токен зʼявиться
+на кроці 5). `CLIENT_URL` і `SWAGGER_SERVER_URL` уже вказують на
+`https://www.bookamore.store` — канонічну, з `www`, форму власного домену PROD;
+апексна тут не годиться (чому саме одна — розділ 5.3).
+
+OAuth-креденшели лишаються порожніми: реальних застосунків Google/Meta у проєкту
+немає в жодному середовищі, тож заповнювати нема чим (розділ 5.4).
 
 ---
 
