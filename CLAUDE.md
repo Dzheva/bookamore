@@ -98,6 +98,11 @@ The `alt-web.biz.ua` zone stays with its old registrar and is not moved to Cloud
 carries mail (MX/SPF/DKIM) and unrelated sites. `bookamore.alt-web.biz.ua` therefore still
 points at the old VPS; only `bookamore.store` goes through the tunnel to GCP.
 
+That old prod is deliberately left running as a standby, but **no job deploys it** — `main`
+goes to GCP only, `dev` to `/home/deploy/www/dev`. It runs pre-migration code against its
+own database, so treat it as a frozen copy, not a second live environment. See section 11
+of `deploy/gcp/README.md` before touching it.
+
 Each environment has its own `.env` file on its host.
 
 ## Git Conventions
