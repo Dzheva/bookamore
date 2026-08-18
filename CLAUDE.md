@@ -87,11 +87,16 @@ PostgreSQL 16. Schema managed by Liquibase; changesets live in `backend/src/main
 ### Deployment
 
 GitHub Actions (`.github/workflows/deploy.yml`) auto-deploys on push:
-- `main` → production on **GCP e2-micro** (`bookamore.alt-web.biz.ua`), via `docker-compose.gcp.yaml`.
+- `main` → production on **GCP e2-micro** (`www.bookamore.store`; the apex 301-redirects to
+  it), via `docker-compose.gcp.yaml`.
   Images are built in CI and pushed to GHCR; the 1 GB VM only pulls them. Traffic enters
   through a Cloudflare Tunnel — no host ports are published. See `deploy/gcp/README.md`.
 - `dev` → dev environment on the original VPS (`bookamore-dev.alt-web.biz.ua`), via
   `docker-compose.dev.yml`, still built on the server.
+
+The `alt-web.biz.ua` zone stays with its old registrar and is not moved to Cloudflare — it
+carries mail (MX/SPF/DKIM) and unrelated sites. `bookamore.alt-web.biz.ua` therefore still
+points at the old VPS; only `bookamore.store` goes through the tunnel to GCP.
 
 Each environment has its own `.env` file on its host.
 

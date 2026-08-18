@@ -3,6 +3,12 @@
 Ранбук міграції PROD-середовища на безкоштовний хостинг.
 DEV лишається на старому VPS (`185.143.145.151`) — два повні стеки в 1 GB RAM не влазять.
 
+PROD на GCP публікується на власному домені **`www.bookamore.store`** через Cloudflare Tunnel
+(апекс `bookamore.store` віддає 301 на www — канонічна форма одна, див. 5.3).
+Зона `alt-web.biz.ua` у Cloudflare **не заводиться** — вона несе пошту й сторонні сайти,
+а `bookamore.alt-web.biz.ua` та `bookamore-dev.alt-web.biz.ua` лишаються на старому VPS
+(причини й межі — розділ 5.1).
+
 ---
 
 ## 1. Що змінюється в архітектурі
@@ -199,28 +205,64 @@ nano /opt/bookamore/.env
 ```
 
 Заповнити `DB_PASSWORD`, `JWT_SECRET`, OAuth-креденшели та `CLOUDFLARE_TUNNEL_TOKEN`
-(токен зʼявиться на кроці 5). Значення `CLIENT_URL` і `SWAGGER_SERVER_URL` не змінюються —
-домен той самий, тож **redirect URI в Google/Facebook консолях чіпати не треба**.
+(токен зʼявиться на кроці 5). `CLIENT_URL` і `SWAGGER_SERVER_URL` вказують на
+`https://bookamore.store` — власний домен PROD, тож **redirect URI в консолях
+Google/Facebook доведеться доповнити** (розділ 5.4).
 
 ---
 
 ## 5. Cloudflare Tunnel
 
-### 5.1 Зона `alt-web.biz.ua` у Cloudflare
+### 5.1 Зона `bookamore.store` у Cloudflare
 
-Домен має обслуговуватись у Cloudflare (безкоштовний план):
+PROD на GCP їде на **власному домені `bookamore.store`** (реєстратор — Namecheap), а не
+на піддомені `alt-web.biz.ua`. Причина: `alt-web.biz.ua` обслуговує пошту (`MX → mail.`,
+SPF, DKIM-селектор `dkim`) і кілька сторонніх сайтів на `185.174.220.11`. Перенесення
+тієї зони в Cloudflare зачепило б **весь** домен заради одного піддомену — невиправданий
+ризик мовчки зламати пошту. `bookamore.store` натомість чистий і належить проєкту.
 
-1. Cloudflare Dashboard → **Add a site** → `alt-web.biz.ua`.
-2. Cloudflare просканує наявні DNS-записи — **звірити список і дописати ті, що не підхопились**.
-3. У реєстратора замінити NS-сервери на видані Cloudflare.
+Що лишається на старому VPS `185.143.145.151` і в Cloudflare **не заводиться**:
 
-> ⚠️ Це переносить у Cloudflare **весь** домен, не лише `bookamore.*`. Перед зміною NS
-> вивантажте поточну зону в реєстратора і переконайтесь, що всі записи (пошта — MX, SPF,
-> DKIM; інші піддомени) перенесені. Втрачений MX = мовчки зламана пошта на всьому домені.
+| Хост | Призначення |
+|---|---|
+| `bookamore.alt-web.biz.ua` | старий PROD, A-запис, host nginx + certbot |
+| `bookamore-dev.alt-web.biz.ua` | DEV, A-запис |
 
-Після активації зони: **SSL/TLS → Overview → Full (strict)**, а також
-**Edge Certificates → Always Use HTTPS: On**. Universal SSL покриває
-`bookamore.alt-web.biz.ua` як піддомен першого рівня — окремий сертифікат не потрібен.
+Порядок:
+
+1. Cloudflare Dashboard → **Add a site** → `bookamore.store`, план **Free**.
+2. Cloudflare просканує зону на Namecheap — **звірити список записів** (нижче).
+3. У Namecheap: **Domain → Nameservers → Custom DNS** → вписати пару, видану Cloudflare.
+4. Дочекатись, доки зона перейде `Pending` → `Active` (зазвичай хвилини, TTL у `.store` — 900 с).
+
+**Що прибрати** зі скану — парковку Namecheap, вона більше не потрібна:
+
+```
+A      @     162.255.119.47          ← parkingpage
+CNAME  www   parkingpage.namecheap.com.
+```
+
+**Що зберегти обовʼязково** — інакше тихо помре пересилання пошти:
+
+```
+MX  @  10 eforward1.registrar-servers.com.
+MX  @  10 eforward2.registrar-servers.com.
+MX  @  10 eforward3.registrar-servers.com.
+MX  @  15 eforward4.registrar-servers.com.
+MX  @  20 eforward5.registrar-servers.com.
+TXT @  "v=spf1 include:spf.efwd.registrar-servers.com ~all"
+```
+
+> ⚠️ Namecheap віддає безкоштовний email forwarding **за умови їхніх NS** (BasicDNS).
+> Після переходу на Cloudflare MX-записи лишаться валідними, але сам сервіс Namecheap
+> може відмовитись приймати пошту для домену на чужих NS. Тому після зміни NS —
+> **надіслати тестовий лист** на адресу пересилання. Не дійшов → перевести пересилання
+> на **Cloudflare Email Routing** (безкоштовний, живе в тій самій зоні: *Email → Email
+> Routing → Enable*; він сам замінить MX на `route*.mx.cloudflare.net`).
+
+Після активації зони: **SSL/TLS → Overview → Full (strict)**, **Edge Certificates →
+Always Use HTTPS: On**. Universal SSL покриває `bookamore.store` і `*.bookamore.store` —
+окремий сертифікат не потрібен.
 
 ### 5.2 Створення тунелю
 
@@ -236,27 +278,66 @@ CLOUDFLARE_TUNNEL_TOKEN=eyJhIjoiXXXX...
 
 ### 5.3 Public Hostname
 
-Вкладка **Public Hostname → Add a public hostname**:
+Канонічний хост — **`www.bookamore.store`**. Апекс теж заводимо, але тільки щоб було чому
+відповідати на edge: далі його перехоплює Redirect Rule і віддає 301 на www.
 
-| Поле | Значення |
-|---|---|
-| Subdomain | `bookamore` |
-| Domain | `alt-web.biz.ua` |
-| Type | `HTTP` |
-| URL | `frontend:80` |
+Чому саме один канонічний хост, а не два рівноправні: `CLIENT_URL` у беку — одне значення
+(`OAuth2SuccessHandler` підставляє його в redirect цілим рядком). Якби апекс і www обидва
+віддавали застосунок, користувач з апексу отримав би CORS-origin, якого немає в дозволених,
+і мовчазні 403 на XHR.
+
+Вкладка **Public Hostname → Add a public hostname**, два записи:
+
+| Поле | `www` (канонічний) | Апекс |
+|---|---|---|
+| Subdomain | `www` | *(порожньо)* |
+| Domain | `bookamore.store` | `bookamore.store` |
+| Type | `HTTP` | `HTTP` |
+| URL | `frontend:80` | `frontend:80` |
 
 `frontend` — це імʼя сервісу в docker-мережі `bookamore_prod_network`; cloudflared
 резолвить його напряму, тому назовні не треба публікувати жодного порту.
 
 У **Additional application settings → HTTP Settings** поле *HTTP Host Header* лишити
-**порожнім**: оригінальний `Host` має дійти до nginx і Spring без підміни.
+**порожнім**: оригінальний `Host` має дійти до nginx і Spring без підміни. У
+`frontend/nginx.conf` стоїть `server_name _`, тож будь-який `Host` приймається — зміна
+домену конфіг nginx не зачіпає.
 
-DNS-запис `bookamore.alt-web.biz.ua → <tunnel-uuid>.cfargotunnel.com` (CNAME, proxied)
-Cloudflare створює автоматично — **старий A-запис на `185.143.145.151` треба видалити вручну**,
-інакше частина трафіку піде повз тунель на старий VPS.
+DNS-записи `→ <tunnel-uuid>.cfargotunnel.com` (CNAME, proxied) Cloudflare створює
+автоматично. На апексі це працює завдяки CNAME flattening — окремий A-запис не потрібен.
+Парковочні `A @ 162.255.119.47` і `CNAME www parkingpage.namecheap.com` **видалити
+вручну**, інакше вони конфліктуватимуть із записами тунелю.
 
-`bookamore-dev.alt-web.biz.ua` у цьому тунелі не заводимо — DEV лишається A-записом
-на старий VPS.
+**Redirect Rule для апексу.** *Rules → Redirect Rules → Create rule*, назва `apex to www`:
+
+| Поле | Значення |
+|---|---|
+| If — Custom filter expression | `Hostname` `equals` `bookamore.store` |
+| Then — Type | `Dynamic` |
+| Expression | `concat("https://www.bookamore.store", http.request.uri.path)` |
+| Status code | `301` |
+| Preserve query string | ✅ |
+
+`Dynamic` замість `Static` — щоб редірект зберігав шлях: інакше глибокі посилання на
+апекс (`/offers/…`) губили б URI і кидали на головну.
+
+Що в цей тунель **не** заводимо: `bookamore.alt-web.biz.ua` і `bookamore-dev.alt-web.biz.ua`
+лишаються A-записами на старий VPS у зоні, яку веде bitteserver.
+
+### 5.4 OAuth2 redirect URI
+
+Домен новий, тож у консолях провайдерів треба дозволити його **до** першого логіну —
+інакше `redirect_uri_mismatch`.
+
+| Провайдер | Де | Що додати |
+|---|---|---|
+| Google | Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client ID | *Authorized redirect URIs*: `https://www.bookamore.store/login/oauth2/code/google`; *Authorized JavaScript origins*: `https://www.bookamore.store` |
+| Facebook | Meta for Developers → застосунок → Facebook Login → Settings | *Valid OAuth Redirect URIs*: `https://www.bookamore.store/login/oauth2/code/facebook` |
+
+Форма **з `www`** — саме її бачить провайдер, бо апекс редіректиться ще на edge і до
+застосунку не доходить. Апексну форму додавати не потрібно.
+
+Старі URI на `bookamore.alt-web.biz.ua` не видаляти: цей домен далі обслуговує старий VPS.
 
 ---
 
@@ -345,20 +426,29 @@ docker compose -f docker-compose.gcp.yaml logs cloudflared | grep -i "registered
 docker run --rm --network bookamore_prod_network curlimages/curl:8.10.1 \
   -s -i --max-time 20 http://frontend:80/ | head -5
 
-# Ззовні
-curl -I https://bookamore.alt-web.biz.ua
+# Ззовні. Ознака, що відповідь іде саме через тунель, а не повз нього, —
+# заголовки `server: cloudflare` і `cf-ray` у відповіді.
+curl -sI https://www.bookamore.store | grep -iE "^(HTTP|server|cf-ray)"
+# Апекс має віддати 301 саме на www-форму, зі збереженим шляхом
+curl -sI https://bookamore.store/offers | grep -iE "^(HTTP|location)"
 # Колекційний ендпойнт — саме /offers. GET /api/v1/books у API немає
 # (лише /api/v1/books/{bookId}), тож він віддає 500 "No static resource" і на PROD, і на DEV.
-curl -s https://bookamore.alt-web.biz.ua/api/v1/offers | head -c 200
+curl -s https://www.bookamore.store/api/v1/offers | head -c 200
 
 # Прямий доступ по IP має бути закритий
 curl -m 5 -I "http://$(curl -s ifconfig.me)" || echo "OK: прямий вхід закрито"
 ```
 
-Окремо перевірити OAuth2: логін через Google має завершитись поверненням на
-`https://bookamore.alt-web.biz.ua/oauth2/callback`. Якщо Google скаржиться на
-`redirect_uri_mismatch` — значить `X-Forwarded-Proto` не доїхав; дивитись `map`
-у `frontend/nginx.conf`.
+Окремо перевірити OAuth2. Ланцюжок такий: Google повертає код на
+`https://www.bookamore.store/login/oauth2/code/google` (дефолтний шлях Spring — кастомного
+`redirect-uri` в `application-prod.yaml` немає), далі `OAuth2SuccessHandler` редіректить
+браузер на `${CLIENT_URL}/login` з токеном у параметрах.
+
+Дві різні причини збою, які легко сплутати:
+
+- **`redirect_uri_mismatch` від Google** — URI не доданий у консоль (розділ 5.4).
+- **Редірект пішов на `http://`** — `X-Forwarded-Proto` не доїхав; дивитись `map`
+  у `frontend/nginx.conf`.
 
 ---
 
