@@ -37,7 +37,20 @@ docs/*.docx
 certs
 .claude/
 backup.sql
-uploads/
 pgdata/
-data/
+
+# Робочі теки завантажень, які НЕ версіонуються:
+# uploads/ у корені — тека прод-стеку, backend/.../uploads — залишок від local-профілю.
+# Правило навмисно не глобальне (`uploads/`), інакше воно перекрило б data/uploads нижче.
+/uploads/
+backend/src/main/resources/uploads/
+
+# data/ ігнорується цілком, окрім data/uploads/img — фото, потрібні для локального
+# розгортання «сайт із картинками» без доступу до VPS (frontend/README.md, розділ 4).
+# Ігнорувати треба саме `data/*`, а не `data/`: git не розігнорує вміст теки,
+# яка сама вже під ігнором, тож виняток на неї не подіяв би.
+data/*
+!data/uploads/
+data/uploads/*
+!data/uploads/img/
 
