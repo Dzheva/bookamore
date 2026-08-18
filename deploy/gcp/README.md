@@ -326,8 +326,21 @@ DNS-записи `→ <tunnel-uuid>.cfargotunnel.com` (CNAME, proxied) Cloudflar
 
 ### 5.4 OAuth2 redirect URI
 
-Домен новий, тож у консолях провайдерів треба дозволити його **до** першого логіну —
-інакше `redirect_uri_mismatch`.
+> ⚠️ **Спершу перевір, чи креденшели взагалі існують.** На момент міграції в усіх
+> середовищах стояли заглушки — `prod_placeholder` на старому VPS і на GCP,
+> `change_me` на DEV, — тож соціальний логін не працював ніде. Перевірити можна
+> без входу в консолі, по редіректу:
+>
+> ```bash
+> curl -sSI https://www.bookamore.store/oauth2/authorization/google | grep -i ^location
+> ```
+>
+> Справжній `client_id` закінчується на `.apps.googleusercontent.com`. Якщо там
+> заглушка — додавати redirect URI нема куди, треба спершу створити застосунки
+> в Google Cloud Console і Meta for Developers.
+
+Коли креденшели є, у консолях провайдерів треба дозволити домен **до** першого
+логіну — інакше `redirect_uri_mismatch`.
 
 | Провайдер | Де | Що додати |
 |---|---|---|
