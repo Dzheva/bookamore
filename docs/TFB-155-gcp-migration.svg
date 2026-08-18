@@ -3,7 +3,7 @@
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1976D2"/></marker><marker id="ahg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#607D8B"/></marker></defs>
 <text x="48" y="60" font-size="30" font-weight="700" fill="#1A237E">Міграція Bookamore на GCP e2-micro за Cloudflare Tunnel</text>
 <text x="48" y="92" font-size="17" fill="#546E7A">Два обмеження визначають усе інше: 1 GB RAM (збірка переїжджає в CI) і 1 GB вихідного трафіку на місяць (статику кешує Cloudflare).</text>
-<text x="48" y="116" font-size="15" fill="#546E7A">TFB-155 · гілка TFB-155-gcp-e2micro-cloudflare-tunnel · PROD на GCP, DEV лишається на старому VPS</text>
+<text x="48" y="116" font-size="15" fill="#546E7A">TFB-155 · PROD на GCP за www.bookamore.store · DEV і старий PROD лишаються на VPS у зоні alt-web.biz.ua</text>
 <text x="48" y="164" font-size="16" font-weight="700" fill="#1A237E">Конвеєр доставки</text>
 <text x="308" y="164" font-size="14" fill="#546E7A">збірка більше не відбувається на сервері</text>
 <rect x="48" y="178" width="370" height="66" rx="10" fill="#BBDEFB" stroke="#1976D2" stroke-width="2"/>
@@ -25,7 +25,7 @@
 <text x="308" y="308" font-size="14" fill="#546E7A">тунель ініціюється зсередини VM — вхідних портів немає</text>
 <rect x="48" y="322" width="235" height="66" rx="10" fill="#ECEFF1" stroke="#607D8B" stroke-width="2"/>
 <text x="165" y="350" font-size="16" font-weight="700" fill="#263238" text-anchor="middle">Користувач</text>
-<text x="165" y="372" font-size="12.5" fill="#263238" opacity="0.78" text-anchor="middle">bookamore.alt-web.biz.ua</text>
+<text x="165" y="372" font-size="12.5" fill="#263238" opacity="0.78" text-anchor="middle">www.bookamore.store</text>
 <line x1="289" y1="355" x2="311" y2="355" stroke="#607D8B" stroke-width="2.4" marker-end="url(#ahg)"/>
 <rect x="317" y="322" width="235" height="66" rx="10" fill="#ECEFF1" stroke="#607D8B" stroke-width="2"/>
 <text x="434" y="350" font-size="16" font-weight="700" fill="#263238" text-anchor="middle">Cloudflare edge</text>
@@ -52,7 +52,8 @@
 <circle cx="98" cy="502" r="20" fill="#1A237E"/>
 <text x="98" y="509" font-size="18" font-weight="700" fill="#FFFFFF" text-anchor="middle">1</text>
 <text x="140" y="487" font-size="18" font-weight="700" fill="#1A237E">Створити VM у межах Always Free</text>
-<text x="140" y="512" font-size="14" fill="#546E7A">e2-micro · us-central1 · pd-standard 30 GB · network tier STANDARD. Інший тип диска або регіон робить машину платною.</text>
+<text x="140" y="512" font-size="14" fill="#546E7A">e2-micro · us-east1-b · pd-standard 30 GB · network tier STANDARD. Інший тип диска або регіон робить машину платною;</text>
+<text x="140" y="533" font-size="14" fill="#546E7A">зони перебираються до вільної.</text>
 <rect x="1240" y="482" width="372" height="40" rx="8" fill="#E8F5E9" stroke="#66BB6A" stroke-width="1.6"/>
 <text x="1426" y="507" font-size="13.5" font-family="DejaVu Sans Mono, Consolas, monospace" fill="#1B5E20" text-anchor="middle">gcloud compute instances create</text>
 <rect x="48" y="563" width="1584" height="96" rx="10" fill="#FAFBFC" stroke="#CFD8DC" stroke-width="1.6"/>
@@ -86,7 +87,7 @@
 <circle cx="98" cy="938" r="20" fill="#1A237E"/>
 <text x="98" y="945" font-size="18" font-weight="700" fill="#FFFFFF" text-anchor="middle">5</text>
 <text x="140" y="923" font-size="18" font-weight="700" fill="#1A237E">Полагодити X-Forwarded-Proto</text>
-<text x="140" y="948" font-size="14" fill="#546E7A">За тунелем nginx бачить лише http, тож Spring будував redirect_uri з http:// — Google такий колбек відхиляє. Схему</text>
+<text x="140" y="948" font-size="14" fill="#546E7A">За тунелем nginx бачить лише http, тож Spring будував redirect_uri з http:// — провайдер такий колбек відхиляє. Схему</text>
 <text x="140" y="969" font-size="14" fill="#546E7A">тепер беремо з вхідного заголовка через map.</text>
 <rect x="1240" y="918" width="372" height="40" rx="8" fill="#E8F5E9" stroke="#66BB6A" stroke-width="1.6"/>
 <text x="1426" y="943" font-size="13.5" font-family="DejaVu Sans Mono, Consolas, monospace" fill="#1B5E20" text-anchor="middle">frontend/nginx.conf</text>
@@ -103,9 +104,9 @@
 <rect x="48" y="1108" width="6" height="96" rx="3" fill="#1976D2"/>
 <circle cx="98" cy="1156" r="20" fill="#1A237E"/>
 <text x="98" y="1163" font-size="18" font-weight="700" fill="#FFFFFF" text-anchor="middle">7</text>
-<text x="140" y="1141" font-size="18" font-weight="700" fill="#1A237E">Перевести DNS і TLS на Cloudflare</text>
-<text x="140" y="1166" font-size="14" fill="#546E7A">Зона alt-web.biz.ua у Cloudflare, CNAME на &lt;uuid&gt;.cfargotunnel.com, старий A-запис на 185.143.145.151 знімається.</text>
-<text x="140" y="1187" font-size="14" fill="#546E7A">Universal SSL + Always Use HTTPS.</text>
+<text x="140" y="1141" font-size="18" font-weight="700" fill="#1A237E">Завести власний домен у Cloudflare</text>
+<text x="140" y="1166" font-size="14" fill="#546E7A">У Cloudflare їде чиста зона bookamore.store, а не alt-web.biz.ua з поштою і чужими сайтами. Канонічний хост www, апекс</text>
+<text x="140" y="1187" font-size="14" fill="#546E7A">віддає 301 на нього. Universal SSL + Always Use HTTPS.</text>
 <rect x="1240" y="1136" width="372" height="40" rx="8" fill="#E8F5E9" stroke="#66BB6A" stroke-width="1.6"/>
 <text x="1426" y="1161" font-size="13.5" font-family="DejaVu Sans Mono, Consolas, monospace" fill="#1B5E20" text-anchor="middle">Cloudflare Dashboard</text>
 <rect x="48" y="1217" width="1584" height="96" rx="10" fill="#FAFBFC" stroke="#CFD8DC" stroke-width="1.6"/>
@@ -119,6 +120,6 @@
 <text x="1426" y="1270" font-size="13.5" font-family="DejaVu Sans Mono, Consolas, monospace" fill="#1B5E20" text-anchor="middle">deploy/gcp/README.md §6, §9</text>
 <rect x="48" y="1342" width="1584" height="92" rx="10" fill="#FFF8E1" stroke="#F9A825" stroke-width="2"/>
 <text x="72" y="1370" font-size="16" font-weight="700" fill="#1A237E">Що перевіряти після запуску</text>
-<text x="72" y="1396" font-size="14" fill="#546E7A">docker stats — сума RSS нижче ~800 MB · логін через Google доходить до /oauth2/callback · cf-cache-status: HIT на /assets/ і /img/</text>
+<text x="72" y="1396" font-size="14" fill="#546E7A">docker stats — сума RSS нижче ~800 MB · апекс віддає 301 на www зі збереженим шляхом · cf-cache-status: HIT на /assets/ і /img/</text>
 <text x="72" y="1419" font-size="14" fill="#546E7A">прямий запит на публічний IP не відповідає · Billing → Reports через добу показує нуль · фото і БД лишаються на місці після docker compose down</text>
 </svg>

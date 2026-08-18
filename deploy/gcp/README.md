@@ -204,10 +204,13 @@ chmod 600 /opt/bookamore/.env
 nano /opt/bookamore/.env
 ```
 
-Заповнити `DB_PASSWORD`, `JWT_SECRET`, OAuth-креденшели та `CLOUDFLARE_TUNNEL_TOKEN`
-(токен зʼявиться на кроці 5). `CLIENT_URL` і `SWAGGER_SERVER_URL` вказують на
-`https://bookamore.store` — власний домен PROD, тож **redirect URI в консолях
-Google/Facebook доведеться доповнити** (розділ 5.4).
+Заповнити `DB_PASSWORD`, `JWT_SECRET` та `CLOUDFLARE_TUNNEL_TOKEN` (токен зʼявиться
+на кроці 5). `CLIENT_URL` і `SWAGGER_SERVER_URL` уже вказують на
+`https://www.bookamore.store` — канонічну, з `www`, форму власного домену PROD;
+апексна тут не годиться (чому саме одна — розділ 5.3).
+
+OAuth-креденшели лишаються порожніми: реальних застосунків Google/Meta у проєкту
+немає в жодному середовищі, тож заповнювати нема чим (розділ 5.4).
 
 ---
 
@@ -326,8 +329,21 @@ DNS-записи `→ <tunnel-uuid>.cfargotunnel.com` (CNAME, proxied) Cloudflar
 
 ### 5.4 OAuth2 redirect URI
 
-Домен новий, тож у консолях провайдерів треба дозволити його **до** першого логіну —
-інакше `redirect_uri_mismatch`.
+> ⚠️ **Спершу перевір, чи креденшели взагалі існують.** На момент міграції в усіх
+> середовищах стояли заглушки — `prod_placeholder` на старому VPS і на GCP,
+> `change_me` на DEV, — тож соціальний логін не працював ніде. Перевірити можна
+> без входу в консолі, по редіректу:
+>
+> ```bash
+> curl -sSI https://www.bookamore.store/oauth2/authorization/google | grep -i ^location
+> ```
+>
+> Справжній `client_id` закінчується на `.apps.googleusercontent.com`. Якщо там
+> заглушка — додавати redirect URI нема куди, треба спершу створити застосунки
+> в Google Cloud Console і Meta for Developers.
+
+Коли креденшели є, у консолях провайдерів треба дозволити домен **до** першого
+логіну — інакше `redirect_uri_mismatch`.
 
 | Провайдер | Де | Що додати |
 |---|---|---|
@@ -507,15 +523,61 @@ docker run --rm -v bookamore_prod_uploads:/src:ro -v "$HOME":/dst alpine \
 
 ---
 
-## 11. Вимкнення старого PROD
+## 11. Старий PROD на VPS
 
-Після того як домен стабільно віддається через тунель і дані звірені:
+**Статус: свідомо лишений працювати** як гарячий запас на випадок проблем з GCP.
+`bookamore.alt-web.biz.ua` і далі віддається зі старого VPS через host nginx + certbot.
+
+Що про нього треба памʼятати:
+
+- **Він поза CI.** `deploy.yml` шле `main` тільки на GCP, а `dev` — у `/home/deploy/www/dev`.
+  Каталог `/home/deploy/www/prod` не оновлює ніхто, тож з кожним мержем у `main` код там
+  відстає дедалі більше.
+- **У нього власна БД.** Поки обидві копії показують ті самі дані, але перша ж реєстрація
+  чи новий офер на старому домені створять записи, яких на GCP не буде, і навпаки.
+  Зворотної синхронізації немає.
+- **Сертифікат** Let's Encrypt поновлює certbot на хості; якщо PROD-блок колись прибирати,
+  не зачепити DEV у тому ж конфізі.
+
+Швидка звірка, чи копії ще не розійшлись:
 
 ```bash
-# на старому VPS
+for H in bookamore.alt-web.biz.ua www.bookamore.store; do
+  printf "%-28s " "$H"
+  curl -s "https://$H/api/v1/offers?size=50" \
+    | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['totalElements'], sorted(o['id'] for o in d['content'])[:1])"
+done
+```
+
+Розбіжність у `totalElements` означає, що дані вже живуть окремо і просте вимкнення
+щось втратить — тоді спершу переносити різницю, а не гасити.
+
+### Коли настане час гасити
+
+Розумні критерії: GCP тримає навантаження без OOM, соціальний логін налаштований
+(розділ 5.4), і копії досі ідентичні. Тоді — з редіректом, щоб старі посилання не
+вели в нікуди:
+
+```bash
+# на старому VPS: зняти дамп як страховку
 cd /home/deploy/www/prod
+docker compose -f docker-compose.yaml --env-file .env exec db \
+  pg_dump -U "$DB_USER" -d bookamore_prod -Fc > ~/prod-final-$(date +%F).dump
+tar czf ~/prod-uploads-$(date +%F).tar.gz -C /home/deploy/www/prod uploads
+
 docker compose -f docker-compose.yaml --env-file .env down
 ```
 
-Каталог і томи не видаляти щонайменше тиждень — це фактичний бекап на випадок відкату.
-Конфіг `deploy/nginx.conf` лишається чинним для DEV, PROD-блок у ньому стає мертвим.
+У host nginx PROD-блок замінити на редірект (DEV-блок не чіпати):
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name bookamore.alt-web.biz.ua;
+    # сертифікати лишаються ті самі
+    return 301 https://www.bookamore.store$request_uri;
+}
+```
+
+Каталог і томи не видаляти щонайменше тиждень після цього — це фактичний бекап
+на випадок відкату.

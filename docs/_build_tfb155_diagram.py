@@ -29,7 +29,7 @@ ci_lane = [
     ("GCP e2-micro", "docker compose pull && up -d", True),
 ]
 rt_lane = [
-    ("Користувач", "bookamore.alt-web.biz.ua", False),
+    ("Користувач", "www.bookamore.store", False),
     ("Cloudflare edge", "TLS + кеш статики", False),
     ("cloudflared", "контейнер, вихідний тунель", True),
     ("frontend · nginx", "порт 80, лише в docker-мережі", True),
@@ -41,8 +41,8 @@ rt_lane = [
 # (номер, заголовок, деталі, артефакт)
 steps = [
     ("1", "Створити VM у межах Always Free",
-     "e2-micro · us-central1 · pd-standard 30 GB · network tier STANDARD. Інший тип диска "
-     "або регіон робить машину платною.",
+     "e2-micro · us-east1-b · pd-standard 30 GB · network tier STANDARD. Інший тип диска "
+     "або регіон робить машину платною; зони перебираються до вільної.",
      "gcloud compute instances create"),
     ("2", "Підготувати систему під 1 GB",
      "Swap-файл 1 GB і vm.swappiness=10 як подушка на піки, Docker, каталог /opt/bookamore, "
@@ -57,16 +57,16 @@ steps = [
      "без паралельних воркерів. Іменовані томи для БД і фото.",
      "docker-compose.gcp.yaml"),
     ("5", "Полагодити X-Forwarded-Proto",
-     "За тунелем nginx бачить лише http, тож Spring будував redirect_uri з http:// — Google "
+     "За тунелем nginx бачить лише http, тож Spring будував redirect_uri з http:// — провайдер "
      "такий колбек відхиляє. Схему тепер беремо з вхідного заголовка через map.",
      "frontend/nginx.conf"),
     ("6", "Підняти Cloudflare Tunnel",
      "Токен коннектора в .env, Public Hostname → frontend:80 по docker-мережі. На хості не "
      "публікується жоден порт, прямий вхід по IP закритий.",
      "cloudflared у compose"),
-    ("7", "Перевести DNS і TLS на Cloudflare",
-     "Зона alt-web.biz.ua у Cloudflare, CNAME на <uuid>.cfargotunnel.com, старий A-запис на "
-     "185.143.145.151 знімається. Universal SSL + Always Use HTTPS.",
+    ("7", "Завести власний домен у Cloudflare",
+     "У Cloudflare їде чиста зона bookamore.store, а не alt-web.biz.ua з поштою і чужими "
+     "сайтами. Канонічний хост www, апекс віддає 301 на нього. Universal SSL + Always Use HTTPS.",
      "Cloudflare Dashboard"),
     ("8", "Перенести дані та закрити периметр",
      "pg_dump / pg_restore, uploads розпаковуються в named volume. Видалити firewall-правила "
@@ -105,7 +105,8 @@ add(f'<text x="48" y="92" font-size="17" fill="{MUTED}">'
     'Два обмеження визначають усе інше: 1 GB RAM (збірка переїжджає в CI) '
     'і 1 GB вихідного трафіку на місяць (статику кешує Cloudflare).</text>')
 add(f'<text x="48" y="116" font-size="15" fill="{MUTED}">'
-    'TFB-155 · гілка TFB-155-gcp-e2micro-cloudflare-tunnel · PROD на GCP, DEV лишається на старому VPS</text>')
+    'TFB-155 · PROD на GCP за www.bookamore.store · DEV і старий PROD лишаються на VPS '
+    'у зоні alt-web.biz.ua</text>')
 
 
 def lane(y, title, boxes, note):
@@ -179,7 +180,7 @@ add(f'<rect x="48" y="{fy}" width="{W - 96}" height="{FOOT_H - 16}" rx="10" fill
 add(f'<text x="72" y="{fy + 28}" font-size="16" font-weight="700" fill="{INK}">'
     'Що перевіряти після запуску</text>')
 add(f'<text x="72" y="{fy + 54}" font-size="14" fill="{MUTED}">'
-    'docker stats — сума RSS нижче ~800 MB · логін через Google доходить до /oauth2/callback · '
+    'docker stats — сума RSS нижче ~800 MB · апекс віддає 301 на www зі збереженим шляхом · '
     'cf-cache-status: HIT на /assets/ і /img/</text>')
 add(f'<text x="72" y="{fy + 77}" font-size="14" fill="{MUTED}">'
     'прямий запит на публічний IP не відповідає · Billing → Reports через добу показує нуль · '
