@@ -1,3 +1,5 @@
+import clsx from 'clsx';
+
 export const LogoSvg = ({ className }: { className?: string }) => {
   return (
     <svg
@@ -5,7 +7,7 @@ export const LogoSvg = ({ className }: { className?: string }) => {
       height="31"
       viewBox="0 0 113 31"
       fill="none"
-      className={className}
+      className={clsx('text-deep-blue', className)}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

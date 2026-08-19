@@ -12,6 +12,7 @@ import { AllChatsPage } from '@pages/AllChatsPage/AllChatsPage.tsx';
 import { ChatPage } from '@pages/ChatPage/ChatPage.tsx';
 import { GenreResultsPage } from '@pages/GenreResultsPage/GenreResultsPage.tsx';
 import { NewOfferPage } from '@pages/NewOfferPage/NewOfferPage.tsx';
+import { NotFoundPage } from '@pages/NotFoundPage/NotFoundPage.tsx';
 import ProfilePage from '@/pages/ProfilePage/ProfilePage';
 import MyAnnouncementsPage from '@/pages/MyAnnouncementsPage/MyAnnouncementsPage';
 import OrdersPage from '@/pages/OrdersPage/OrdersPage';
@@ -122,5 +123,9 @@ export const router = createBrowserRouter([
         <SettingsPage />
       </ProtectedRoute>
     ),
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ]);

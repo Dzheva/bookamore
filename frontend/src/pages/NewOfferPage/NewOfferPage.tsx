@@ -6,6 +6,7 @@ import HeaderTitle from '@/shared/ui/HeaderTitle';
 import { BottomNav } from '@shared/ui/BottomNav';
 import { useOfferForm } from './hooks/useOfferForm';
 import { OfferForm } from './components/OfferForm';
+import { NotFoundPage } from '@/pages/NotFoundPage/NotFoundPage';
 
 const NewOfferPage: React.FC = () => {
   const { offerId } = useParams<{ offerId: string }>();
@@ -25,7 +26,7 @@ const NewOfferPage: React.FC = () => {
   } = useOfferForm();
 
   if (isLoading) return <div>Loading...</div>;
-  if (offerId && (error || !offer)) return <div>Not found</div>;
+  if (offerId && (error || !offer)) return <NotFoundPage />;
 
   return (
     <>
