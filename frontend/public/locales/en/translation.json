@@ -195,5 +195,11 @@
     "confirmation": "Are you sure you want to delete this announcement? This action cannot be undone.",
     "confirmButton": "Yes, delete",
     "cancelButton": "No, cancel"
+  },
+
+  "notFound": {
+    "title": "This page got lost between chapters",
+    "description": "The link may be out of date",
+    "backToHome": "Back to home"
   }
 }

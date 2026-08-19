@@ -157,7 +157,7 @@ export function Header() {
       <div className="px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Top row - Logo */}
         <div className="flex items-center justify-between py-4 px-[10px]">
-          <LogoSvg className="text-deep-blue" />
+          <LogoSvg />
           <LanguageSwitch />
         </div>
 

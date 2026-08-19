@@ -13,6 +13,7 @@ import { ConditionBlock } from './ConditionBlock';
 import { GenresBlock } from './GenresBlock';
 import { DescriptionBlock } from './DescriptionBlock';
 import { SellerBlock } from './SellerBlock';
+import { NotFoundPage } from '@/pages/NotFoundPage/NotFoundPage';
 
 import { BottomNav } from '@/shared/ui/BottomNav';
 import { BookSection } from '@/shared/ui/BookSection';
@@ -47,7 +48,7 @@ const OfferDetailsPage: React.FC = () => {
   );
 
   if (isLoading) return <div>Loading...</div>;
-  if (error || !offer) return <div>Not found</div>;
+  if (error || !offer) return <NotFoundPage />;
 
   const { book, seller } = offer;
 
