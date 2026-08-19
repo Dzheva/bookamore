@@ -3,12 +3,12 @@ package com.bookamore.backend.service.impl;
 import com.bookamore.backend.dto.offer.OfferResponse;
 import com.bookamore.backend.entity.Favorite;
 import com.bookamore.backend.exception.ResourceNotFoundException;
-import com.bookamore.backend.jwt.JwtUserDetails;
 import com.bookamore.backend.mapper.offer.OfferMapper;
 import com.bookamore.backend.repository.FavoriteRepository;
 import com.bookamore.backend.repository.OfferRepository;
 import com.bookamore.backend.repository.UserRepository;
 import com.bookamore.backend.service.FavoriteService;
+import com.bookamore.backend.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,10 +38,11 @@ public class FavoriteServiceImpl implements FavoriteService {
         }
 
         Favorite favorite = new Favorite();
-        favorite.setUserId(currentUserId());
+        favorite.setUserId(SecurityUtils.getAuthenticatedUserId());
         favorite.setOfferId(offerId);
 
         try {
+            // flush is needed so that the FK - 404 wrapper is guaranteed to work with @Transactional
             favoriteRepository.saveAndFlush(favorite);
         } catch (DataIntegrityViolationException ex) {
             if (ex.getCause() instanceof ConstraintViolationException) {
@@ -55,12 +55,12 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     @Transactional
     public void removeFromFavorites(UUID offerId) {
-        favoriteRepository.deleteByUserIdAndOfferId(currentUserId(), offerId);
+        favoriteRepository.deleteByUserIdAndOfferId(SecurityUtils.getAuthenticatedUserId(), offerId);
     }
 
     @Override
     public Page<OfferResponse> getFavorites(Integer page, Integer size, String sortBy, String sortDir) {
-        return getFavoritesByUserId(currentUserId(), page, size, sortBy, sortDir);
+        return getFavoritesByUserId(SecurityUtils.getAuthenticatedUserId(), page, size, sortBy, sortDir);
     }
 
     @Override
@@ -75,13 +75,5 @@ public class FavoriteServiceImpl implements FavoriteService {
         Sort.Direction direction = Sort.Direction.fromString(sortDir);
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         return favoriteRepository.findOffersByUserId(userId, pageable).map(offerMapper::toResponse);
-    }
-
-    private UUID currentUserId() {
-        JwtUserDetails principal = (JwtUserDetails) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-        return principal.getId();
     }
 }
