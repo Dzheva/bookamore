@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
@@ -7,7 +8,7 @@ type SocialProvider = 'google' | 'facebook';
 
 interface SocialAuthButtonProps {
   provider: SocialProvider;
-  onClick: () => void;
+  url: string;
 }
 
 const providerConfig = {
@@ -24,20 +25,20 @@ const providerConfig = {
 
 const SocialAuthButton: React.FC<SocialAuthButtonProps> = ({
   provider,
-  onClick,
+  url,
 }) => {
   const { t } = useTranslation();
   const config = providerConfig[provider];
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <Link
+      to={url}
+      rel="noopener noreferrer"
       className="mb-4 flex w-full items-center rounded-full border border-[#747775] p-2.5 text-sm font-medium text-[#1F1F1F] hover:bg-gray-50"
     >
       <span className="mr-2 flex items-center">{config.icon}</span>
       {t('auth.continueWith')} {config.label}
-    </button>
+    </Link>
   );
 };
 

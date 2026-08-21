@@ -11,6 +11,8 @@ import { validators } from '@/shared/helpers/validators';
 import { SocialAuthButton } from '@/shared/ui/SocialAuthButton';
 import { useTranslation } from 'react-i18next';
 
+const OAUTH_BASE_URL = import.meta.env.VITE_OAUTH_BASE_URL || '';
+
 interface ValidationError {
   name?: string;
   email?: string;
@@ -212,12 +214,12 @@ const SignUpPage: React.FC = () => {
           <div className="flex flex-col max-w-fit mx-auto">
             <SocialAuthButton
               provider="google"
-              onClick={() => console.log('Google auth')}
+              url={`${OAUTH_BASE_URL}/oauth2/authorization/google`}
             />
 
             <SocialAuthButton
               provider="facebook"
-              onClick={() => console.log('Facebook auth')}
+              url={`${OAUTH_BASE_URL}/oauth2/authorization/facebook`}
             />
           </div>
         </form>

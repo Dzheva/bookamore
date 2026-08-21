@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { getCookie, setCookie, removeCookie } from '@/shared/helpers/cookies';
 
 export interface User {
   id: string;
@@ -16,9 +17,9 @@ interface AuthState {
 
 const getStoredToken = (): string | null => {
   try {
-    return localStorage.getItem('auth_token');
+    return localStorage.getItem('auth_token') || getCookie('auth_token');
   } catch {
-    return null;
+    return getCookie('auth_token');
   }
 };
 
@@ -37,6 +38,7 @@ const setStoredAuth = (token: string): void => {
   } catch (error) {
     console.error('Failed to save auth to localStorage:', error);
   }
+  setCookie('auth_token', token);
 };
 const setStoredUser = (user: User): void => {
   try {
@@ -53,6 +55,7 @@ const clearStoredAuth = (): void => {
   } catch (error) {
     console.error('Failed to clear auth from localStorage:', error);
   }
+  removeCookie('auth_token');
 };
 
 // Ініціальний стан - намагаємось відновити з localStorage
