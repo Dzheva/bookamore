@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
@@ -31,14 +30,14 @@ const SocialAuthButton: React.FC<SocialAuthButtonProps> = ({
   const config = providerConfig[provider];
 
   return (
-    <Link
-      to={url}
+    <a
+      href={url}
       rel="noopener noreferrer"
       className="mb-4 flex w-full items-center rounded-full border border-[#747775] p-2.5 text-sm font-medium text-[#1F1F1F] hover:bg-gray-50"
     >
       <span className="mr-2 flex items-center">{config.icon}</span>
       {t('auth.continueWith')} {config.label}
-    </Link>
+    </a>
   );
 };
 
