@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Favorite.FavoriteId> {
@@ -19,6 +21,12 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Favorite.Fav
             WHERE f.userId = :userId
             """)
     Page<Offer> findOffersByUserId(UUID userId, Pageable pageable);
+
+    @Query("""
+            SELECT f.offerId FROM Favorite f
+            WHERE f.userId = :userId AND f.offerId IN :offerIds
+            """)
+    Set<UUID> findOfferIdsByUserIdAndOfferIdIn(UUID userId, Collection<UUID> offerIds);
 
     void deleteByUserIdAndOfferId(UUID userId, UUID offerId);
 }
