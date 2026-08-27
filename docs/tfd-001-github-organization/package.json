@@ -8,7 +8,8 @@
     "export": "slidev export slides.md"
   },
   "devDependencies": {
-    "@slidev/cli": "^51.0.0",
-    "@slidev/theme-default": "^0.25.0"
+    "@slidev/cli": "51.7.1",
+    "@slidev/theme-default": "0.25.0",
+    "shiki": "1.24.4"
   }
 }
