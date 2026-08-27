@@ -108,9 +108,9 @@ mdc: true
 - Frontend/backend і далі деплояться разом, права на рівні всього репо
 
 **Варіант B — розбити на окремі репозиторії**
-- `bookamore-frontend`
-- `bookamore-backend`
-- `bookamore-gitops` (docker-compose, nginx, deploy/, .github/workflows)
+- `front`
+- `backend`
+- `gitops` (docker-compose, nginx, deploy/, .github/workflows)
 - Чіткіші права per team, незалежні CI-прогони, менші checkout/build
 - Ціна: рефакторинг CI, синхронізація версій між репо, окрема задача
 

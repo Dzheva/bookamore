@@ -6,6 +6,7 @@ frontend/build/
 # Dependencies
 backend/.mvn/
 frontend/node_modules/
+docs/tfd-001-github-organization/node_modules/
 
 # IDE
 .idea/
