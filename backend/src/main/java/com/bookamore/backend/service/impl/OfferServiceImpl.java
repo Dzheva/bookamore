@@ -49,6 +49,7 @@ public class OfferServiceImpl implements OfferService {
     private final ImageService imageService;
 
     private final OfferMapper offerMapper;
+    private final OfferFavoriteMarker offerFavoriteMarker;
 
     private static final Set<String> BOOK_FIELDS = Set.of(
             "title", "yearOfRelease", "description", "condition", "authorName"
@@ -126,12 +127,16 @@ public class OfferServiceImpl implements OfferService {
 
 
     public Page<OfferResponse> getOffersPage(Integer page, Integer size, String sortBy, String sortDir) {
-        return getOffersEntityPage(page, size, sortBy, sortDir).map(offerMapper::toResponse);
+        return offerFavoriteMarker.mark(
+            getOffersEntityPage(page, size, sortBy, sortDir).map(offerMapper::toResponse)
+        );
     }
 
     public Page<OfferWithBookResponse> getOffersWithBooksPage(OfferFilter filter, Integer page, Integer size,
                                                               String sortBy, String sortDir) {
-        return getOffersEntityPageWithFilter(filter, page, size, sortBy, sortDir).map(offerMapper::toResponseWithBook);
+        return offerFavoriteMarker.markWithBook(
+            getOffersEntityPageWithFilter(filter, page, size, sortBy, sortDir).map(offerMapper::toResponseWithBook)
+        );
     }
 
     public Page<Offer> getOffersEntityPageWithFilter(OfferFilter filter, Integer page, Integer size, String sortBy, String sortDir) {
@@ -173,11 +178,11 @@ public class OfferServiceImpl implements OfferService {
     }
 
     public OfferResponse getById(UUID offerId) {
-        return offerMapper.toResponse(getEntityById(offerId));
+        return offerFavoriteMarker.mark(offerMapper.toResponse(getEntityById(offerId)));
     }
 
     public OfferWithBookResponse getWithBookById(UUID offerId) {
-        return offerMapper.toResponseWithBook(getEntityById(offerId));
+        return offerFavoriteMarker.markWithBook(offerMapper.toResponseWithBook(getEntityById(offerId)));
     }
 
     @Transactional

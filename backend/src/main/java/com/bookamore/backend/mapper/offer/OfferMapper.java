@@ -20,6 +20,7 @@ public interface OfferMapper {
 
     @Mapping(target = "bookId", source = "book.id")
     @Mapping(target = "seller", source = "user")
+    @Mapping(target = "favorite", ignore = true)
     OfferResponse toResponse(Offer offer);
 
     @Mapping(target = "id", source = "id")
@@ -32,6 +33,7 @@ public interface OfferMapper {
 
     @Mapping(target = "book", source = "book")
     @Mapping(target = "seller", source = "user")
+    @Mapping(target = "favorite", ignore = true)
     OfferWithBookResponse toResponseWithBook(Offer offer);
 
     @Mapping(target = "book", source = "request")

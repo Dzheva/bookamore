@@ -60,7 +60,9 @@ public class FavoriteServiceImpl implements FavoriteService {
 
     @Override
     public Page<OfferResponse> getFavorites(Integer page, Integer size, String sortBy, String sortDir) {
-        return getFavoritesByUserId(SecurityUtils.getAuthenticatedUserId(), page, size, sortBy, sortDir);
+        Page<OfferResponse> fp = getFavoritesByUserId(SecurityUtils.getAuthenticatedUserId(), page, size, sortBy, sortDir);
+        fp.forEach(o -> o.setFavorite(true));
+        return fp;
     }
 
     @Override
@@ -68,12 +70,16 @@ public class FavoriteServiceImpl implements FavoriteService {
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("Not found User with uuid = " + userId);
         }
-        return getFavoritesByUserId(userId, page, size, sortBy, sortDir);
+        Page<OfferResponse> fp = getFavoritesByUserId(userId, page, size, sortBy, sortDir);
+        fp.forEach(o -> o.setFavorite(true));
+        return fp;
     }
 
     private Page<OfferResponse> getFavoritesByUserId(UUID userId, Integer page, Integer size, String sortBy, String sortDir) {
         Sort.Direction direction = Sort.Direction.fromString(sortDir);
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return favoriteRepository.findOffersByUserId(userId, pageable).map(offerMapper::toResponse);
+        Page<OfferResponse> fp = favoriteRepository.findOffersByUserId(userId, pageable).map(offerMapper::toResponse);
+        fp.forEach(o -> o.setFavorite(true));
+        return fp;
     }
 }
