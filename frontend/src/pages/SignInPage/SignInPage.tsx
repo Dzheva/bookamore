@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router';
 import { useLoginMutation } from '@app/store/api/AuthApi';
 import { useDispatch } from 'react-redux';
@@ -12,6 +12,9 @@ import { AuthHeader } from '@/shared/ui/AuthHeader';
 import { validators } from '@/shared/helpers/validators';
 import { SocialAuthButton } from '@/shared/ui/SocialAuthButton';
 import { useTranslation } from 'react-i18next';
+import { setCookie } from '@/shared/helpers/cookies';
+
+const OAUTH_BASE_URL = import.meta.env.VITE_OAUTH_BASE_URL || '';
 
 interface ValidationError {
   email?: string;
@@ -40,6 +43,29 @@ const SignInPage: React.FC = () => {
 
   const [login, { isLoading }] = useLoginMutation();
   const [getCurrentUser] = useLazyGetCurrentUserQuery();
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const token = url.searchParams.get('token');
+
+    if (token) {
+      setCookie('auth_token', token);
+      dispatch(setCredentials({ token }));
+
+      getCurrentUser()
+        .unwrap()
+        .then((user) => {
+          dispatch(setCurrentUser(user));
+        })
+        .catch((err) => {
+          console.warn('Failed to fetch user data:', err);
+        })
+        .finally(() => {
+          const from = location.state?.from?.pathname || '/';
+          navigate(from, { replace: true });
+        });
+    }
+  }, [dispatch, getCurrentUser, location.state, navigate]);
 
   const clearFieldError = (field: keyof SignInFormData) => {
     setErrors((prev) => ({
@@ -182,12 +208,12 @@ const SignInPage: React.FC = () => {
           <div className="flex flex-col max-w-fit mx-auto">
             <SocialAuthButton
               provider="google"
-              onClick={() => console.log('Google auth')}
+              url={`${OAUTH_BASE_URL}/oauth2/authorization/google`}
             />
 
             <SocialAuthButton
               provider="facebook"
-              onClick={() => console.log('Facebook auth')}
+              url={`${OAUTH_BASE_URL}/oauth2/authorization/facebook`}
             />
           </div>
         </form>
