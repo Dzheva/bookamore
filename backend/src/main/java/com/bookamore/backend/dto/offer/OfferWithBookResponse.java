@@ -27,4 +27,7 @@ public class OfferWithBookResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("isFavorite")
     private Boolean favorite;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long favoritesCount;
 }
