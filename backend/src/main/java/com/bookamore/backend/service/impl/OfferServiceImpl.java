@@ -55,8 +55,6 @@ public class OfferServiceImpl implements OfferService {
             "title", "yearOfRelease", "description", "condition", "authorName"
     );
 
-    private final String offerPreviewsSubDir = "offer";
-
     @Transactional
     public OfferResponse create(OfferRequest request) {
         UUID bookId = Optional.ofNullable(request.getBookId())
@@ -77,7 +75,9 @@ public class OfferServiceImpl implements OfferService {
         offer.setBook(book);
         offer.setUser(user);
         offer = offerRepository.save(offer);
-        return offerMapper.toResponse(offer);
+        OfferResponse resp = offerMapper.toResponse(offer);
+        resp.setFavorite(false);
+        return resp;
     }
 
     @Transactional
@@ -89,7 +89,9 @@ public class OfferServiceImpl implements OfferService {
         offer.setBook(savedBook);
         offer = offerRepository.save(offer);
 
-        return offerMapper.toResponseWithBook(offer);
+        OfferWithBookResponse resp = offerMapper.toResponseWithBook(offer);
+        resp.setFavorite(false);
+        return resp;
     }
 
     public Page<Offer> getOffersEntityPage(Integer page, Integer size, String sortBy, String sortDir) {
@@ -198,9 +200,13 @@ public class OfferServiceImpl implements OfferService {
 
         if (isModified) {
             Offer savedOffer = offerRepository.save(existingOffer);  // save modified offer
-            return offerMapper.toResponse(savedOffer);
+            return offerFavoriteMarker.mark(
+                offerMapper.toResponse(savedOffer)
+            );
         }
-        return offerMapper.toResponse(existingOffer);
+        return offerFavoriteMarker.mark(
+            offerMapper.toResponse(existingOffer)
+        );
     }
 
     private boolean updateSimpleFields(Offer existingOffer, Offer patch) {
