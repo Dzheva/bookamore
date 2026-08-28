@@ -12,15 +12,17 @@ import HeaderTitle from '@/shared/ui/HeaderTitle';
 import { SettingLinkSvg } from '@/shared/ui/icons/SettingLinkSvg';
 import { ArrowRight } from '@/shared/ui/icons/Arrows';
 import LogOut from '@/shared/components/LogOut/LogOut';
+import { useGetCurrentUserQuery } from '@/app/store/api/UsersApi';
 
 const ProfilePage = () => {
   const { t } = useTranslation();
-  // Тимчасові дані користувача
-  const user = {
-    name: 'Jane Walker',
-    email: 'janewalker@gmail.com',
-    avatar: 'https://v0.dev/placeholder.svg', // Сюди підставиться реальне фото пізніше
-  };
+  const { data: user } = useGetCurrentUserQuery();
+  const userInitials = user?.name
+    ?.split(' ')
+    .map((namePart) => namePart[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 
   const menuItems = [
     {
@@ -61,16 +63,15 @@ const ProfilePage = () => {
             
            "
           >
-            <img
-              src={user.avatar}
-              alt={user.name}
-              className="w-[86px] h-[86px] 
-              rounded-[50px]
-              "
-            />
+            <div
+              aria-label={user?.name}
+              className="w-[86px] h-[86px] rounded-[50px] bg-[#A1D9D6] flex items-center justify-center text-h3m text-[#004261]"
+            >
+              {userInitials}
+            </div>
             <div className="min-w-[215px]">
-              <h2 className="text-h3m ">{user.name}</h2>
-              <p className="text-em">{user.email}</p>
+              <h2 className="text-h3m ">{user?.name}</h2>
+              <p className="text-em">{user?.email}</p>
             </div>
             <NavLink to="/settings">
               <SettingLinkSvg />
