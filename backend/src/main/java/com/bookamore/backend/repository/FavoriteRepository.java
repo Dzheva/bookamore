@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,6 +28,22 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Favorite.Fav
             WHERE f.userId = :userId AND f.offerId IN :offerIds
             """)
     Set<UUID> findOfferIdsByUserIdAndOfferIdIn(UUID userId, Collection<UUID> offerIds);
+
+    @Query("""
+            SELECT o.id AS offerId, COUNT(f.offerId) AS favoriteCount
+            FROM Offer o
+            LEFT JOIN Favorite f ON o.id = f.offerId
+            WHERE o.id IN :offerIds
+              AND o.user.id = :authorId
+            GROUP BY o.id
+            """)
+    List<OfferFavoriteCount> countFavoritesByOfferIdIn(Collection<UUID> offerIds, UUID authorId);
+
+    interface OfferFavoriteCount {
+        UUID getOfferId();
+
+        long getFavoriteCount();
+    }
 
     void deleteByUserIdAndOfferId(UUID userId, UUID offerId);
 }
